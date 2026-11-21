@@ -88,6 +88,12 @@
                     @elseif($type === 'email')
                         <input type="email" name="{{ $name }}" value="{{ $value }}" class="form-control">
 
+                    @elseif($type === 'password')
+                        <input type="password" name="{{ $name }}" value="" class="form-control" autocomplete="new-password">
+                        @if($record)
+                            <p class="text-slate-400 text-xs mt-1">Biarkan kosong bila tidak ingin mengganti password.</p>
+                        @endif
+
                     @else
                         <input type="text" name="{{ $name }}" value="{{ $value }}" class="form-control">
                     @endif

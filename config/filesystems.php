@@ -33,7 +33,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],
@@ -44,6 +44,9 @@ return [
             // URL relatif agar gambar tetap tampil di host/port apa pun
             // (mis. preview/proxy), tidak terikat pada APP_URL.
             'url' => env('ASSET_URL', '/storage'),
+            // Sajikan berkas lewat route /storage/{path} sehingga foto tetap
+            // tampil walau symlink public/storage belum dibuat (storage:link).
+            'serve' => true,
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

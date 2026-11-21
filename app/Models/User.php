@@ -82,6 +82,12 @@ class User extends Authenticatable implements FilamentUser
             : []);
     }
 
+    /** Nama role pertama — dipakai untuk kolom/select pada menu User. */
+    public function getRoleAttribute(): ?string
+    {
+        return $this->roles->first()?->name;
+    }
+
     public function mitra(): BelongsTo
     {
         return $this->belongsTo(Mitra::class, 'mitra_id');

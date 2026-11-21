@@ -53,6 +53,11 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'CRUD Generator', 'en' => 'CRUD Generator', 'ms' => 'Penjana CRUD'],
                 'route_name' => 'admin.generator.index',
             ],
+            [
+                'key' => 'users', 'icon' => 'user-cog', 'sort' => 5, 'parent' => 'pengaturan',
+                'title' => ['id' => 'User', 'en' => 'Users', 'ms' => 'Pengguna'],
+                'route_name' => 'admin.users.index', 'resource' => 'User', 'is_crud' => true,
+            ],
         ];
 
         $created = [];

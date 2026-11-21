@@ -16,18 +16,21 @@ class RoleMenuSeeder extends Seeder
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'export'],
             'cabang'    => ['view'],
+            'users'     => ['view'],
         ],
         'pemilik_mitra' => [
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'create', 'update', 'delete', 'export'],
             'cabang'    => ['view', 'create', 'update', 'delete'],
             'mitras'    => ['view'],
+            'users'     => ['view', 'create', 'update', 'delete'],
         ],
         'admin_mitra' => [
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'create', 'update', 'delete', 'export'],
             'cabang'    => ['view', 'create', 'update', 'delete'],
             'mitras'    => ['view'],
+            'users'     => ['view', 'create', 'update', 'delete'],
         ],
         'staff_admin' => [
             'dashboard' => ['view'],
