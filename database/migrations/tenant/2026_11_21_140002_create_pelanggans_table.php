@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
+            $table->string('mitra_uuid')->nullable()->index();
             $table->unsignedBigInteger('cabang_id')->nullable()->index();
             $table->string('name');
             $table->string('slug')->unique();

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('cabangs', function (Blueprint $table) {
             $table->id();
+            $table->string('mitra_uuid')->nullable()->index();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('code')->nullable();

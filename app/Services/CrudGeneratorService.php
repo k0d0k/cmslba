@@ -5,11 +5,14 @@ namespace App\Services;
 use App\Models\CrudDefinition;
 use App\Models\Menu;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 /**
  * CRUD Generator: membuat migrasi, model, controller, dan menu secara otomatis.
+ *
+ * Mendukung dua target database:
+ * - tenant  -> database mitra (database/migrations/tenant, model App\Models\Tenant).
+ * - central -> database pusat  (database/migrations, model App\Models).
  */
 class CrudGeneratorService
 {
@@ -27,7 +30,7 @@ class CrudGeneratorService
     ];
 
     /**
-     * @param array $definition ['title','key','model','fields'(array),'roles'(array),'icon','has_cabang']
+     * @param array $definition ['title','key','model','fields'(array),'roles'(array),'icon','has_cabang','connection']
      */
     public function generate(array $definition): array
     {
@@ -38,19 +41,27 @@ class CrudGeneratorService
         $fields  = $definition['fields'];
         $icon    = $definition['icon'] ?? 'table';
         $hasCabang = (bool) ($definition['has_cabang'] ?? false);
-        $timestamp = date('Y_m_d_His');
 
-        // 1. Migrasi (database mitra)
-        $migrationPath = database_path("migrations/tenant/{$timestamp}_create_{$table}_table.php");
-        File::put($migrationPath, $this->migrationStub($table, $fields, $hasCabang));
+        $connection = ($definition['connection'] ?? 'tenant') === 'central' ? 'central' : 'tenant';
+        $isTenant   = $connection === 'tenant';
+        $namespace  = $isTenant ? 'App\\Models\\Tenant' : 'App\\Models';
+        $timestamp  = date('Y_m_d_His');
+
+        // 1. Migrasi (ke folder sesuai target database)
+        $migrationPath = $isTenant
+            ? database_path("migrations/tenant/{$timestamp}_create_{$table}_table.php")
+            : database_path("migrations/{$timestamp}_create_{$table}_table.php");
+        File::put($migrationPath, $this->migrationStub($table, $fields, $hasCabang, $isTenant));
 
         // 2. Model
-        $modelPath = app_path("Models/Tenant/{$model}.php");
-        File::put($modelPath, $this->modelStub($model, $table, $fields, $hasCabang));
+        $modelPath = $isTenant
+            ? app_path("Models/Tenant/{$model}.php")
+            : app_path("Models/{$model}.php");
+        File::put($modelPath, $this->modelStub($model, $table, $fields, $hasCabang, $connection, $namespace));
 
         // 3. Controller
         $controllerPath = app_path("Http/Controllers/Admin/{$model}Controller.php");
-        File::put($controllerPath, $this->controllerStub($model, $key, $title, $fields, $hasCabang));
+        File::put($controllerPath, $this->controllerStub($model, $key, $title, $fields, $hasCabang, $namespace));
 
         // 4. Menu
         $menu = Menu::create([
@@ -66,10 +77,10 @@ class CrudGeneratorService
         ]);
 
         // 5. Simpan definisi + assign ke role
-        $definitionRow = CrudDefinition::create([
+        CrudDefinition::create([
             'model_name' => $model,
             'table_name' => $table,
-            'connection' => 'tenant',
+            'connection' => $connection,
             'menu_id'    => $menu->id,
             'icon'       => $icon,
             'fields'     => $fields,
@@ -105,14 +116,18 @@ class CrudGeneratorService
         }
     }
 
-    protected function migrationStub(string $table, array $fields, bool $hasCabang): string
+    protected function migrationStub(string $table, array $fields, bool $hasCabang, bool $isTenant): string
     {
         $columns = '';
+        if ($isTenant) {
+            // Setiap tabel pada database mitra menyimpan uuid mitra pemiliknya.
+            $columns .= "            \$table->string('mitra_uuid')->nullable()->index();\n";
+        }
         if ($hasCabang) {
             $columns .= "            \$table->unsignedBigInteger('cabang_id')->nullable()->index();\n";
         }
         foreach ($fields as $f) {
-            if (in_array($f['name'], ['slug', 'cabang_id'], true)) {
+            if (in_array($f['name'], ['slug', 'cabang_id', 'mitra_uuid'], true)) {
                 continue;
             }
             $columns .= '            ' . $this->columnLine($f) . "\n";
@@ -166,10 +181,21 @@ PHP;
         return $line . ';';
     }
 
-    protected function modelStub(string $model, string $table, array $fields, bool $hasCabang): string
+    protected function modelStub(string $model, string $table, array $fields, bool $hasCabang, string $connection, string $namespace): string
     {
-        $fillable = collect($fields)->pluck('name')->map(fn ($n) => "'{$n}'")->implode(', ');
-        $fillable = "'slug', " . ($hasCabang ? "'cabang_id', " : '') . $fillable;
+        $isTenant = $connection === 'tenant';
+
+        $fillableParts = ["'slug'"];
+        if ($isTenant) {
+            $fillableParts[] = "'mitra_uuid'";
+        }
+        if ($hasCabang) {
+            $fillableParts[] = "'cabang_id'";
+        }
+        foreach ($fields as $f) {
+            $fillableParts[] = "'{$f['name']}'";
+        }
+        $fillable = implode(', ', $fillableParts);
 
         $casts = [];
         foreach ($fields as $f) {
@@ -182,24 +208,36 @@ PHP;
             }
         }
         $castsStr = $casts ? implode(",\n        ", $casts) . ',' : '';
-        $slugSource = collect($fields)->firstWhere('name', 'name') ? 'name' : (collect($fields)->first()['name'] ?? 'id');
 
+        $slugSource = collect($fields)->firstWhere('name', 'name') ? 'name' : (collect($fields)->first()['name'] ?? 'id');
         $slugSource = $slugSource === 'id' ? 'id' : $slugSource;
 
-        $stub = <<<PHP
+        // Import & trait tambahan untuk database mitra.
+        $mitraImport = $isTenant ? "\nuse App\\Models\\Concerns\\HasMitraUuid;" : '';
+        $mitraTrait  = $isTenant ? "\n    use HasMitraUuid;" : '';
+        $belongsToImport = $hasCabang ? "\nuse Illuminate\\Database\\Eloquent\\Relations\\BelongsTo;" : '';
+        $cabangRelation = $hasCabang ? <<<PHP
+
+
+    public function cabang(): BelongsTo
+    {
+        return \$this->belongsTo(Cabang::class, 'cabang_id');
+    }
+PHP : '';
+
+        return <<<PHP
 <?php
 
-namespace App\Models\Tenant;
+namespace {$namespace};
 
-use App\Models\Concerns\HasSlug;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Concerns\HasSlug;{$mitraImport}
+use Illuminate\Database\Eloquent\Model;{$belongsToImport}
 
 class {$model} extends Model
 {
-    use HasSlug;
+    use HasSlug;{$mitraTrait}
 
-    protected \$connection = 'tenant';
+    protected \$connection = '{$connection}';
 
     protected \$table = '{$table}';
 
@@ -209,22 +247,16 @@ class {$model} extends Model
         {$castsStr}
     ];
 
-    public \$slug_source = '{$slugSource}';
-
-    public function cabang(): BelongsTo
-    {
-        return \$this->belongsTo(Cabang::class, 'cabang_id');
-    }
+    public \$slug_source = '{$slugSource}';{$cabangRelation}
 }
 PHP;
-
-        return $stub;
     }
 
-    protected function controllerStub(string $model, string $key, string $title, array $fields, bool $hasCabang): string
+    protected function controllerStub(string $model, string $key, string $title, array $fields, bool $hasCabang, string $namespace): string
     {
         $fieldsPhp = $this->exportFields($fields);
         $hasCabangStr = $hasCabang ? 'true' : 'false';
+        $fqcn = "\\{$namespace}\\{$model}";
 
         return <<<PHP
 <?php
@@ -233,7 +265,7 @@ namespace App\Http\Controllers\Admin;
 
 class {$model}Controller extends BaseCrudController
 {
-    protected string \$model = \\App\\Models\\Tenant\\{$model}::class;
+    protected string \$model = {$fqcn}::class;
     protected string \$view = 'admin.crud';
     protected string \$routeName = 'admin.{$key}';
     protected string \$title = '{$title}';

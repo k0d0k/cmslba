@@ -100,7 +100,7 @@ class DatabaseSeeder extends Seeder
             $tenant->provision($mitra);
             $tenant->connect($mitra);
 
-            $this->seedTenantData($data['cabangs'], $data['pelanggans']);
+            $this->seedTenantData($data['cabangs'], $data['pelanggans'], $mitra->uuid);
 
             // User milik mitra (semua role lingkup mitra)
             $owner = null;
@@ -129,13 +129,14 @@ class DatabaseSeeder extends Seeder
     }
 
     /** Isi data contoh (cabang & pelanggan) di database mitra. */
-    protected function seedTenantData(array $cabangs, array $pelanggans): void
+    protected function seedTenantData(array $cabangs, array $pelanggans, string $mitraUuid): void
     {
         $conn = DB::connection('tenant');
 
         if ($conn->table('cabangs')->count() === 0) {
             foreach ($cabangs as $cabang) {
                 $conn->table('cabangs')->insert([
+                    'mitra_uuid' => $mitraUuid,
                     'name'       => $cabang['name'],
                     'slug'       => Str::slug($cabang['name']),
                     'code'       => $cabang['code'],
@@ -152,6 +153,7 @@ class DatabaseSeeder extends Seeder
 
             foreach ($pelanggans as $i => [$name, $email, $phone]) {
                 $conn->table('pelanggans')->insert([
+                    'mitra_uuid' => $mitraUuid,
                     'cabang_id'  => $cabangIds[$i % $total],
                     'name'       => $name,
                     'slug'       => Str::slug($name),

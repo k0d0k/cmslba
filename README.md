@@ -5,7 +5,7 @@ Boilerplate **Laravel 13 + Filament** dengan panel admin bergaya **TailAdmin** d
 ## Fitur
 
 1. **TailAdmin + DataTables server-side** — antarmuka admin berbasis Blade + Tailwind + jQuery DataTables (Yajra), dengan autentikasi panel Filament.
-2. **Multi skin** — beberapa tema warna (default, emerald, rose, slate) yang tersimpan per pengguna.
+2. **Multi skin** — tema warna tersimpan per pengguna: **LBA Cloud** (default, navy + teal seperti `dev.lbacloud.com`, premium: **Midnight**, **Obsidian**, **Royal Indigo**, serta **Emerald**, **Slate**, **Rose**.
 3. **Multi bahasa** — Bahasa Indonesia, English, dan Bahasa Malaysia.
 4. **7 Role** dengan cakupan akses berbeda:
    - `admin_principal`, `user_principal` — lingkup pusat (principal)
@@ -13,7 +13,7 @@ Boilerplate **Laravel 13 + Filament** dengan panel admin bergaya **TailAdmin** d
 5. **Menu dinamis (nested)** — pengurutan dengan drag & drop (SortableJS).
 6. **Assign Menu & permission CRUD** — setiap role dapat diberi hak `view/create/update/delete/export` per menu.
 7. **Slug di setiap tabel** — semua resource diedit berdasarkan slug.
-8. **CRUD Generator** — membuat migrasi, model, controller, dan baris menu secara otomatis.
+8. **CRUD Generator** — membuat migrasi, model, controller, dan baris menu secara otomatis, dengan pilihan target **database pusat (central)** atau **database mitra (tenant)**.
 9. **Konfigurasi terpusat di database `lbacloud_pusat`** — role, menu, dan pemetaan hak akses tersimpan di sana.
 10. **Multi mitra** — pendaftaran mitra otomatis membuat database baru `lbacloud_mitra_<uuid>` beserta frontpage publik di `/{nama-mitra}`.
 
@@ -78,7 +78,7 @@ Setiap mitra memiliki database terpisah (`lbacloud_mitra_<uuid>`) berisi data ca
 ## Arsitektur database
 
 - **Central** (`lbacloud_pusat`) — menyimpan user, role, menu, mitra, skin, dan definisi CRUD.
-- **Tenant** (`lbacloud_mitra_<uuid>`) — database terpisah untuk setiap mitra (mis. cabang, pelanggan, dan modul hasil generator).
+- **Tenant** (`lbacloud_mitra_<uuid>`) — database terpisah untuk setiap mitra (mis. cabang, pelanggan, dan modul hasil generator). Setiap tabel tenant memiliki kolom `mitra_uuid` yang diisi otomatis dari mitra aktif.
 
 Secara default proyek memakai **SQLite**. Untuk **MySQL**, cukup ubah `.env`:
 
@@ -100,12 +100,12 @@ TENANT_DB_PREFIX=lbacloud_mitra_
 
 ## CRUD Generator
 
-Buka **Pengaturan → CRUD Generator**, tentukan judul, model, parent menu, daftar field (nama, tipe, label, nullable/unik/opsi), dan role yang diberi akses. Sistem akan membuat:
+Buka **Pengaturan → CRUD Generator**, tentukan judul, model, **database target**, parent menu, daftar field (nama, tipe, label, nullable/unik/opsi), dan role yang diberi akses. Berdasarkan pilihan database, sistem akan membuat:
 
-- migrasi di `database/migrations/tenant/`
-- model di `app/Models/Tenant/`
-- controller di `app/Http/Controllers/Admin/`
-- baris menu + definisi CRUD, dan langsung tersedia di sidebar.
+- **Database Mitra (tenant)** — migrasi di `database/migrations/tenant/`, model di `app/Models/Tenant/`, dan setiap tabel diberi kolom `mitra_uuid` (`App\Models\Concerns\HasMitraUuid`).
+- **Database Pusat (central)** — migrasi di `database/migrations/`, model di `app/Models/`.
+
+Selain itu dibuat controller di `app/Http/Controllers/Admin/`, baris menu + definisi CRUD, dan langsung tersedia di sidebar. Migrasi otomatis dijalankan pada database target.
 
 ## Lisensi
 

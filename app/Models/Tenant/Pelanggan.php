@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Concerns\HasMitraUuid;
 use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,13 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Pelanggan extends Model
 {
     use HasSlug;
+    use HasMitraUuid;
 
     protected $connection = 'tenant';
 
     protected $table = 'pelanggans';
 
     protected $fillable = [
-        'cabang_id', 'name', 'slug', 'email', 'phone',
+        'mitra_uuid', 'cabang_id', 'name', 'slug', 'email', 'phone',
         'address', 'birth_date', 'notes', 'is_active',
     ];
 

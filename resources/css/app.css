@@ -11,10 +11,10 @@
 
 /* ================= Multi-skin (variabel dari database) ================= */
 :root {
-    --color-primary: #465fff;
-    --color-primary-dark: #3641f5;
-    --color-sidebar: #1c2434;
-    --color-sidebar-hover: #333a48;
+    --color-primary: #087f80;
+    --color-primary-dark: #076b6c;
+    --color-sidebar: #14263d;
+    --color-sidebar-hover: #1c3a5c;
 }
 
 * { box-sizing: border-box; }

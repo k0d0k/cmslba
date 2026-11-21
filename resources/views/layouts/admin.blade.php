@@ -5,8 +5,8 @@
 
     $activeSkinCode = session('skin', $currentUser->skin ?? 'default');
     $activeSkin = \App\Models\Skin::where('code', $activeSkinCode)->first();
-    $skinPrimary = $activeSkin->primary ?? '#465fff';
-    $skinSidebar = $activeSkin->sidebar ?? '#1c2434';
+    $skinPrimary = $activeSkin->primary ?? '#087f80';
+    $skinSidebar = $activeSkin->sidebar ?? '#14263d';
 
     $activeMitra = app()->bound('active_mitra') ? app('active_mitra') : null;
     $isPrincipal = $currentUser?->isPrincipal() ?? false;

@@ -68,10 +68,14 @@ return [
     |--------------------------------------------------------------------------
     */
     'skins' => [
-        'default' => ['label' => 'Default', 'primary' => '#465fff', 'sidebar' => '#1c2434'],
-        'emerald' => ['label' => 'Emerald', 'primary' => '#10b981', 'sidebar' => '#062a22'],
-        'rose'    => ['label' => 'Rose',    'primary' => '#f43f5e', 'sidebar' => '#2a0a14'],
-        'slate'   => ['label' => 'Slate',   'primary' => '#0ea5e9', 'sidebar' => '#0f172a'],
+        // Default mengikuti identitas LBA Cloud (navy + teal) seperti dev.lbacloud.com.
+        'default'  => ['label' => 'LBA Cloud',    'primary' => '#087f80', 'sidebar' => '#14263d'],
+        'midnight' => ['label' => 'Midnight',     'primary' => '#c9a227', 'sidebar' => '#0c1725'],
+        'obsidian' => ['label' => 'Obsidian',     'primary' => '#d4af7a', 'sidebar' => '#0a0a0b'],
+        'royal'    => ['label' => 'Royal Indigo', 'primary' => '#7c5cff', 'sidebar' => '#1e1b4b'],
+        'emerald'  => ['label' => 'Emerald',      'primary' => '#10b981', 'sidebar' => '#062a22'],
+        'slate'    => ['label' => 'Slate',        'primary' => '#0ea5e9', 'sidebar' => '#0f172a'],
+        'rose'     => ['label' => 'Rose',         'primary' => '#f43f5e', 'sidebar' => '#2a0a14'],
     ],
 
     /*

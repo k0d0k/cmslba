@@ -40,10 +40,14 @@ class CrudGeneratorController extends Controller
         $request->validate([
             'title'          => ['required', 'string', 'max:100'],
             'model'          => ['required', 'string', 'max:60', 'regex:/^[A-Za-z][A-Za-z0-9]+$/'],
+            'connection'     => ['required', 'in:central,tenant'],
             'field_name'     => ['required', 'array', 'min:1'],
             'field_name.*'   => ['required', 'string'],
             'field_type.*'   => ['required', 'string'],
         ]);
+
+        $connection = $request->input('connection', 'tenant');
+        $hasCabang  = $connection === 'tenant' && $request->boolean('has_cabang');
 
         $fields = [];
         foreach ($request->input('field_name') as $i => $name) {
@@ -76,25 +80,46 @@ class CrudGeneratorController extends Controller
             'model'      => $request->input('model'),
             'icon'       => $request->input('icon', 'table'),
             'parent_id'  => $request->input('parent_id') ?: null,
-            'has_cabang' => $request->boolean('has_cabang'),
+            'has_cabang' => $hasCabang,
+            'connection' => $connection,
             'fields'     => $fields,
             'roles'      => $request->input('roles', []),
         ]);
 
-        // Jalankan migrasi pada database mitra yang aktif.
-        $mitra = app()->bound('active_mitra') ? app('active_mitra') : Mitra::where('status', 'active')->first();
-        if ($mitra) {
+        $this->migrate($connection);
+
+        return redirect()->route('admin.generator.index')
+            ->with('success', __('messages.crud_generated', ['model' => $request->input('model')]))
+            ->with('generated', $result);
+    }
+
+    /**
+     * Jalankan migrasi pada database target (pusat atau mitra) yang baru dibuat.
+     */
+    protected function migrate(string $connection): void
+    {
+        if ($connection === 'tenant') {
+            $mitra = app()->bound('active_mitra') ? app('active_mitra') : Mitra::where('status', 'active')->first();
+            if (! $mitra) {
+                return;
+            }
             $this->tenant->connect($mitra);
+
             Artisan::call('migrate', [
                 '--path'     => $this->tenant->path(),
                 '--realpath' => true,
                 '--database' => 'tenant',
                 '--force'    => true,
             ]);
+
+            return;
         }
 
-        return redirect()->route('admin.generator.index')
-            ->with('success', __('messages.crud_generated', ['model' => $request->input('model')]))
-            ->with('generated', $result);
+        Artisan::call('migrate', [
+            '--path'     => database_path('migrations'),
+            '--realpath' => true,
+            '--database' => 'central',
+            '--force'    => true,
+        ]);
     }
 }

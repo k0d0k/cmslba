@@ -35,6 +35,18 @@
                     <input type="text" name="icon" value="{{ old('icon', 'table') }}" class="form-control">
                 </div>
                 <div>
+                    <label class="form-label">Database</label>
+                    <select name="database_target" id="database_target" class="form-control" onchange="document.getElementById('connection').value = this.value">
+                        <option value="tenant" @selected(old('connection', 'tenant') === 'tenant')>Database Mitra (tenant)</option>
+                        <option value="central" @selected(old('connection') === 'central')>Database Pusat (central)</option>
+                    </select>
+                    <input type="hidden" name="connection" id="connection" value="{{ old('connection', 'tenant') }}">
+                    <p class="text-xs text-slate-400 mt-1">
+                        <b>Mitra</b>: tabel dibuat di <code>database/migrations/tenant</code> (model <code>App\Models\Tenant</code>), tiap tabel diberi <code>mitra_uuid</code>.
+                        <b>Pusat</b>: tabel dibuat di <code>database/migrations</code> (model <code>App\Models</code>).
+                    </p>
+                </div>
+                <div>
                     <label class="form-label">Parent Menu</label>
                     <select name="parent_id" class="form-control">
                         <option value="">- (root)</option>
