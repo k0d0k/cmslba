@@ -112,3 +112,32 @@ body {
 /* ================= DataTables ================= */
 table.dataTable thead th { background: #f8fafc; font-size: .75rem; text-transform: uppercase; color: #475569; }
 .dt-container .dt-search input { border: 1px solid #d0d5dd; border-radius: .5rem; padding: .35rem .6rem; }
+
+/* ================= Sidebar show/hide ================= */
+#sidebar { display: none; }
+
+/* Desktop: tampil secara default, disembunyikan saat .sidebar-collapsed */
+@media (min-width: 768px) {
+    #sidebar { display: block; }
+    body.sidebar-collapsed #sidebar { display: none; }
+}
+
+/* Mobile: tampil sebagai overlay saat .sidebar-open */
+@media (max-width: 767.98px) {
+    body.sidebar-open #sidebar {
+        display: block;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 60;
+        overflow-y: auto;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, .35);
+    }
+}
+
+#sidebar-backdrop { display: none; }
+body.sidebar-open #sidebar-backdrop { display: block; }
+
+/* Ikon di dalam tombol topbar */
+.btn svg { width: 1rem; height: 1rem; flex-shrink: 0; }

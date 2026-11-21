@@ -20,9 +20,9 @@
 
         <div class="card-body">
             <table class="js-datatable w-full display"
-                   data-url="{{ route('admin.mitras.data') }}"
-                   data-columns='@json($columns)'
-                   data-actions="1">
+                   data-dt-url="{{ route('admin.mitras.data') }}"
+                   data-dt-columns='@json($columns)'
+                   data-dt-actions="1">
                 <thead>
                     <tr>
                         <th>#</th>

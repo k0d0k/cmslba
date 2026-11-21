@@ -18,10 +18,27 @@ function initIcons(root = document) {
 window.initIcons = initIcons;
 
 function initSidebar() {
+    const isDesktop = () => window.matchMedia('(min-width: 768px)').matches;
+    const closeMobile = () => document.body.classList.remove('sidebar-open');
+
+    // Tombol toggle: kolaps di desktop, buka overlay di mobile.
     document.querySelectorAll('[data-sidebar-toggle]').forEach((el) => {
         el.addEventListener('click', () => {
-            document.body.classList.toggle('sidebar-collapsed');
-            document.getElementById('sidebar')?.classList.toggle('hidden');
+            if (isDesktop()) {
+                document.body.classList.toggle('sidebar-collapsed');
+            } else {
+                document.body.classList.toggle('sidebar-open');
+            }
+        });
+    });
+
+    // Klik backdrop menutup sidebar mobile.
+    document.getElementById('sidebar-backdrop')?.addEventListener('click', closeMobile);
+
+    // Klik link di sidebar menutup overlay mobile.
+    document.querySelectorAll('#sidebar a').forEach((link) => {
+        link.addEventListener('click', () => {
+            if (!isDesktop()) closeMobile();
         });
     });
 
@@ -67,15 +84,19 @@ async function initDataTables() {
     const { default: DataTable } = await import('datatables.net-dt');
 
     document.querySelectorAll('.js-datatable').forEach((table) => {
-        const url = table.dataset.url;
+        // Catatan: DataTables v3 menggabungkan seluruh atribut data-* pada elemen
+        // tabel ke opsi init-nya. Karena itu atribut konfigurasi kita memakai
+        // prefiks "dt-" (data-dt-url / data-dt-columns / data-dt-actions) agar
+        // tidak menimpa opsi bawaan seperti "columns".
+        const url = table.dataset.dtUrl;
         let columns = [];
         try {
-            columns = JSON.parse(table.dataset.columns || '[]');
+            columns = JSON.parse(table.dataset.dtColumns || '[]');
         } catch (e) {
             columns = [];
         }
 
-        const hasActions = table.dataset.actions === '1';
+        const hasActions = table.dataset.dtActions === '1';
 
         const cols = [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, width: '40px' },

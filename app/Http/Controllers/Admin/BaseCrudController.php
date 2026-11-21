@@ -66,8 +66,15 @@ abstract class BaseCrudController extends Controller
         }
 
         $user = $this->user();
-        if ($this->hasCabang && $user && ! $user->isPrincipal() && $user->cabang_id) {
-            $query->where('cabang_id', $user->cabang_id);
+        if ($this->hasCabang) {
+            // Utamakan cabang yang dipilih di topbar; fallback ke cabang bawaan user mitra.
+            $cabangId = session('active_cabang_id');
+            if (! $cabangId && $user && ! $user->isPrincipal()) {
+                $cabangId = $user->cabang_id;
+            }
+            if ($cabangId) {
+                $query->where('cabang_id', $cabangId);
+            }
         }
 
         return $query;
@@ -204,7 +211,12 @@ abstract class BaseCrudController extends Controller
         $this->authorizeAbility('create');
         $request->validate($this->rules());
 
-        ($this->model)::create($this->values($request));
+        $data = $this->values($request);
+        if ($this->hasCabang && empty($data['cabang_id'])) {
+            $data['cabang_id'] = session('active_cabang_id') ?: $this->user()?->cabang_id;
+        }
+
+        ($this->model)::create($data);
 
         return redirect()->route($this->routeName . '.index')
             ->with('success', __('messages.created'));

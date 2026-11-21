@@ -37,4 +37,12 @@ return [
     'view'         => 'Lihat',
     'create'       => 'Tambah',
     'update'       => 'Ubah',
+    'sidebar_toggle' => 'Tunjuk/sembunyi menu',
+    'account'      => 'Akaun',
+    'change_password' => 'Tukar Kata Laluan',
+    'current_password' => 'Kata Laluan Semasa',
+    'new_password' => 'Kata Laluan Baharu',
+    'confirm_password' => 'Sahkan Kata Laluan',
+    'active_cabang' => 'Cawangan Aktif',
+    'all_branches' => 'Semua Cawangan',
 ];

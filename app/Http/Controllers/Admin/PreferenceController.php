@@ -42,6 +42,20 @@ class PreferenceController extends Controller
     {
         $mitra = Mitra::findOrFail($request->input('mitra_id'));
         $request->session()->put('active_mitra_id', $mitra->id);
+        // Cabang terikat pada database mitra, jadi reset saat mitra berganti.
+        $request->session()->forget('active_cabang_id');
+
+        return back();
+    }
+
+    public function switchCabang(Request $request)
+    {
+        $cabangId = $request->input('cabang_id');
+        if ($cabangId) {
+            $request->session()->put('active_cabang_id', (int) $cabangId);
+        } else {
+            $request->session()->forget('active_cabang_id');
+        }
 
         return back();
     }

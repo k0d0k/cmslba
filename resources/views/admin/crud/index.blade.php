@@ -18,9 +18,9 @@
 
         <div class="card-body">
             <table class="js-datatable w-full display"
-                   data-url="{{ route($routeName . '.data') }}"
-                   data-columns='@json($columns)'
-                   data-actions="{{ $hasActions ? '1' : '0' }}">
+                   data-dt-url="{{ route($routeName . '.data') }}"
+                   data-dt-columns='@json($columns)'
+                   data-dt-actions="{{ $hasActions ? '1' : '0' }}">
                 <thead>
                     <tr>
                         <th>#</th>

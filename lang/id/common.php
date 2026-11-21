@@ -37,4 +37,12 @@ return [
     'view'         => 'Lihat',
     'create'       => 'Tambah',
     'update'       => 'Ubah',
+    'sidebar_toggle' => 'Sembunyikan/tampilkan menu',
+    'account'      => 'Akun',
+    'change_password' => 'Ganti Password',
+    'current_password' => 'Password Saat Ini',
+    'new_password' => 'Password Baru',
+    'confirm_password' => 'Konfirmasi Password',
+    'active_cabang' => 'Cabang Aktif',
+    'all_branches' => 'Semua Cabang',
 ];

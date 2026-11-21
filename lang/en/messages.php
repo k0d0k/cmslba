@@ -15,6 +15,9 @@ return [
     'locale_saved'      => 'Language changed successfully.',
     'mitra_switched'    => 'Active tenant switched successfully.',
 
+    'profile_updated'   => 'Profile updated successfully.',
+    'password_updated'  => 'Password changed successfully.',
+
     'confirm_delete'    => 'Are you sure you want to delete this record?',
     'delete_failed'     => 'Failed to delete the record.',
     'no_data'           => 'No data available.',

@@ -37,4 +37,12 @@ return [
     'view'         => 'View',
     'create'       => 'Create',
     'update'       => 'Update',
+    'sidebar_toggle' => 'Toggle sidebar',
+    'account'      => 'Account',
+    'change_password' => 'Change Password',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'confirm_password' => 'Confirm Password',
+    'active_cabang' => 'Active Branch',
+    'all_branches' => 'All Branches',
 ];

@@ -15,6 +15,9 @@ return [
     'locale_saved'      => 'Bahasa berjaya ditukar.',
     'mitra_switched'    => 'Mitra aktif berjaya ditukar.',
 
+    'profile_updated'   => 'Profil berjaya dikemas kini.',
+    'password_updated'  => 'Kata laluan berjaya ditukar.',
+
     'confirm_delete'    => 'Adakah anda pasti untuk memadam data ini?',
     'delete_failed'     => 'Gagal memadam data.',
     'no_data'           => 'Tiada data.',

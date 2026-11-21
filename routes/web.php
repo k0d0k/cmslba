@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\CrudGeneratorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController;
@@ -41,10 +42,17 @@ Route::middleware(['auth', 'tenant'])
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-        // Preferensi: bahasa, skin, mitra aktif
+        // Preferensi: bahasa, skin, mitra & cabang aktif
         Route::post('preference/locale', [PreferenceController::class, 'locale'])->name('preference.locale');
         Route::post('preference/skin', [PreferenceController::class, 'skin'])->name('preference.skin');
         Route::post('preference/mitra', [PreferenceController::class, 'switchMitra'])->name('preference.mitra');
+        Route::post('preference/cabang', [PreferenceController::class, 'switchCabang'])->name('preference.cabang');
+
+        // Akun: profil & ganti password
+        Route::get('account/profile', [AccountController::class, 'profile'])->name('account.profile');
+        Route::post('account/profile', [AccountController::class, 'updateProfile'])->name('account.profile.update');
+        Route::get('account/password', [AccountController::class, 'password'])->name('account.password');
+        Route::post('account/password', [AccountController::class, 'updatePassword'])->name('account.password.update');
 
         // Manajemen menu dinamis (drag & drop)
         Route::middleware('role:admin_principal')->group(function () {

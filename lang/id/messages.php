@@ -15,6 +15,9 @@ return [
     'locale_saved'      => 'Bahasa berhasil diubah.',
     'mitra_switched'    => 'Mitra aktif berhasil diganti.',
 
+    'profile_updated'   => 'Profil berhasil diperbarui.',
+    'password_updated'  => 'Password berhasil diubah.',
+
     'confirm_delete'    => 'Yakin ingin menghapus data ini?',
     'delete_failed'     => 'Gagal menghapus data.',
     'no_data'           => 'Belum ada data.',
