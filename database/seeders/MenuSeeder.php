@@ -59,18 +59,18 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.users.index', 'resource' => 'User', 'is_crud' => true,
             ],
             [
-                'key' => 'modules', 'icon' => 'puzzle', 'sort' => 6, 'parent' => 'pengaturan',
+                'key' => 'modules', 'icon' => 'puzzle', 'sort' => 3,
                 'title' => ['id' => 'Registry Modul', 'en' => 'Module Registry', 'ms' => 'Registry Modul'],
                 'route_name' => 'admin.modules.index', 'resource' => 'Module', 'is_crud' => true,
             ],
             [
-                'key' => 'subscriptions', 'icon' => 'credit-card', 'sort' => 7, 'parent' => 'pengaturan',
+                'key' => 'subscriptions', 'icon' => 'credit-card', 'sort' => 4,
                 'title' => ['id' => 'Paket Langganan', 'en' => 'Subscription Plans', 'ms' => 'Pakej Langganan'],
                 'route_name' => 'admin.subscriptions.index', 'resource' => 'Subscription', 'is_crud' => true,
             ],
             [
-                'key' => 'setting_aplikasi', 'icon' => 'app-window', 'sort' => 8, 'parent' => 'pengaturan',
-                'title' => ['id' => 'Setting Aplikasi', 'en' => 'Application Settings', 'ms' => 'Tetapan Aplikasi'],
+                'key' => 'setting_aplikasi', 'icon' => 'app-window', 'sort' => 5,
+                'title' => ['id' => 'Setting', 'en' => 'Settings', 'ms' => 'Tetapan'],
                 'route_name' => 'admin.setting-app.index',
             ],
         ];
