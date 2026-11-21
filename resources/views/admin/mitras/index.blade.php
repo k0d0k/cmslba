@@ -5,10 +5,12 @@
 @section('content')
     @php
         $columns = [
-            ['data' => 'name',    'name' => 'name'],
-            ['data' => 'slug',    'name' => 'slug'],
-            ['data' => 'db_name', 'name' => 'db_name'],
-            ['data' => 'status',  'name' => 'status'],
+            ['data' => 'name',      'name' => 'name'],
+            ['data' => 'slug',      'name' => 'slug'],
+            ['data' => 'db_name',   'name' => 'db_name'],
+            ['data' => 'brand',     'name' => 'brand'],
+            ['data' => 'langganan', 'name' => 'langganan'],
+            ['data' => 'status',    'name' => 'status'],
         ];
         $hasActions = ($canUpdate ?? false) || ($canDelete ?? false);
     @endphp
@@ -32,6 +34,8 @@
                         <th>{{ __('common.name') }}</th>
                         <th>Slug (Frontpage)</th>
                         <th>Database</th>
+                        <th>Brand</th>
+                        <th>Langganan</th>
                         <th>{{ __('common.status') }}</th>
                         @if($hasActions)
                             <th>{{ __('common.actions') }}</th>

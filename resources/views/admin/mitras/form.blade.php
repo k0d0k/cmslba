@@ -48,6 +48,27 @@
                 <textarea name="address" rows="2" class="form-control">{{ old('address', $mitra?->address) }}</textarea>
             </div>
 
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="form-label">Brand</label>
+                    <select name="brand_id" class="form-control">
+                        <option value="">-</option>
+                        @foreach($brands as $brand)
+                            <option value="{{ $brand->id }}" @selected((int) old('brand_id', $mitra?->brand_id) === $brand->id)>{{ $brand->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Langganan</label>
+                    <select name="langganan_id" class="form-control">
+                        <option value="">-</option>
+                        @foreach($subscriptions as $subscription)
+                            <option value="{{ $subscription->id }}" @selected((int) old('langganan_id', $mitra?->langganan_id) === $subscription->id)>{{ $subscription->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
             <div class="grid grid-cols-3 gap-3">
                 <div>
                     <label class="form-label">{{ __('common.skin') }}</label>

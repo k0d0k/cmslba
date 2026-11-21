@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,8 @@ class Mitra extends Model
         'locale',
         'status',
         'plan',
+        'brand_id',
+        'langganan_id',
         'owner_user_id',
         'expired_at',
     ];
@@ -50,6 +53,16 @@ class Mitra extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class, 'brand_id');
+    }
+
+    public function langganan(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class, 'langganan_id');
     }
 
     public function getRouteKeyName(): string

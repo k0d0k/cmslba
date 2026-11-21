@@ -17,6 +17,9 @@ class RoleMenuSeeder extends Seeder
             'pelanggan' => ['view', 'export'],
             'cabang'    => ['view'],
             'users'     => ['view'],
+            'modules'   => ['view'],
+            'subscriptions' => ['view'],
+            'setting_aplikasi' => ['view'],
         ],
         'pemilik_mitra' => [
             'dashboard' => ['view'],

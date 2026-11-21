@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PreferenceController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SettingAppController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FrontpageController;
 use App\Http\Controllers\MitraRegistrationController;
@@ -66,6 +67,10 @@ Route::middleware(['auth', 'tenant'])
 
         // Reset password akun pelanggan (dikirim ke email).
         Route::post('pelanggan/{slug}/reset-password', [PelangganController::class, 'resetPassword'])->name('pelanggan.reset-password');
+
+        // Setting aplikasi (form tunggal): nama, logo, bahasa, telepon, email, alamat, map.
+        Route::get('setting-aplikasi', [SettingAppController::class, 'edit'])->name('setting-app.index');
+        Route::post('setting-aplikasi', [SettingAppController::class, 'update'])->name('setting-app.update');
 
         // Manajemen menu dinamis (drag & drop)
         Route::middleware('role:admin_principal')->group(function () {

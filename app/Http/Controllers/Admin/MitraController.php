@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Menu;
 use App\Models\Mitra;
+use App\Models\Subscription;
 use App\Services\MenuService;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
@@ -52,7 +54,7 @@ class MitraController extends Controller
     {
         $this->authorizeAbility('view');
 
-        $query = Mitra::query();
+        $query = Mitra::query()->with(['brand', 'langganan']);
 
         // Selain principal: hanya boleh melihat mitranya sendiri.
         $user = auth()->user();
@@ -63,6 +65,8 @@ class MitraController extends Controller
         return DataTables::eloquent($query)
             ->addIndexColumn()
             ->editColumn('status', fn ($m) => '<span class="badge badge-' . ($m->status === 'active' ? 'success' : 'warning') . '">' . $m->status . '</span>')
+            ->addColumn('brand', fn ($m) => optional($m->brand)->name)
+            ->addColumn('langganan', fn ($m) => optional($m->langganan)->name)
             ->addColumn('actions', function ($m) {
                 $html = '<div class="flex gap-2">';
                 if ($this->can('update')) {
@@ -83,7 +87,11 @@ class MitraController extends Controller
     {
         $this->authorizeAbility('create');
 
-        return view('admin.mitras.form', ['mitra' => null]);
+        return view('admin.mitras.form', [
+            'mitra'         => null,
+            'brands'        => Brand::orderBy('name')->get(),
+            'subscriptions' => Subscription::orderBy('name')->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -103,7 +111,11 @@ class MitraController extends Controller
     {
         $this->authorizeAbility('update');
 
-        return view('admin.mitras.form', compact('mitra'));
+        return view('admin.mitras.form', [
+            'mitra'         => $mitra,
+            'brands'        => Brand::orderBy('name')->get(),
+            'subscriptions' => Subscription::orderBy('name')->get(),
+        ]);
     }
 
     public function update(Request $request, Mitra $mitra)
@@ -139,6 +151,8 @@ class MitraController extends Controller
             'locale' => ['nullable', 'in:id,en,ms'],
             'status' => ['required', 'in:pending,active,suspended'],
             'plan'   => ['nullable', 'string'],
+            'brand_id' => ['nullable', 'exists:brands,id'],
+            'langganan_id' => ['nullable', 'exists:subscriptions,id'],
         ]);
     }
 

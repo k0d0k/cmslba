@@ -58,6 +58,21 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'User', 'en' => 'Users', 'ms' => 'Pengguna'],
                 'route_name' => 'admin.users.index', 'resource' => 'User', 'is_crud' => true,
             ],
+            [
+                'key' => 'modules', 'icon' => 'puzzle', 'sort' => 6, 'parent' => 'pengaturan',
+                'title' => ['id' => 'Registry Modul', 'en' => 'Module Registry', 'ms' => 'Registry Modul'],
+                'route_name' => 'admin.modules.index', 'resource' => 'Module', 'is_crud' => true,
+            ],
+            [
+                'key' => 'subscriptions', 'icon' => 'credit-card', 'sort' => 7, 'parent' => 'pengaturan',
+                'title' => ['id' => 'Paket Langganan', 'en' => 'Subscription Plans', 'ms' => 'Pakej Langganan'],
+                'route_name' => 'admin.subscriptions.index', 'resource' => 'Subscription', 'is_crud' => true,
+            ],
+            [
+                'key' => 'setting_aplikasi', 'icon' => 'app-window', 'sort' => 8, 'parent' => 'pengaturan',
+                'title' => ['id' => 'Setting Aplikasi', 'en' => 'Application Settings', 'ms' => 'Tetapan Aplikasi'],
+                'route_name' => 'admin.setting-app.index',
+            ],
         ];
 
         $created = [];
