@@ -3,6 +3,7 @@ import $ from 'jquery';
 import Sortable from 'sortablejs';
 import { createIcons, icons } from 'lucide';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
+import 'datatables.net-responsive-dt/css/responsive.dataTables.css';
 
 window.$ = window.jQuery = $;
 window.Sortable = Sortable;
@@ -90,6 +91,8 @@ function initConfirmForms() {
 async function initDataTables() {
     if (!document.querySelector('.js-datatable')) return;
     const { default: DataTable } = await import('datatables.net-dt');
+    // Ekstensi Responsive: kolom akan dilipat otomatis pada layar sempit.
+    await import('datatables.net-responsive-dt');
 
     document.querySelectorAll('.js-datatable').forEach((table) => {
         // Catatan: DataTables v3 menggabungkan seluruh atribut data-* pada elemen
@@ -118,6 +121,7 @@ async function initDataTables() {
             processing: true,
             serverSide: true,
             autoWidth: false,
+            responsive: true,
             ajax: url,
             columns: cols,
             order: [],
