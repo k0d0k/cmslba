@@ -19,6 +19,7 @@ class Cabang extends Model
     protected $fillable = ['mitra_uuid', 'name', 'slug', 'code', 'address', 'phone', 'is_active'];
 
     protected $casts = ['is_active' => 'boolean'];
+    
 
     public $slug_source = 'name';
 
