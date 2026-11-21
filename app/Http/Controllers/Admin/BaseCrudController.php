@@ -105,6 +105,7 @@ abstract class BaseCrudController extends Controller
                 'date'     => 'date',
                 'datetime' => 'date',
                 'email'    => 'email',
+                'image'    => 'image|max:2048',
                 'select'   => 'in:' . implode(',', array_keys($f['options'] ?? [])),
                 'text'     => 'string',
                 default    => 'string|max:255',
@@ -130,8 +131,15 @@ abstract class BaseCrudController extends Controller
         $data = [];
         foreach ($this->fields() as $f) {
             $name = $f['name'];
-            if (($f['type'] ?? '') === 'boolean') {
+            $type = $f['type'] ?? 'string';
+
+            if ($type === 'boolean') {
                 $data[$name] = $request->boolean($name);
+            } elseif ($type === 'image') {
+                // Hanya ubah bila ada berkas baru diunggah (agar edit lain tidak menghapus gambar lama).
+                if ($request->hasFile($name)) {
+                    $data[$name] = $request->file($name)->store('uploads/' . ($this->menuKey ?: 'files'), 'public');
+                }
             } else {
                 $data[$name] = $request->input($name);
             }
@@ -168,6 +176,10 @@ abstract class BaseCrudController extends Controller
                 $dt->editColumn($name, fn ($row) => $row->{$name}
                     ? '<span class="badge bg-success">' . __('common.yes') . '</span>'
                     : '<span class="badge bg-secondary">' . __('common.no') . '</span>');
+            } elseif ($type === 'image') {
+                $dt->editColumn($name, fn ($row) => $row->{$name}
+                    ? '<img src="' . e(\Illuminate\Support\Facades\Storage::url($row->{$name})) . '" alt="" class="w-10 h-10 rounded object-cover border border-slate-200">'
+                    : '<span class="text-slate-400">-</span>');
             } elseif (in_array($type, ['date', 'datetime'], true)) {
                 $dt->editColumn($name, fn ($row) => optional($row->{$name})->format('Y-m-d'));
             } elseif ($type === 'select' && ! empty($f['options'])) {
@@ -184,6 +196,7 @@ abstract class BaseCrudController extends Controller
             if ($this->can('update')) {
                 $html .= '<a href="' . route($this->routeName . '.edit', $row->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
             }
+            $html .= $this->rowActions($row);
             if ($this->can('delete')) {
                 $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route($this->routeName . '.destroy', $row->slug) . '">' . __('common.delete') . '</button>';
             }
@@ -194,13 +207,19 @@ abstract class BaseCrudController extends Controller
 
         $raw = ['actions'];
         foreach ($this->fields() as $f) {
-            if (($f['type'] ?? '') === 'boolean') {
+            if (in_array($f['type'] ?? '', ['boolean', 'image'], true)) {
                 $raw[] = $f['name'];
             }
         }
         $dt->rawColumns($raw);
 
         return $dt->toJson();
+    }
+
+    /** Aksi tambahan per baris pada tabel (dapat dioverride subclass). */
+    protected function rowActions($row): string
+    {
+        return '';
     }
 
     public function create()

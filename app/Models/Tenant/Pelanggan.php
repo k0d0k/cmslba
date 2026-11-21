@@ -17,8 +17,8 @@ class Pelanggan extends Model
     protected $table = 'pelanggans';
 
     protected $fillable = [
-        'mitra_uuid', 'cabang_id', 'name', 'slug', 'email', 'phone',
-        'address', 'birth_date', 'notes', 'is_active',
+        'mitra_uuid', 'cabang_id', 'user_id', 'name', 'slug', 'email', 'phone',
+        'picture', 'address', 'birth_date', 'notes', 'is_active',
     ];
 
     protected $casts = [
@@ -31,5 +31,11 @@ class Pelanggan extends Model
     public function cabang(): BelongsTo
     {
         return $this->belongsTo(Cabang::class, 'cabang_id');
+    }
+
+    /** Akun login pelanggan pada tabel users (database pusat). */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 }

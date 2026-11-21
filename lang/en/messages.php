@@ -21,4 +21,12 @@ return [
     'confirm_delete'    => 'Are you sure you want to delete this record?',
     'delete_failed'     => 'Failed to delete the record.',
     'no_data'           => 'No data available.',
+
+    'confirm_reset_password'           => 'Reset this customer account password and email the new password?',
+    'pelanggan_no_user'                => 'Customer is not linked to a user account.',
+    'pelanggan_no_email'               => 'The user account has no email.',
+    'pelanggan_password_reset'         => 'A new password has been sent to :email.',
+    'pelanggan_password_reset_subject' => 'Your Account Password Reset',
+    'pelanggan_password_reset_greeting' => 'Hello :name,',
+    'pelanggan_password_reset_body'    => 'Your account password has been reset by an admin. Use the following new password to sign in:',
 ];

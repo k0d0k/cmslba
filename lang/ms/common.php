@@ -45,4 +45,6 @@ return [
     'confirm_password' => 'Sahkan Kata Laluan',
     'active_cabang' => 'Cawangan Aktif',
     'all_branches' => 'Semua Cawangan',
+    'picture'      => 'Gambar',
+    'reset_password' => 'Set Semula Kata Laluan',
 ];

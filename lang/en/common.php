@@ -45,4 +45,6 @@ return [
     'confirm_password' => 'Confirm Password',
     'active_cabang' => 'Active Branch',
     'all_branches' => 'All Branches',
+    'picture'      => 'Picture',
+    'reset_password' => 'Reset Password',
 ];

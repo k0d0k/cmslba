@@ -17,6 +17,12 @@ class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, SoftDeletes;
 
+    /**
+     * Akun user selalu berada di database pusat, walau diakses dari relasi
+     * model pada database mitra (tenant).
+     */
+    protected $connection = 'central';
+
     protected $fillable = [
         'name',
         'slug',

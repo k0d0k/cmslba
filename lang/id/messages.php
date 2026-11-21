@@ -21,4 +21,12 @@ return [
     'confirm_delete'    => 'Yakin ingin menghapus data ini?',
     'delete_failed'     => 'Gagal menghapus data.',
     'no_data'           => 'Belum ada data.',
+
+    'confirm_reset_password'           => 'Reset password akun pelanggan ini dan kirim password baru ke emailnya?',
+    'pelanggan_no_user'                => 'Pelanggan belum direlasikan ke akun user.',
+    'pelanggan_no_email'               => 'Akun user belum memiliki email.',
+    'pelanggan_password_reset'         => 'Password baru berhasil dikirim ke :email.',
+    'pelanggan_password_reset_subject' => 'Reset Password Akun Anda',
+    'pelanggan_password_reset_greeting' => 'Halo :name,',
+    'pelanggan_password_reset_body'    => 'Password akun Anda telah direset oleh admin. Gunakan password baru berikut untuk masuk:',
 ];

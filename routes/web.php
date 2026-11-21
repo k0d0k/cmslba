@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CrudGeneratorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MitraController;
+use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PreferenceController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\AuthController;
@@ -62,6 +63,9 @@ Route::middleware(['auth', 'tenant'])
         Route::get('mitras/{mitra}/edit', [MitraController::class, 'edit'])->name('mitras.edit');
         Route::put('mitras/{mitra}', [MitraController::class, 'update'])->name('mitras.update');
         Route::delete('mitras/{mitra}', [MitraController::class, 'destroy'])->name('mitras.destroy');
+
+        // Reset password akun pelanggan (dikirim ke email).
+        Route::post('pelanggan/{slug}/reset-password', [PelangganController::class, 'resetPassword'])->name('pelanggan.reset-password');
 
         // Manajemen menu dinamis (drag & drop)
         Route::middleware('role:admin_principal')->group(function () {

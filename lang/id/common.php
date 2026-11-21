@@ -45,4 +45,6 @@ return [
     'confirm_password' => 'Konfirmasi Password',
     'active_cabang' => 'Cabang Aktif',
     'all_branches' => 'Semua Cabang',
+    'picture'      => 'Foto',
+    'reset_password' => 'Reset Password',
 ];

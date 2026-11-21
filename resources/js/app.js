@@ -79,6 +79,14 @@ function initDeletes() {
     });
 }
 
+function initConfirmForms() {
+    document.addEventListener('submit', (e) => {
+        const form = e.target.closest('form.js-confirm');
+        if (!form) return;
+        if (!confirm(form.dataset.confirm || 'Yakin?')) e.preventDefault();
+    });
+}
+
 async function initDataTables() {
     if (!document.querySelector('.js-datatable')) return;
     const { default: DataTable } = await import('datatables.net-dt');
@@ -183,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initIcons();
     initSidebar();
     initDeletes();
+    initConfirmForms();
     initDataTables();
     initMenuSortable();
 });

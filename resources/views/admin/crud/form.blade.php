@@ -10,7 +10,7 @@
     <div class="card max-w-3xl">
         <div class="card-header">{{ $record ? __('common.edit') : __('common.add') }} {{ $title }}</div>
 
-        <form method="POST" action="{{ $action }}" class="card-body space-y-4">
+        <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="card-body space-y-4">
             @csrf
             @if($record)
                 @method('PUT')
@@ -60,6 +60,14 @@
                                 </option>
                             @endforeach
                         </select>
+
+                    @elseif($type === 'image')
+                        @if($value)
+                            <div class="mb-2">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($value) }}" alt="" class="w-20 h-20 rounded-lg object-cover border border-slate-200">
+                            </div>
+                        @endif
+                        <input type="file" name="{{ $name }}" accept="image/*" class="form-control">
 
                     @elseif($type === 'date')
                         <input type="date" name="{{ $name }}"

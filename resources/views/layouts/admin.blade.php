@@ -139,9 +139,13 @@
                 {{-- User --}}
                 <div class="relative">
                     <button type="button" data-dropdown-toggle="dd-user" class="btn btn-secondary btn-sm">
-                        <span class="w-6 h-6 rounded-full grid place-items-center text-white text-xs font-semibold" style="background: var(--color-primary)">
-                            {{ strtoupper(substr($currentUser?->name ?? 'U', 0, 1)) }}
-                        </span>
+                        @if($currentUser?->avatar)
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($currentUser->avatar) }}" alt="" class="w-6 h-6 rounded-full object-cover">
+                        @else
+                            <span class="w-6 h-6 rounded-full grid place-items-center text-white text-xs font-semibold" style="background: var(--color-primary)">
+                                {{ strtoupper(substr($currentUser?->name ?? 'U', 0, 1)) }}
+                            </span>
+                        @endif
                         <span class="hidden sm:inline">{{ $currentUser?->name }}</span>
                         <i data-lucide="chevron-down"></i>
                     </button>
@@ -178,6 +182,12 @@
             @if(session('success'))
                 <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 px-4 py-3 text-sm">
                     {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 rounded-lg border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm">
+                    {{ session('error') }}
                 </div>
             @endif
 

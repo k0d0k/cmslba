@@ -21,12 +21,19 @@ class AccountController extends Controller
         $user = auth()->user();
 
         $data = $request->validate([
-            'name'   => ['required', 'string', 'max:255'],
-            'email'  => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'phone'  => ['nullable', 'string', 'max:50'],
-            'locale' => ['nullable', Rule::in(array_keys(config('lbacloud.locales')))],
-            'skin'   => ['nullable', 'string'],
+            'name'    => ['required', 'string', 'max:255'],
+            'email'   => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'phone'   => ['nullable', 'string', 'max:50'],
+            'locale'  => ['nullable', Rule::in(array_keys(config('lbacloud.locales')))],
+            'skin'    => ['nullable', 'string'],
+            'picture' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        // Unggah foto profil -> kolom `avatar` pada tabel users.
+        if ($request->hasFile('picture')) {
+            $data['avatar'] = $request->file('picture')->store('avatars', 'public');
+        }
+        unset($data['picture']);
 
         $user->forceFill($data)->save();
 

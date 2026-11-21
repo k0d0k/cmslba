@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Mail\PelangganPasswordReset;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
 /**
  * Contoh modul CRUD Pelanggan (data multi cabang pada database mitra).
+ * Pelanggan direlasikan ke akun login pada tabel users (database pusat).
  */
 class PelangganController extends BaseCrudController
 {
@@ -14,12 +19,51 @@ class PelangganController extends BaseCrudController
     protected string $menuKey = 'pelanggan';
     protected bool $hasCabang = true;
     protected array $fields = [
+        ['name' => 'picture', 'type' => 'image', 'label' => 'Foto', 'nullable' => true],
         ['name' => 'name', 'type' => 'string', 'label' => 'Nama', 'nullable' => false],
         ['name' => 'email', 'type' => 'email', 'label' => 'Email', 'nullable' => true],
         ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
+        ['name' => 'user_id', 'type' => 'relation', 'label' => 'Akun User', 'nullable' => true, 'relation' => ['model' => \App\Models\User::class, 'label' => 'name']],
         ['name' => 'cabang_id', 'type' => 'relation', 'label' => 'Cabang', 'nullable' => true, 'relation' => ['model' => \App\Models\Tenant\Cabang::class, 'label' => 'name']],
         ['name' => 'birth_date', 'type' => 'date', 'label' => 'Tanggal Lahir', 'nullable' => true],
         ['name' => 'address', 'type' => 'text', 'label' => 'Alamat', 'nullable' => true],
         ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => false],
     ];
+
+    /**
+     * Reset password akun pelanggan: buat password acak, simpan, lalu kirim ke email.
+     */
+    public function resetPassword($slug)
+    {
+        $this->authorizeAbility('update');
+
+        $record = ($this->model)::where('slug', $slug)->firstOrFail();
+        $user = $record->user;
+
+        if (! $user) {
+            return back()->with('error', __('messages.pelanggan_no_user'));
+        }
+        if (blank($user->email)) {
+            return back()->with('error', __('messages.pelanggan_no_email'));
+        }
+
+        $password = Str::password(10);
+        $user->forceFill(['password' => $password])->save();
+
+        Mail::to($user->email)->send(new PelangganPasswordReset($user, $password));
+
+        return back()->with('success', __('messages.pelanggan_password_reset', ['email' => $user->email]));
+    }
+
+    protected function rowActions($row): string
+    {
+        if (! $this->can('update') || ! $row->user_id) {
+            return '';
+        }
+
+        return '<form method="POST" action="' . route($this->routeName . '.reset-password', $row->slug) . '" class="js-confirm" data-confirm="' . e(__('messages.confirm_reset_password')) . '">'
+            . '<input type="hidden" name="_token" value="' . csrf_token() . '">'
+            . '<button type="submit" class="btn btn-sm btn-secondary">' . __('common.reset_password') . '</button>'
+            . '</form>';
+    }
 }
