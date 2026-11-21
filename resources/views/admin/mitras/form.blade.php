@@ -63,7 +63,7 @@
                     <select name="langganan_id" class="form-control">
                         <option value="">-</option>
                         @foreach($subscriptions as $subscription)
-                            <option value="{{ $subscription->id }}" @selected((int) old('langganan_id', $mitra?->langganan_id) === $subscription->id)>{{ $subscription->name }}</option>
+                            <option value="{{ $subscription->id }}" @selected((string) old('langganan_id', $mitra?->langganan_id) === (string) $subscription->id)>{{ $subscription->name }}</option>
                         @endforeach
                     </select>
                 </div>

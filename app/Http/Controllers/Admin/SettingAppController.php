@@ -48,6 +48,7 @@ class SettingAppController extends Controller
                 'email'          => Setting::get('email', null, 'app'),
                 'address'        => Setting::get('address', null, 'app'),
                 'map'            => Setting::get('map', null, 'app'),
+                'footer'         => Setting::get('footer', null, 'app'),
             ],
         ]);
     }
@@ -64,6 +65,7 @@ class SettingAppController extends Controller
             'email'          => ['nullable', 'email'],
             'address'        => ['nullable', 'string'],
             'map'            => ['nullable', 'string'],
+            'footer'         => ['nullable', 'string'],
         ]);
 
         Setting::put('app_name', $data['app_name'], 'app');
@@ -72,6 +74,7 @@ class SettingAppController extends Controller
         Setting::put('email', $data['email'] ?? null, 'app');
         Setting::put('address', $data['address'] ?? null, 'app');
         Setting::put('map', $data['map'] ?? null, 'app');
+        Setting::put('footer', $data['footer'] ?? null, 'app');
 
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('uploads/logo', 'public');

@@ -42,6 +42,12 @@ abstract class BaseCrudController extends Controller
         return auth()->user();
     }
 
+    /** Nama kolom yang dipakai sebagai key pada route (default `slug`, bisa `id` bila tanpa slug). */
+    protected function routeKeyName(): string
+    {
+        return (new ($this->model))->getRouteKeyName();
+    }
+
     protected function can(string $ability): bool
     {
         $user = $this->user();
@@ -194,11 +200,11 @@ abstract class BaseCrudController extends Controller
         $dt->addColumn('actions', function ($row) {
             $html = '<div class="flex gap-2">';
             if ($this->can('update')) {
-                $html .= '<a href="' . route($this->routeName . '.edit', $row->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
+                $html .= '<a href="' . route($this->routeName . '.edit', $row->getRouteKey()) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
             }
             $html .= $this->rowActions($row);
             if ($this->can('delete')) {
-                $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route($this->routeName . '.destroy', $row->slug) . '">' . __('common.delete') . '</button>';
+                $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route($this->routeName . '.destroy', $row->getRouteKey()) . '">' . __('common.delete') . '</button>';
             }
             $html .= '</div>';
 
@@ -253,7 +259,7 @@ abstract class BaseCrudController extends Controller
     public function edit($slug)
     {
         $this->authorizeAbility('update');
-        $record = ($this->model)::where('slug', $slug)->firstOrFail();
+        $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
 
         return view($this->view . '.form', [
             'fields'    => $this->fields(),
@@ -266,7 +272,7 @@ abstract class BaseCrudController extends Controller
     public function update(Request $request, $slug)
     {
         $this->authorizeAbility('update');
-        $record = ($this->model)::where('slug', $slug)->firstOrFail();
+        $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
 
         $request->validate($this->rules($record->id));
         $record->update($this->values($request));
@@ -278,7 +284,7 @@ abstract class BaseCrudController extends Controller
     public function destroy($slug)
     {
         $this->authorizeAbility('delete');
-        $record = ($this->model)::where('slug', $slug)->firstOrFail();
+        $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
         $record->delete();
 
         if (request()->wantsJson()) {

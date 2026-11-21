@@ -65,6 +65,15 @@
                 @endif
             </div>
 
+            <div>
+                <label class="form-label">Footer</label>
+                <textarea name="footer" rows="2" class="form-control" placeholder="Teks yang tampil di footer halaman">{{ old('footer', $settings['footer']) }}</textarea>
+                <p class="text-slate-400 text-xs mt-1">Teks ini ditampilkan pada bagian footer.</p>
+                @error('footer')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             @if($canUpdate)
                 <div class="flex items-center gap-2 pt-2">
                     <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>

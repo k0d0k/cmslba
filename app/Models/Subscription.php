@@ -2,24 +2,45 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasSlug;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Subscription extends Model
 {
-    use HasSlug;
-
     protected $connection = 'central';
 
-    protected $table = 'subscriptions';
+    protected $table = 'subscription';
 
-    protected $fillable = ['slug', 'name', 'code', 'price', 'duration_days', 'description', 'is_active'];
+    public $incrementing = false;
 
-    protected $casts = [
-        'price'         => 'decimal:2',
-        'duration_days' => 'integer',
-        'is_active'     => 'boolean',
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'id',
+        'code',
+        'name',
+        'description',
+        'status',
+        'price_amount',
+        'currency',
+        'billing_interval',
+        'trial_days',
+        'seat_limit',
+        'module_keys',
     ];
 
-    public $slug_source = 'name';
+    protected $casts = [
+        'price_amount' => 'decimal:2',
+        'trial_days'   => 'integer',
+        'seat_limit'   => 'integer',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Subscription $subscription) {
+            if (blank($subscription->id)) {
+                $subscription->id = (string) Str::ulid();
+            }
+        });
+    }
 }

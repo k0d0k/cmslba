@@ -152,7 +152,7 @@ class MitraController extends Controller
             'status' => ['required', 'in:pending,active,suspended'],
             'plan'   => ['nullable', 'string'],
             'brand_id' => ['nullable', 'exists:brands,id'],
-            'langganan_id' => ['nullable', 'exists:subscriptions,id'],
+            'langganan_id' => ['nullable', 'exists:subscription,id'],
         ]);
     }
 
