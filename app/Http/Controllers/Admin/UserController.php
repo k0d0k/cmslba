@@ -43,7 +43,6 @@ class UserController extends BaseCrudController
             ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
             ['name' => 'role', 'type' => 'select', 'label' => 'Role', 'nullable' => true, 'options' => $this->roleOptions()],
             ['name' => 'mitra_id', 'type' => 'relation', 'label' => 'Mitra', 'nullable' => true, 'relation' => ['model' => \App\Models\Mitra::class, 'label' => 'name']],
-            ['name' => 'password', 'type' => 'password', 'label' => 'Password', 'nullable' => true],
             ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => true, 'default' => true],
         ];
     }

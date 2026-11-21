@@ -122,7 +122,12 @@ class DatabaseSeeder extends Seeder
 
                 if ($userData['role'] === 'pemilik_mitra') {
                     $owner = $user;
-                }
+                    $this->call(RolesTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
+        $this->call(MenusTableSeeder::class);
+        $this->call(MitrasTableSeeder::class);
+        $this->call(BrandsTableSeeder::class);
+    }
             }
 
             $mitra->update(['owner_user_id' => $owner?->id]);
