@@ -21,7 +21,8 @@ class SubscriptionSeeder extends Seeder
                 'billing_interval' => 'yearly',
                 'trial_days'       => 7,
                 'seat_limit'       => 10,
-                'module_keys'      => json_encode([
+                'sina_credit_per_patient_per_period' => 0,
+                'module_keys'      => [
                     'appointments',
                     'commerce',
                     'consultations',
@@ -30,7 +31,7 @@ class SubscriptionSeeder extends Seeder
                     'lba',
                     'patients',
                     'practitioners',
-                ]),
+                ],
             ],
         );
     }

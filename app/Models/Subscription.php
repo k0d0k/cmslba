@@ -26,6 +26,7 @@ class Subscription extends Model
         'billing_interval',
         'trial_days',
         'seat_limit',
+        'sina_credit_per_patient_per_period',
         'module_keys',
     ];
 
@@ -33,6 +34,8 @@ class Subscription extends Model
         'price_amount' => 'decimal:2',
         'trial_days'   => 'integer',
         'seat_limit'   => 'integer',
+        'sina_credit_per_patient_per_period' => 'integer',
+        'module_keys' => 'array',
     ];
 
     protected static function booted(): void
