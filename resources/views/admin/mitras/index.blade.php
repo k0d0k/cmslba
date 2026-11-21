@@ -1,0 +1,40 @@
+@extends('layouts.admin')
+
+@section('title', 'Multi Mitra')
+
+@section('content')
+    @php
+        $columns = [
+            ['data' => 'name',    'name' => 'name'],
+            ['data' => 'slug',    'name' => 'slug'],
+            ['data' => 'db_name', 'name' => 'db_name'],
+            ['data' => 'status',  'name' => 'status'],
+        ];
+    @endphp
+
+    <div class="card">
+        <div class="card-header flex items-center justify-between">
+            <span>Daftar Mitra (Tenant)</span>
+            <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
+        </div>
+
+        <div class="card-body">
+            <table class="js-datatable w-full display"
+                   data-url="{{ route('admin.mitras.data') }}"
+                   data-columns='@json($columns)'
+                   data-actions="1">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ __('common.name') }}</th>
+                        <th>Slug (Frontpage)</th>
+                        <th>Database</th>
+                        <th>{{ __('common.status') }}</th>
+                        <th>{{ __('common.actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+@endsection

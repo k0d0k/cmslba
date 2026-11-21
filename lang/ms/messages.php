@@ -1,0 +1,21 @@
+<?php
+
+return [
+    'forbidden'        => 'Anda tidak mempunyai hak akses untuk tindakan ini.',
+    'created'          => 'Data berjaya ditambah.',
+    'updated'          => 'Data berjaya dikemas kini.',
+    'deleted'          => 'Data berjaya dipadam.',
+    'mitra_created'    => 'Mitra :name berjaya dicipta dengan pangkalan data :db.',
+    'mitra_registered' => 'Pendaftaran berjaya. Pangkalan data mitra anda: :db.',
+    'crud_generated'   => 'CRUD :model berjaya dijana dan ditambah ke menu.',
+
+    'menu_saved'        => 'Struktur menu berjaya disimpan.',
+    'assign_saved'      => 'Akses menu berjaya disimpan.',
+    'skin_saved'        => 'Tema berjaya digunakan.',
+    'locale_saved'      => 'Bahasa berjaya ditukar.',
+    'mitra_switched'    => 'Mitra aktif berjaya ditukar.',
+
+    'confirm_delete'    => 'Adakah anda pasti untuk memadam data ini?',
+    'delete_failed'     => 'Gagal memadam data.',
+    'no_data'           => 'Tiada data.',
+];

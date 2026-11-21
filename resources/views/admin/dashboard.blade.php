@@ -1,0 +1,64 @@
+@extends('layouts.admin')
+
+@section('title', __('common.dashboard'))
+
+@section('content')
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        @php
+            $cards = [
+                ['label' => 'Users',   'value' => $stats['users'],  'color' => '#465fff'],
+                ['label' => 'Roles',   'value' => $stats['roles'],  'color' => '#10b981'],
+                ['label' => 'Menus',   'value' => $stats['menus'],  'color' => '#f59e0b'],
+                ['label' => 'Mitras',  'value' => $stats['mitras'], 'color' => '#f43f5e'],
+            ];
+        @endphp
+
+        @foreach($cards as $card)
+            <div class="card p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-xs uppercase text-slate-400 font-semibold">{{ $card['label'] }}</div>
+                        <div class="text-3xl font-bold text-slate-800 mt-1">{{ $card['value'] }}</div>
+                    </div>
+                    <div class="w-3 h-10 rounded-full" style="background: {{ $card['color'] }}"></div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="card lg:col-span-2">
+            <div class="card-header">{{ __('common.welcome') }}, {{ auth()->user()->name }}</div>
+            <div class="card-body text-sm text-slate-600 space-y-2">
+                <p>Boilerplate <b>Laravel + TailAdmin + DataTables</b> dengan multi-skin, multi-bahasa, RBAC dinamis, CRUD Generator, dan multi-mitra (database terpisah per mitra).</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Menu dinamis dengan drag &amp; drop (nested).</li>
+                    <li>Assign menu &amp; permission CRUD per role.</li>
+                    <li>Setiap tabel memakai <b>slug</b> sebagai key edit.</li>
+                    <li>CRUD Generator otomatis membuat migrasi, model, controller, dan menu.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">{{ __('common.active_mitra') }}</div>
+            <div class="card-body text-sm text-slate-600">
+                @if($activeMitra)
+                    <div class="font-semibold text-slate-800">{{ $activeMitra->name }}</div>
+                    <div class="text-xs text-slate-400 mb-3">{{ $activeMitra->db_name }}</div>
+                    <div class="flex items-center justify-between border-t border-slate-100 py-2">
+                        <span>Cabang</span><span class="font-semibold">{{ $tenantStats['cabang'] }}</span>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-slate-100 py-2">
+                        <span>Pelanggan</span><span class="font-semibold">{{ $tenantStats['pelanggan'] }}</span>
+                    </div>
+                    <a href="{{ route('frontpage.mitra', $activeMitra->slug) }}" target="_blank" class="btn btn-secondary btn-sm mt-3 w-full justify-center">
+                        Lihat Frontpage
+                    </a>
+                @else
+                    <p class="text-slate-400">{{ __('messages.no_data') }}</p>
+                @endif
+            </div>
+        </div>
+    </div>
+@endsection

@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ================= Multi-skin (variabel dari database) ================= */
+:root {
+    --color-primary: #465fff;
+    --color-primary-dark: #3641f5;
+    --color-sidebar: #1c2434;
+    --color-sidebar-hover: #333a48;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background: #f1f5f9;
+    color: #1f2937;
+    font-family: var(--font-sans);
+    margin: 0;
+}
+
+/* ================= Komponen dasar (gaya TailAdmin) ================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border-radius: .5rem;
+    padding: .5rem .875rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: .15s;
+}
+.btn-sm { padding: .35rem .6rem; font-size: .75rem; }
+.btn-primary { background: var(--color-primary); color: #fff; }
+.btn-primary:hover { filter: brightness(.92); }
+.btn-secondary { background: #f1f5f9; color: #334155; border-color: #e2e8f0; }
+.btn-danger { background: #ef4444; color: #fff; }
+.btn-success { background: #10b981; color: #fff; }
+
+.card {
+    background: #fff;
+    border-radius: .75rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .06);
+}
+.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
+.card-body { padding: 1.25rem; }
+
+.badge {
+    display: inline-block;
+    padding: .15rem .5rem;
+    border-radius: 9999px;
+    font-size: .7rem;
+    font-weight: 600;
+}
+.badge-success { background: #d1fae5; color: #065f46; }
+.badge-warning { background: #fef3c7; color: #92400e; }
+.badge-secondary { background: #e2e8f0; color: #334155; }
+
+.form-label { display: block; font-size: .8125rem; font-weight: 500; margin-bottom: .35rem; color: #344054; }
+.form-control {
+    width: 100%;
+    border: 1px solid #d0d5dd;
+    border-radius: .5rem;
+    padding: .5rem .75rem;
+    font-size: .875rem;
+    background: #fff;
+    outline: none;
+}
+.form-control:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent); }
+.form-check { width: 1rem; height: 1rem; }
+
+/* ================= Sidebar ================= */
+.sidebar { background: var(--color-sidebar); color: #cbd5e1; }
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .6rem .75rem;
+    border-radius: .5rem;
+    color: #cbd5e1;
+    font-size: .875rem;
+    text-decoration: none;
+}
+.sidebar-link:hover { background: var(--color-sidebar-hover); color: #fff; }
+.sidebar-link.active { background: var(--color-primary); color: #fff; }
+.sidebar-group-label { color: #94a3b8; font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; padding: .5rem .75rem; }
+.sidebar-sub { margin-left: 1.5rem; display: flex; flex-direction: column; gap: .15rem; }
+
+/* ================= DataTables ================= */
+table.dataTable thead th { background: #f8fafc; font-size: .75rem; text-transform: uppercase; color: #475569; }
+.dt-container .dt-search input { border: 1px solid #d0d5dd; border-radius: .5rem; padding: .35rem .6rem; }
