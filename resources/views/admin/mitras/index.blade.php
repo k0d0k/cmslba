@@ -10,19 +10,22 @@
             ['data' => 'db_name', 'name' => 'db_name'],
             ['data' => 'status',  'name' => 'status'],
         ];
+        $hasActions = ($canUpdate ?? false) || ($canDelete ?? false);
     @endphp
 
     <div class="card">
         <div class="card-header flex items-center justify-between">
             <span>Daftar Mitra (Tenant)</span>
-            <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
+            @if($canCreate ?? false)
+                <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
+            @endif
         </div>
 
         <div class="card-body !p-0">
             <table class="js-datatable w-full display"
                    data-dt-url="{{ route('admin.mitras.data') }}"
                    data-dt-columns='@json($columns)'
-                   data-dt-actions="1">
+                   data-dt-actions="{{ $hasActions ? '1' : '0' }}">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -30,7 +33,9 @@
                         <th>Slug (Frontpage)</th>
                         <th>Database</th>
                         <th>{{ __('common.status') }}</th>
-                        <th>{{ __('common.actions') }}</th>
+                        @if($hasActions)
+                            <th>{{ __('common.actions') }}</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody></tbody>

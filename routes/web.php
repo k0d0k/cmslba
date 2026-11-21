@@ -54,6 +54,15 @@ Route::middleware(['auth', 'tenant'])
         Route::get('account/password', [AccountController::class, 'password'])->name('account.password');
         Route::post('account/password', [AccountController::class, 'updatePassword'])->name('account.password.update');
 
+        // Multi mitra — akses diatur lewat Role & Akses (role_menu), bukan hanya principal.
+        Route::get('mitras', [MitraController::class, 'index'])->name('mitras.index');
+        Route::get('mitras/data', [MitraController::class, 'data'])->name('mitras.data');
+        Route::get('mitras/create', [MitraController::class, 'create'])->name('mitras.create');
+        Route::post('mitras', [MitraController::class, 'store'])->name('mitras.store');
+        Route::get('mitras/{mitra}/edit', [MitraController::class, 'edit'])->name('mitras.edit');
+        Route::put('mitras/{mitra}', [MitraController::class, 'update'])->name('mitras.update');
+        Route::delete('mitras/{mitra}', [MitraController::class, 'destroy'])->name('mitras.destroy');
+
         // Manajemen menu dinamis (drag & drop)
         Route::middleware('role:admin_principal')->group(function () {
             Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
@@ -66,15 +75,6 @@ Route::middleware(['auth', 'tenant'])
             Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
             Route::get('roles/{role}/assign', [RoleController::class, 'assign'])->name('roles.assign');
             Route::post('roles/{role}/assign', [RoleController::class, 'saveAssign'])->name('roles.assign.save');
-
-            // Multi mitra
-            Route::get('mitras', [MitraController::class, 'index'])->name('mitras.index');
-            Route::get('mitras/data', [MitraController::class, 'data'])->name('mitras.data');
-            Route::get('mitras/create', [MitraController::class, 'create'])->name('mitras.create');
-            Route::post('mitras', [MitraController::class, 'store'])->name('mitras.store');
-            Route::get('mitras/{mitra}/edit', [MitraController::class, 'edit'])->name('mitras.edit');
-            Route::put('mitras/{mitra}', [MitraController::class, 'update'])->name('mitras.update');
-            Route::delete('mitras/{mitra}', [MitraController::class, 'destroy'])->name('mitras.destroy');
 
             // CRUD Generator
             Route::get('generator', [CrudGeneratorController::class, 'index'])->name('generator.index');

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use App\Models\Mitra;
+use App\Services\MenuService;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,23 +17,63 @@ class MitraController extends Controller
     {
     }
 
+    /** Cek hak akses aksi berdasarkan menu `mitras` di database pusat. */
+    protected function can(string $ability): bool
+    {
+        $user = auth()->user();
+        if (! $user) {
+            return false;
+        }
+        if ($user->hasRole('admin_principal')) {
+            return true;
+        }
+        $menu = Menu::where('key', 'mitras')->first();
+
+        return $menu ? app(MenuService::class)->userCan($user, $menu, $ability) : false;
+    }
+
+    protected function authorizeAbility(string $ability): void
+    {
+        abort_unless($this->can($ability), 403, __('messages.forbidden'));
+    }
+
     public function index()
     {
-        return view('admin.mitras.index');
+        $this->authorizeAbility('view');
+
+        return view('admin.mitras.index', [
+            'canCreate' => $this->can('create'),
+            'canUpdate' => $this->can('update'),
+            'canDelete' => $this->can('delete'),
+        ]);
     }
 
     public function data()
     {
+        $this->authorizeAbility('view');
+
         $query = Mitra::query();
+
+        // Selain principal: hanya boleh melihat mitranya sendiri.
+        $user = auth()->user();
+        if ($user && ! $user->isPrincipal()) {
+            $query->whereKey($user->mitra_id);
+        }
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
             ->editColumn('status', fn ($m) => '<span class="badge badge-' . ($m->status === 'active' ? 'success' : 'warning') . '">' . $m->status . '</span>')
             ->addColumn('actions', function ($m) {
-                return '<div class="flex gap-2">'
-                    . '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>'
-                    . '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route('admin.mitras.destroy', $m->slug) . '">' . __('common.delete') . '</button>'
-                    . '</div>';
+                $html = '<div class="flex gap-2">';
+                if ($this->can('update')) {
+                    $html .= '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
+                }
+                if ($this->can('delete')) {
+                    $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route('admin.mitras.destroy', $m->slug) . '">' . __('common.delete') . '</button>';
+                }
+                $html .= '</div>';
+
+                return $html;
             })
             ->rawColumns(['status', 'actions'])
             ->toJson();
@@ -39,11 +81,14 @@ class MitraController extends Controller
 
     public function create()
     {
+        $this->authorizeAbility('create');
+
         return view('admin.mitras.form', ['mitra' => null]);
     }
 
     public function store(Request $request)
     {
+        $this->authorizeAbility('create');
         $data = $this->validated($request);
         $mitra = Mitra::create($data);
 
@@ -56,11 +101,14 @@ class MitraController extends Controller
 
     public function edit(Mitra $mitra)
     {
+        $this->authorizeAbility('update');
+
         return view('admin.mitras.form', compact('mitra'));
     }
 
     public function update(Request $request, Mitra $mitra)
     {
+        $this->authorizeAbility('update');
         $mitra->update($this->validated($request, $mitra->id));
 
         return redirect()->route('admin.mitras.index')->with('success', __('messages.updated'));
@@ -68,6 +116,7 @@ class MitraController extends Controller
 
     public function destroy(Mitra $mitra)
     {
+        $this->authorizeAbility('delete');
         $this->tenant->drop($mitra);
         $mitra->delete();
 
