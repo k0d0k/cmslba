@@ -28,6 +28,15 @@ abstract class BaseCrudController extends Controller
         return app(MenuService::class);
     }
 
+    /**
+     * Definisi field form/tabel. Bisa dioverride subclass untuk menyisipkan
+     * field dinamis (mis. pilihan mitra yang bergantung user yang login).
+     */
+    protected function fields(): array
+    {
+        return $this->fields;
+    }
+
     protected function user()
     {
         return auth()->user();
@@ -56,7 +65,7 @@ abstract class BaseCrudController extends Controller
     {
         $query = ($this->model)::query();
 
-        $relations = collect($this->fields)
+        $relations = collect($this->fields())
             ->pluck('relation.model')
             ->filter()
             ->map(fn ($m) => class_basename($m))
@@ -83,7 +92,7 @@ abstract class BaseCrudController extends Controller
     protected function rules(?int $ignoreId = null): array
     {
         $rules = [];
-        foreach ($this->fields as $f) {
+        foreach ($this->fields() as $f) {
             $type = $f['type'] ?? 'string';
             $name = $f['name'];
             $r = [];
@@ -119,7 +128,7 @@ abstract class BaseCrudController extends Controller
     protected function values(Request $request): array
     {
         $data = [];
-        foreach ($this->fields as $f) {
+        foreach ($this->fields() as $f) {
             $name = $f['name'];
             if (($f['type'] ?? '') === 'boolean') {
                 $data[$name] = $request->boolean($name);
@@ -136,7 +145,7 @@ abstract class BaseCrudController extends Controller
         $this->authorizeAbility('view');
 
         return view($this->view . '.index', [
-            'fields'    => $this->fields,
+            'fields'    => $this->fields(),
             'routeName' => $this->routeName,
             'title'     => $this->title,
             'canCreate' => $this->can('create'),
@@ -151,7 +160,7 @@ abstract class BaseCrudController extends Controller
 
         $dt = DataTables::eloquent($this->query())->addIndexColumn();
 
-        foreach ($this->fields as $f) {
+        foreach ($this->fields() as $f) {
             $name = $f['name'];
             $type = $f['type'] ?? 'string';
 
@@ -184,7 +193,7 @@ abstract class BaseCrudController extends Controller
         });
 
         $raw = ['actions'];
-        foreach ($this->fields as $f) {
+        foreach ($this->fields() as $f) {
             if (($f['type'] ?? '') === 'boolean') {
                 $raw[] = $f['name'];
             }
@@ -199,7 +208,7 @@ abstract class BaseCrudController extends Controller
         $this->authorizeAbility('create');
 
         return view($this->view . '.form', [
-            'fields'    => $this->fields,
+            'fields'    => $this->fields(),
             'routeName' => $this->routeName,
             'title'     => $this->title,
             'record'    => null,
@@ -228,7 +237,7 @@ abstract class BaseCrudController extends Controller
         $record = ($this->model)::where('slug', $slug)->firstOrFail();
 
         return view($this->view . '.form', [
-            'fields'    => $this->fields,
+            'fields'    => $this->fields(),
             'routeName' => $this->routeName,
             'title'     => $this->title,
             'record'    => $record,

@@ -20,7 +20,7 @@
                 @php
                     $name = $f['name'];
                     $type = $f['type'] ?? 'string';
-                    $value = old($name, optional($record)->{$name});
+                    $value = old($name, optional($record)->{$name} ?? ($f['default'] ?? null));
                 @endphp
 
                 <div>
@@ -36,12 +36,15 @@
                         </label>
 
                     @elseif($type === 'select')
-                        <select name="{{ $name }}" class="form-control">
+                        <select name="{{ $name }}" class="form-control" @disabled($f['disabled'] ?? false)>
                             <option value="">-</option>
                             @foreach($f['options'] ?? [] as $optKey => $optLabel)
                                 <option value="{{ $optKey }}" @selected((string) $value === (string) $optKey)>{{ $optLabel }}</option>
                             @endforeach
                         </select>
+                        @if($f['disabled'] ?? false)
+                            <input type="hidden" name="{{ $name }}" value="{{ $value }}">
+                        @endif
 
                     @elseif($type === 'relation')
                         @php
