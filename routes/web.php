@@ -64,6 +64,12 @@ Route::middleware(['auth', 'tenant'])
         Route::get('mitras/{mitra}/edit', [MitraController::class, 'edit'])->name('mitras.edit');
         Route::put('mitras/{mitra}', [MitraController::class, 'update'])->name('mitras.update');
         Route::delete('mitras/{mitra}', [MitraController::class, 'destroy'])->name('mitras.destroy');
+        Route::post('mitras/{mitra}/subscriptions', [MitraController::class, 'subscribe'])->name('mitras.subscriptions.store');
+        Route::post('mitras/{mitra}/subscriptions/{subscription}/cancel', [MitraController::class, 'cancelSubscription'])->name('mitras.subscriptions.cancel');
+        Route::post('mitras/{mitra}/subscriptions/{subscription}/activate', [MitraController::class, 'activateSubscription'])->name('mitras.subscriptions.activate');
+        Route::post('mitras/{mitra}/brands', [MitraController::class, 'attachBrand'])->name('mitras.brands.store');
+        Route::post('mitras/{mitra}/brands/{brand}/primary', [MitraController::class, 'makePrimaryBrand'])->name('mitras.brands.primary');
+        Route::delete('mitras/{mitra}/brands/{brand}', [MitraController::class, 'detachBrand'])->name('mitras.brands.destroy');
 
         // Reset password akun pelanggan (dikirim ke email).
         Route::post('pelanggan/{slug}/reset-password', [PelangganController::class, 'resetPassword'])->name('pelanggan.reset-password');

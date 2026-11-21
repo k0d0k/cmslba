@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
@@ -63,6 +64,18 @@ class Mitra extends Model
     public function langganan(): BelongsTo
     {
         return $this->belongsTo(Subscription::class, 'langganan_id');
+    }
+
+    public function brands(): BelongsToMany
+    {
+        return $this->belongsToMany(Brand::class, 'mitra_brands')
+            ->withPivot('is_primary')
+            ->withTimestamps();
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(MitraSubscription::class)->latest('created_at');
     }
 
     public function getRouteKeyName(): string

@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Menu;
 use App\Models\Mitra;
+use App\Models\MitraSubscription;
 use App\Models\Subscription;
 use App\Services\MenuService;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Yajra\DataTables\Facades\DataTables;
 
 class MitraController extends Controller
@@ -54,7 +56,7 @@ class MitraController extends Controller
     {
         $this->authorizeAbility('view');
 
-        $query = Mitra::query()->with(['brand', 'langganan']);
+        $query = Mitra::query()->with(['brands', 'subscriptions.subscription']);
 
         // Selain principal: hanya boleh melihat mitranya sendiri.
         $user = auth()->user();
@@ -65,8 +67,8 @@ class MitraController extends Controller
         return DataTables::eloquent($query)
             ->addIndexColumn()
             ->editColumn('status', fn ($m) => '<span class="badge badge-' . ($m->status === 'active' ? 'success' : 'warning') . '">' . $m->status . '</span>')
-            ->addColumn('brand', fn ($m) => optional($m->brand)->name)
-            ->addColumn('langganan', fn ($m) => optional($m->langganan)->name)
+            ->addColumn('brand', fn ($m) => $m->brands->pluck('name')->implode(', '))
+            ->addColumn('langganan', fn ($m) => $m->subscriptions->first()?->subscription?->name)
             ->addColumn('actions', function ($m) {
                 $html = '<div class="flex gap-2">';
                 if ($this->can('update')) {
@@ -90,7 +92,7 @@ class MitraController extends Controller
         return view('admin.mitras.form', [
             'mitra'         => null,
             'brands'        => Brand::orderBy('name')->get(),
-            'subscriptions' => Subscription::orderBy('name')->get(),
+            'subscriptions' => Subscription::where('status', 'active')->orderBy('name')->get(),
         ]);
     }
 
@@ -98,10 +100,30 @@ class MitraController extends Controller
     {
         $this->authorizeAbility('create');
         $data = $this->validated($request);
+        $brandIds = $data['brand_ids'] ?? [];
+        $primaryBrandId = $data['primary_brand_id'] ?? null;
+        $initialSubscriptionId = $data['initial_subscription_id'] ?? null;
+        $initialSeats = $data['initial_seats'] ?? 1;
+        unset($data['brand_ids'], $data['primary_brand_id'], $data['initial_subscription_id'], $data['initial_seats']);
+
+        $initialPackage = $initialSubscriptionId
+            ? Subscription::findOrFail($initialSubscriptionId)
+            : null;
+        if ($initialPackage?->seat_limit !== null && $initialSeats > $initialPackage->seat_limit) {
+            throw ValidationException::withMessages([
+                'initial_seats' => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+            ]);
+        }
+
         $mitra = Mitra::create($data);
+        $this->syncBrands($mitra, $brandIds, $primaryBrandId);
 
         $this->tenant->provision($mitra);
         $this->seedTenant($mitra);
+
+        if ($initialPackage) {
+            $this->createSubscription($mitra, $initialPackage, (int) $initialSeats);
+        }
 
         return redirect()->route('admin.mitras.index')
             ->with('success', __('messages.mitra_created', ['name' => $mitra->name, 'db' => $mitra->db_name]));
@@ -111,17 +133,21 @@ class MitraController extends Controller
     {
         $this->authorizeAbility('update');
 
+        $mitra->load(['brands', 'subscriptions.subscription']);
+
         return view('admin.mitras.form', [
             'mitra'         => $mitra,
             'brands'        => Brand::orderBy('name')->get(),
-            'subscriptions' => Subscription::orderBy('name')->get(),
+            'subscriptions' => Subscription::where('status', 'active')->orderBy('name')->get(),
         ]);
     }
 
     public function update(Request $request, Mitra $mitra)
     {
         $this->authorizeAbility('update');
-        $mitra->update($this->validated($request, $mitra->id));
+        $data = $this->validated($request, $mitra->id);
+        unset($data['brand_ids'], $data['primary_brand_id'], $data['initial_subscription_id'], $data['initial_seats']);
+        $mitra->update($data);
 
         return redirect()->route('admin.mitras.index')->with('success', __('messages.updated'));
     }
@@ -139,6 +165,177 @@ class MitraController extends Controller
         return back()->with('success', __('messages.deleted'));
     }
 
+    public function subscribe(Request $request, Mitra $mitra)
+    {
+        $this->authorizeAbility('update');
+        $data = $request->validate([
+            'subscriptions_id' => ['required', 'exists:subscription,id'],
+            'seats' => ['required', 'integer', 'min:1'],
+        ]);
+        $package = Subscription::findOrFail($data['subscriptions_id']);
+
+        if ($package->seat_limit !== null && $data['seats'] > $package->seat_limit) {
+            return back()->withErrors([
+                'seats' => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+            ])->withInput();
+        }
+
+        $this->createSubscription($mitra, $package, (int) $data['seats']);
+
+        return back()->with('success', 'Paket langganan berhasil ditambahkan.');
+    }
+
+    public function cancelSubscription(Mitra $mitra, MitraSubscription $subscription)
+    {
+        $this->authorizeAbility('update');
+        abort_unless((int) $subscription->mitra_id === (int) $mitra->id, 404);
+
+        $subscription->update([
+            'status' => 'cancelled',
+            'cancelled_at' => now(),
+        ]);
+
+        return back()->with('success', 'Langganan berhasil dibatalkan.');
+    }
+
+    public function activateSubscription(Mitra $mitra, MitraSubscription $subscription)
+    {
+        $this->authorizeAbility('update');
+        abort_unless((int) $subscription->mitra_id === (int) $mitra->id, 404);
+
+        $start = now();
+        $subscription->update([
+            'status' => 'active',
+            'starts_at' => $subscription->starts_at ?? $start,
+            'current_period_start' => $start,
+            'current_period_end' => $this->periodEnd($subscription->subscription, $start),
+            'cancelled_at' => null,
+            'ended_at' => null,
+        ]);
+
+        return back()->with('success', 'Langganan berhasil diaktifkan.');
+    }
+
+    public function attachBrand(Request $request, Mitra $mitra)
+    {
+        $this->authorizeAbility('update');
+        $data = $request->validate([
+            'brand_id' => ['required', 'integer', 'exists:brands,id'],
+            'is_primary' => ['nullable', 'boolean'],
+        ]);
+        $brandId = (int) $data['brand_id'];
+        $existingPivot = DB::table('mitra_brands')
+            ->where('mitra_id', $mitra->id)
+            ->where('brand_id', $brandId)
+            ->first();
+        $isPrimary = $request->boolean('is_primary')
+            || (! $existingPivot && $mitra->brands()->count() === 0)
+            || ($existingPivot && (bool) $existingPivot->is_primary);
+
+        if ($isPrimary) {
+            DB::table('mitra_brands')->where('mitra_id', $mitra->id)->update([
+                'is_primary' => false,
+                'updated_at' => now(),
+            ]);
+        }
+
+        $mitra->brands()->syncWithoutDetaching([
+            $brandId => ['is_primary' => $isPrimary],
+        ]);
+
+        return back()->with('success', 'Merek berhasil dilampirkan.');
+    }
+
+    public function makePrimaryBrand(Mitra $mitra, Brand $brand)
+    {
+        $this->authorizeAbility('update');
+        abort_unless($mitra->brands()->whereKey($brand->id)->exists(), 404);
+
+        DB::table('mitra_brands')->where('mitra_id', $mitra->id)->update([
+            'is_primary' => false,
+            'updated_at' => now(),
+        ]);
+        $mitra->brands()->updateExistingPivot($brand->id, [
+            'is_primary' => true,
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Merek utama berhasil diubah.');
+    }
+
+    public function detachBrand(Mitra $mitra, Brand $brand)
+    {
+        $this->authorizeAbility('update');
+        $pivot = DB::table('mitra_brands')
+            ->where('mitra_id', $mitra->id)
+            ->where('brand_id', $brand->id)
+            ->first();
+        abort_unless($pivot, 404);
+
+        $mitra->brands()->detach($brand->id);
+
+        if ($pivot->is_primary) {
+            $nextBrand = $mitra->brands()->orderBy('brands.name')->first();
+            if ($nextBrand) {
+                $mitra->brands()->updateExistingPivot($nextBrand->id, [
+                    'is_primary' => true,
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Merek berhasil dilepaskan.');
+    }
+
+    protected function syncBrands(Mitra $mitra, array $brandIds, mixed $primaryBrandId = null): void
+    {
+        $brandIds = array_values(array_unique(array_map('intval', $brandIds)));
+        if (! $brandIds) {
+            return;
+        }
+
+        $primaryBrandId = in_array((int) $primaryBrandId, $brandIds, true)
+            ? (int) $primaryBrandId
+            : $brandIds[0];
+        $sync = [];
+        foreach ($brandIds as $brandId) {
+            $sync[$brandId] = ['is_primary' => $brandId === $primaryBrandId];
+        }
+        $mitra->brands()->sync($sync);
+    }
+
+    protected function createSubscription(Mitra $mitra, Subscription $package, int $seats): MitraSubscription
+    {
+        if ($package->seat_limit !== null && $seats > $package->seat_limit) {
+            throw ValidationException::withMessages([
+                'seats' => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+            ]);
+        }
+
+        $start = now();
+        $trialEnd = $package->trial_days > 0 ? $start->copy()->addDays($package->trial_days) : null;
+
+        return $mitra->subscriptions()->create([
+            'subscriptions_id' => $package->id,
+            'status' => $trialEnd ? 'trialing' : 'active',
+            'seats' => $seats,
+            'starts_at' => $start,
+            'trial_ends_at' => $trialEnd,
+            'current_period_start' => $start,
+            'current_period_end' => $this->periodEnd($package, $start),
+        ]);
+    }
+
+    protected function periodEnd(Subscription $package, $start)
+    {
+        return match ($package->billing_interval) {
+            'yearly' => $start->copy()->addYearNoOverflow(),
+            'weekly' => $start->copy()->addWeek(),
+            'daily' => $start->copy()->addDay(),
+            default => $start->copy()->addMonthNoOverflow(),
+        };
+    }
+
     protected function validated(Request $request, ?int $ignoreId = null): array
     {
         return $request->validate([
@@ -151,8 +348,11 @@ class MitraController extends Controller
             'locale' => ['nullable', 'in:id,en,ms'],
             'status' => ['required', 'in:pending,active,suspended'],
             'plan'   => ['nullable', 'string'],
-            'brand_id' => ['nullable', 'exists:brands,id'],
-            'langganan_id' => ['nullable', 'exists:subscription,id'],
+            'brand_ids' => ['nullable', 'array'],
+            'brand_ids.*' => ['integer', 'distinct', 'exists:brands,id'],
+            'primary_brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'initial_subscription_id' => ['nullable', 'exists:subscription,id'],
+            'initial_seats' => ['required_with:initial_subscription_id', 'integer', 'min:1'],
         ]);
     }
 
