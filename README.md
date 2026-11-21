@@ -69,7 +69,12 @@ Buka `http://localhost:8000`.
 | Role | Email |
 | --- | --- |
 | Pemilik Mitra | pemilik@klinik.test |
+| Admin Mitra | admin@klinik.test |
 | Staff Admin | staff@klinik.test |
+| Operator LBA/Dokter/Peninjau/Konsultan | operator@klinik.test |
+| Keuangan & Penjualan | keuangan@klinik.test |
+
+Total **12 user demo**: 2 principal (pusat) + 5 role mitra di masing-masing dari 2 mitra. Role principal mengakses seluruh menu (termasuk kelola mitra & CRUD Generator), sedangkan role mitra hanya mengakses data mitranya sendiri (semua cabangnya).
 
 Frontpage mitra: `/mitra-demo` dan `/klinik-sehat`.
 

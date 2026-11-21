@@ -63,8 +63,11 @@ class DatabaseSeeder extends Seeder
                     ['Joko Susilo',  'joko@example.com',  '081234567103'],
                 ],
                 'users' => [
-                    ['name' => 'Pemilik Klinik Sehat', 'email' => 'pemilik@klinik.test', 'role' => 'pemilik_mitra'],
-                    ['name' => 'Staff Klinik Sehat',   'email' => 'staff@klinik.test',   'role' => 'staff_admin'],
+                    ['name' => 'Pemilik Klinik Sehat',  'email' => 'pemilik@klinik.test',  'role' => 'pemilik_mitra'],
+                    ['name' => 'Admin Klinik Sehat',    'email' => 'admin@klinik.test',    'role' => 'admin_mitra'],
+                    ['name' => 'Staff Klinik Sehat',    'email' => 'staff@klinik.test',    'role' => 'staff_admin'],
+                    ['name' => 'Operator Klinik Sehat', 'email' => 'operator@klinik.test', 'role' => 'operator'],
+                    ['name' => 'Keuangan Klinik Sehat', 'email' => 'keuangan@klinik.test', 'role' => 'keuangan_penjualan'],
                 ],
             ],
         ];
