@@ -18,7 +18,7 @@
             <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
         </div>
 
-        <div class="card-body">
+        <div class="card-body !p-0">
             <table class="js-datatable w-full display"
                    data-dt-url="{{ route('admin.mitras.data') }}"
                    data-dt-columns='@json($columns)'

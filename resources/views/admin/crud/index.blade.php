@@ -16,7 +16,7 @@
             @endif
         </div>
 
-        <div class="card-body">
+        <div class="card-body !p-0">
             <table class="js-datatable w-full display"
                    data-dt-url="{{ route($routeName . '.data') }}"
                    data-dt-columns='@json($columns)'
