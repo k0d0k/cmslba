@@ -95,7 +95,18 @@ body {
 }
 .sidebar-link:hover { background: var(--color-sidebar-hover); color: #fff; }
 .sidebar-link.active { background: var(--color-primary); color: #fff; }
-.sidebar-group-label { color: #94a3b8; font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; padding: .5rem .75rem; }
+.sidebar-link svg { width: 1.05rem; height: 1.05rem; flex-shrink: 0; }
+.sidebar-group-label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: #94a3b8;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: .5rem .75rem;
+}
+.sidebar-group-label svg { width: .95rem; height: .95rem; flex-shrink: 0; }
 .sidebar-sub { margin-left: 1.5rem; display: flex; flex-direction: column; gap: .15rem; }
 
 /* ================= DataTables ================= */

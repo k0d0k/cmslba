@@ -18,6 +18,7 @@
         "datatables.net": "^3.1.5",
         "datatables.net-dt": "^3.1.5",
         "jquery": "^4.1.0",
+        "lucide": "^1.77.0",
         "sortablejs": "^1.15.7"
     }
 }

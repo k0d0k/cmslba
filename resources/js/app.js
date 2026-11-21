@@ -1,10 +1,21 @@
 import './bootstrap';
 import $ from 'jquery';
 import Sortable from 'sortablejs';
+import { createIcons, icons } from 'lucide';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 
 window.$ = window.jQuery = $;
 window.Sortable = Sortable;
+
+/**
+ * Ganti elemen <i data-lucide="nama-ikon"> menjadi SVG.
+ * Bisa dipanggil ulang setelah konten dinamis dirender.
+ */
+function initIcons(root = document) {
+    createIcons({ icons, attrs: { 'stroke-width': 1.75 }, root });
+}
+
+window.initIcons = initIcons;
 
 function initSidebar() {
     document.querySelectorAll('[data-sidebar-toggle]').forEach((el) => {
@@ -136,6 +147,7 @@ function initMenuSortable() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initIcons();
     initSidebar();
     initDeletes();
     initDataTables();

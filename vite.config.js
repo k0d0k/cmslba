@@ -10,4 +10,16 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                // Pustaka ikon dipisah agar chunk utama tetap ringan & mudah di-cache.
+                manualChunks(id) {
+                    if (id.includes('node_modules/lucide')) {
+                        return 'lucide';
+                    }
+                },
+            },
+        },
+    },
 });
