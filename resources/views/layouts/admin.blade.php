@@ -23,6 +23,10 @@
         }
     }
     $activeCabangId = session('active_cabang_id');
+
+    // Identitas aplikasi (logo & footer) dari tabel settings grup `app`.
+    $appLogo = \App\Models\Setting::get('logo', null, 'app');
+    $appFooter = \App\Models\Setting::get('footer', null, 'app');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -31,6 +35,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') &middot; {{ config('app.name') }}</title>
+    @if($appLogo)
+        <link rel="icon" href="{{ \Illuminate\Support\Facades\Storage::url($appLogo) }}">
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
@@ -45,7 +52,11 @@
     {{-- ==================== Sidebar ==================== --}}
     <aside id="sidebar" class="sidebar w-64 shrink-0 min-h-screen p-3">
         <div class="flex items-center gap-2 px-2 py-3 mb-2">
-            <div class="w-8 h-8 rounded-lg grid place-items-center font-bold text-white" style="background: var(--color-primary)">L</div>
+            @if($appLogo)
+                <img src="{{ \Illuminate\Support\Facades\Storage::url($appLogo) }}" alt="{{ config('app.name') }}" class="w-8 h-8 rounded-lg object-contain bg-white/10 p-0.5">
+            @else
+                <div class="w-8 h-8 rounded-lg grid place-items-center font-bold text-white" style="background: var(--color-primary)">L</div>
+            @endif
             <span class="font-semibold text-white text-sm">{{ config('app.name') }}</span>
         </div>
 
@@ -205,7 +216,11 @@
         </main>
 
         <footer class="px-4 py-3 text-xs text-slate-500 border-t border-slate-200 bg-white">
-            &copy; {{ date('Y') }} {{ config('app.name') }} &middot; LBA Cloud Boilerplate
+            @if($appFooter)
+                {{ $appFooter }}
+            @else
+                &copy; {{ date('Y') }} {{ config('app.name') }} &middot; LBA Cloud Boilerplate
+            @endif
         </footer>
     </div>
 </div>
