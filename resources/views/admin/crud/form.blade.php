@@ -4,7 +4,7 @@
 
 @section('content')
     @php
-        $action = $record ? route($routeName . '.update', $record->slug) : route($routeName . '.store');
+        $action = $record ? route($routeName . '.update', $record->getRouteKey()) : route($routeName . '.store');
     @endphp
 
     <div class="card max-w-3xl">

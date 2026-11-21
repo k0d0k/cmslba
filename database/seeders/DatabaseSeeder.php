@@ -81,6 +81,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             RoleMenuSeeder::class,
             UserSeeder::class,
+            SubscriptionSeeder::class,
         ]);
 
         $tenant = app(TenantService::class);
