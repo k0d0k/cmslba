@@ -47,12 +47,33 @@ Buka `http://localhost:8000`.
 
 ## Akun demo (password: `password`)
 
+**Level pusat (principal)**
+
 | Role | Email |
 | --- | --- |
 | Admin Principal | admin@lbacloud.test |
 | User Principal | user@lbacloud.test |
+
+**Mitra "Mitra Demo"**
+
+| Role | Email |
+| --- | --- |
 | Pemilik Mitra | pemilik@demo.test |
+| Admin Mitra | admin@demo.test |
 | Staff Admin | staff@demo.test |
+| Operator LBA/Dokter/Peninjau/Konsultan | operator@demo.test |
+| Keuangan & Penjualan | keuangan@demo.test |
+
+**Mitra "Klinik Sehat Bersama"**
+
+| Role | Email |
+| --- | --- |
+| Pemilik Mitra | pemilik@klinik.test |
+| Staff Admin | staff@klinik.test |
+
+Frontpage mitra: `/mitra-demo` dan `/klinik-sehat`.
+
+Setiap mitra memiliki database terpisah (`lbacloud_mitra_<uuid>`) berisi data cabang & pelanggan contoh. Untuk me-reset seluruh data demo: `php artisan migrate:fresh --seed`.
 
 ## Arsitektur database
 
