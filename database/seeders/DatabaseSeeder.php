@@ -81,6 +81,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             RoleMenuSeeder::class,
             UserSeeder::class,
+            ModuleSeeder::class,
             SubscriptionSeeder::class,
         ]);
 

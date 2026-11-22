@@ -4,15 +4,6 @@
 
 @section('content')
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        @php
-            $cards = [
-                ['label' => 'Users',   'value' => $stats['users'],  'color' => '#465fff'],
-                ['label' => 'Roles',   'value' => $stats['roles'],  'color' => '#10b981'],
-                ['label' => 'Menus',   'value' => $stats['menus'],  'color' => '#f59e0b'],
-                ['label' => 'Mitras',  'value' => $stats['mitras'], 'color' => '#f43f5e'],
-            ];
-        @endphp
-
         @foreach($cards as $card)
             <div class="card p-5">
                 <div class="flex items-center justify-between">

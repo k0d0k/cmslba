@@ -33,22 +33,10 @@ class SubscriptionController extends BaseCrudController
 
     protected function moduleOptions(): array
     {
-        $modules = Module::query()->orderBy('name')->get(['code', 'name']);
-
-        if ($modules->isNotEmpty()) {
-            return $modules->pluck('name', 'code')->all();
-        }
-
-        return [
-            'appointments' => 'Appointments',
-            'consultations' => 'Consultations',
-            'knowledge_base' => 'KnowledgeBase',
-            'demo.showcase' => 'DemoShowcase',
-            'patients' => 'Patients',
-            'lba' => 'LBA',
-            'practitioners' => 'Practitioners',
-            'commerce' => 'Commerce',
-        ];
+        return Module::query()
+            ->orderBy('name')
+            ->pluck('name', 'code')
+            ->all();
     }
 
     public function create()
