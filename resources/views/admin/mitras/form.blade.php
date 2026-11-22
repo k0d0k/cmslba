@@ -87,6 +87,8 @@
             </div>
 
             @unless($mitra)
+            <div class="card max-w-5xl mb-5">
+            <div class="card-header">Langganan &amp; Lisensi Awal</div>
                 <section class="border border-slate-200 rounded-lg p-4 space-y-4">
                     <h3 class="font-semibold text-slate-700">Langganan &amp; Lisensi Awal</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
@@ -137,6 +139,7 @@
                     Saat disimpan, sistem akan otomatis membuat database mitra
                     <b>lbacloud_mitra_&lt;uuid&gt;</b> dan menjalankan migrasi.
                 </div>
+                </div>
             @endunless
 
             <div class="flex items-center gap-2 pt-1">
@@ -149,7 +152,7 @@
         @if($mitra)
     <div class="card max-w-5xl mb-5">
         <div class="card-header">Langganan &amp; Lisensi Mitra</div>
-            <section class="border-t-4 border-slate-900 p-4 space-y-4">
+             <section class="border-t border-slate-200 p-4 space-y-4">
                 <form method="POST" action="{{ route('admin.mitras.subscriptions.store', $mitra) }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                     @csrf
                     <div class="sm:col-span-2">
