@@ -70,7 +70,9 @@ class MitraController extends Controller
             ->addColumn('brand', fn ($m) => $m->brands->pluck('name')->implode(', '))
             ->addColumn('langganan', fn ($m) => $m->subscriptions->first()?->subscription?->name)
             ->addColumn('actions', function ($m) {
-                $html = '<div class="flex gap-2">';
+                $html = '<div class="flex flex-wrap gap-2 items-center">';
+                $html .= '<a href="' . route('admin.sina.index', ['mitra' => $m->slug]) . '" class="btn btn-sm btn-secondary" title="Integrasi SINA AI">'
+                    . '<i data-lucide="brain-circuit"></i> SINA AI</a>';
                 if ($this->can('update')) {
                     $html .= '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
                 }

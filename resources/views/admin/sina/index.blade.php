@@ -39,17 +39,28 @@
                 </div>
 
                 @if($isPrincipal)
-                    <form method="GET" action="{{ route('admin.sina.index') }}" class="flex items-center gap-2">
-                        <label class="text-xs text-slate-500">Mitra</label>
-                        <select name="mitra" onchange="this.form.submit()" class="form-control">
+                    {{-- Combobox mitra yang bisa dicari; navigasi ke ?mitra=slug (aman, tanpa id) --}}
+                    <form id="mitra-picker" method="GET" action="{{ route('admin.sina.index') }}" class="flex items-center gap-2">
+                        <label class="text-xs text-slate-500" for="mitra-search">Mitra</label>
+                        <input id="mitra-search" list="mitra-list" name="mitra" value="{{ $mitra->slug }}"
+                               class="form-control" style="min-width:240px"
+                               placeholder="Cari mitra..." autocomplete="off">
+                        <datalist id="mitra-list">
                             @foreach($mitras as $m)
-                                <option value="{{ $m->id }}" @selected($mitra->id === $m->id)>{{ $m->name }}</option>
+                                <option value="{{ $m->slug }}" data-name="{{ $m->name }}">{{ $m->name }}</option>
                             @endforeach
-                        </select>
+                        </datalist>
+                        <button type="submit" class="btn btn-primary btn-sm">Buka</button>
                     </form>
                 @else
                     <span class="badge badge-secondary">{{ $mitra->name }}</span>
                 @endif
+            </div>
+
+            {{-- Mitra yang sedang aktif (ditampilkan di semua tab) --}}
+            <div class="text-xs text-slate-500">
+                Mitra aktif: <span class="font-medium text-slate-700">{{ $mitra->name }}</span>
+                @if($isPrincipal) <span class="text-slate-400">({{ $mitra->slug }})</span> @endif
             </div>
 
             {{-- ===================== Tab ===================== --}}
@@ -126,34 +137,67 @@
 
                     {{-- ---------- TAB: Token & Harga ---------- --}}
                     <div class="sina-panel hidden" data-panel="price">
-                        <div class="max-w-xl">
-                            <div class="rounded-lg border border-slate-200 p-4 mb-4">
-                                <div class="text-xs text-slate-500">Harga token saat ini</div>
-                                <div class="text-2xl font-bold text-slate-800 mt-1">
-                                    Rp {{ number_format($tokenPrice, 0, ',', '.') }}
-                                    <span class="text-sm font-normal text-slate-500">/ kredit</span>
+                        <p class="text-xs text-slate-500 mb-4">
+                            Harga satu kali chat: kredit yang dicadangkan sebelumnya, dan ditagih untuk, satu balasan SINA yang selesai.
+                        </p>
+
+                        @if($canManagePrice)
+                            <form method="POST" action="{{ route('admin.sina.pricing') }}" class="space-y-4">
+                                @csrf
+                                <label class="flex items-center gap-2 text-sm text-slate-700">
+                                    <input type="checkbox" name="billing_enabled" value="1" class="form-check"
+                                           @checked(old('billing_enabled', $pricing['billing_enabled']))>
+                                    Aktifkan penagihan kredit SINA
+                                </label>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="form-label">Kredit per chat</label>
+                                        <input type="number" min="1" name="sina_credit_per_chat"
+                                               value="{{ old('sina_credit_per_chat', $pricing['credit_per_chat']) }}"
+                                               class="form-control" required>
+                                        @error('sina_credit_per_chat')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Kredit per 1.000 token</label>
+                                        <input type="number" min="1" name="sina_credit_per_1000_tokens"
+                                               value="{{ old('sina_credit_per_1000_tokens', $pricing['credit_per_1000']) }}"
+                                               class="form-control" required>
+                                        @error('sina_credit_per_1000_tokens')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Satuan</label>
+                                        <input type="text" name="sina_unit"
+                                               value="{{ old('sina_unit', $pricing['unit']) }}"
+                                               class="form-control" required>
+                                        @error('sina_unit')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                                    </div>
+                                </div>
+
+                                <p class="text-xs text-slate-500">
+                                    Nilai 1 berarti satu kali chat menghabiskan 1 token. Nilai ini juga menjadi batas
+                                    maksimum tagihan untuk satu balasan.
+                                </p>
+
+                                <button type="submit" class="btn btn-primary">Simpan Harga</button>
+                            </form>
+                        @else
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl">
+                                <div class="rounded-lg border border-slate-200 p-3">
+                                    <div class="text-xs text-slate-500">Kredit per chat</div>
+                                    <div class="text-lg font-semibold text-slate-700">{{ $pricing['credit_per_chat'] }}</div>
+                                </div>
+                                <div class="rounded-lg border border-slate-200 p-3">
+                                    <div class="text-xs text-slate-500">Kredit per 1.000 token</div>
+                                    <div class="text-lg font-semibold text-slate-700">{{ $pricing['credit_per_1000'] }}</div>
+                                </div>
+                                <div class="rounded-lg border border-slate-200 p-3">
+                                    <div class="text-xs text-slate-500">Satuan</div>
+                                    <div class="text-lg font-semibold text-slate-700">{{ $pricing['unit'] }}</div>
                                 </div>
                             </div>
-
-                            @if($canManagePrice)
-                                <form method="POST" action="{{ route('admin.sina.token-price') }}" class="space-y-3">
-                                    @csrf
-                                    <div>
-                                        <label class="form-label">Harga per Kredit (Rp)</label>
-                                        <input type="number" step="0.01" min="0" name="token_price_per_credit"
-                                               value="{{ old('token_price_per_credit', $tokenPrice) }}"
-                                               class="form-control" placeholder="contoh: 150" required>
-                                        @error('token_price_per_credit')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                                    </div>
-                                    <p class="text-xs text-slate-400">
-                                        Harga berlaku global untuk semua mitra dan menjadi dasar perhitungan biaya top-up.
-                                    </p>
-                                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
-                                </form>
-                            @else
-                                <p class="text-sm text-slate-500">Hanya principal yang dapat mengubah harga token.</p>
-                            @endif
-                        </div>
+                            <p class="text-sm text-slate-500 mt-3">Hanya principal yang dapat mengubah harga token.</p>
+                        @endif
                     </div>
 
                     {{-- ---------- TAB: Saldo Kredit SINA AI ---------- --}}
@@ -163,7 +207,7 @@
                                 <div class="text-xs text-slate-500">Saldo tersedia</div>
                                 <div class="flex items-end gap-2 mt-1">
                                     <span class="text-3xl font-bold text-slate-800">{{ number_format($wallet->balance_credits) }}</span>
-                                    <span class="text-sm text-slate-500 mb-1">kredit</span>
+                                    <span class="text-sm text-slate-500 mb-1">{{ $pricing['unit'] }}</span>
                                 </div>
                                 <div class="text-xs text-slate-400 mt-2">Mitra: {{ $mitra->name }}</div>
                             </div>
@@ -195,12 +239,13 @@
 
                         <p class="text-xs text-slate-400 mb-3">
                             Saldo awal berasal dari paket langganan: Kredit SINA AI per pasien per periode &times; jumlah kursi.
+                            1 chat = {{ $pricing['credit_per_chat'] }} {{ $pricing['unit'] }}.
                         </p>
 
                         <h3 class="text-sm font-semibold text-slate-600 mb-2">Riwayat Pemakaian Kredit</h3>
                         <div class="border border-slate-200 rounded-lg overflow-hidden">
                             <table class="js-datatable w-full display"
-                                   data-dt-url="{{ route('admin.sina.data', ['mitra' => $mitra->id]) }}"
+                                   data-dt-url="{{ route('admin.sina.data', ['mitra' => $mitra->slug]) }}"
                                    data-dt-columns='@json($usageColumns)'
                                    data-dt-actions="0">
                                 <thead>
@@ -222,42 +267,35 @@
 
                     {{-- ---------- TAB: Tambah Kredit (Top-up) ---------- --}}
                     <div class="sina-panel hidden" data-panel="topup">
-                        @if($isPrincipal)
-                            <form method="GET" action="{{ route('admin.sina.index') }}" class="mb-4 flex items-center gap-2">
-                                <label class="text-xs text-slate-500">Mitra</label>
-                                <select name="mitra" onchange="this.form.submit()" class="form-control" style="max-width:280px">
-                                    @foreach($mitras as $m)
-                                        <option value="{{ $m->id }}" @selected($mitra->id === $m->id)>{{ $m->name }}</option>
-                                    @endforeach
-                                </select>
-                            </form>
-                        @endif
-
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
                             <div class="lg:col-span-2">
                                 @if($canUpdate)
-                                    <form id="topup-form" method="POST" action="{{ route('admin.sina.topup') }}"
-                                          data-price="{{ $tokenPrice }}" class="space-y-3">
+                                    <form method="POST" action="{{ route('admin.sina.topup') }}" class="space-y-3">
                                         @csrf
                                         <input type="hidden" name="mitra_id" value="{{ $mitra->id }}">
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label class="form-label">Jumlah Kredit</label>
-                                                <input id="topup-credits" type="number" name="credits" min="1"
+                                                <label class="form-label">Mitra</label>
+                                                <input type="text" value="{{ $mitra->name }}" class="form-control bg-slate-50" disabled>
+                                                <p class="text-xs text-slate-400 mt-1">Ubah mitra pada pemilih di bagian atas halaman.</p>
+                                            </div>
+                                            <div>
+                                                <label class="form-label">Jumlah Kredit ({{ $pricing['unit'] }})</label>
+                                                <input type="number" name="credits" min="1"
                                                        value="{{ old('credits') }}" class="form-control" placeholder="contoh: 1000" required>
                                                 @error('credits')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                                             </div>
-                                            <div>
+                                            <div class="md:col-span-2">
                                                 <label class="form-label">Catatan</label>
                                                 <input type="text" name="note" value="{{ old('note') }}" class="form-control"
                                                        placeholder="Catatan top-up (opsional)">
                                             </div>
                                         </div>
 
-                                        <div class="rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm text-slate-600">
-                                            Harga per kredit: Rp {{ number_format($tokenPrice, 0, ',', '.') }} &nbsp;&middot;&nbsp;
-                                            Estimasi biaya: <span id="topup-total" class="font-semibold text-slate-800">Rp 0</span>
-                                        </div>
+                                        <p class="text-xs text-slate-500">
+                                            1 chat = {{ $pricing['credit_per_chat'] }} {{ $pricing['unit'] }}.
+                                            Top-up ini menambah saldo kredit mitra yang bersangkutan.
+                                        </p>
 
                                         <button type="submit" class="btn btn-primary">
                                             <i data-lucide="plus"></i> Simpan Top-up
@@ -269,14 +307,16 @@
                             </div>
                             <div class="rounded-lg border border-slate-200 p-4">
                                 <div class="text-xs text-slate-500">Saldo tersedia</div>
-                                <div class="text-2xl font-bold text-slate-800 mt-1">{{ number_format($wallet->balance_credits) }} <span class="text-sm font-normal text-slate-500">kredit</span></div>
+                                <div class="text-2xl font-bold text-slate-800 mt-1">{{ number_format($wallet->balance_credits) }}
+                                    <span class="text-sm font-normal text-slate-500">{{ $pricing['unit'] }}</span>
+                                </div>
                             </div>
                         </div>
 
                         <h3 class="text-sm font-semibold text-slate-600 mb-2">Riwayat Top-up Kredit</h3>
                         <div class="border border-slate-200 rounded-lg overflow-hidden">
                             <table class="js-datatable w-full display"
-                                   data-dt-url="{{ route('admin.sina.topups', ['mitra' => $mitra->id]) }}"
+                                   data-dt-url="{{ route('admin.sina.topups', ['mitra' => $mitra->slug]) }}"
                                    data-dt-columns='@json($topupColumns)'
                                    data-dt-actions="0">
                                 <thead>
@@ -284,8 +324,8 @@
                                         <th>#</th>
                                         <th>Waktu</th>
                                         <th>Kredit</th>
-                                        <th>Harga/Kredit</th>
-                                        <th>Total Biaya</th>
+                                        <th>Kredit/chat</th>
+                                        <th>Total Kredit</th>
                                         <th>Catatan</th>
                                     </tr>
                                 </thead>
@@ -306,17 +346,15 @@
 
         <script>
             (function () {
+                // ----- Tab -----
                 var tabs = Array.prototype.slice.call(document.querySelectorAll('.sina-tab'));
                 var panels = Array.prototype.slice.call(document.querySelectorAll('.sina-panel'));
-
                 function show(key) {
                     tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.tab === key); });
                     panels.forEach(function (p) { p.classList.toggle('hidden', p.dataset.panel !== key); });
                     try { sessionStorage.setItem('sina_tab', key); } catch (e) {}
                 }
-
                 tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
-
                 var initial = 'endpoint';
                 try {
                     var saved = sessionStorage.getItem('sina_tab');
@@ -324,18 +362,27 @@
                 } catch (e) {}
                 show(initial);
 
-                // Kalkulator biaya top-up (kredit x harga per kredit).
-                var form = document.getElementById('topup-form');
-                if (form) {
-                    var price = parseFloat(form.dataset.price || '0');
-                    var input = document.getElementById('topup-credits');
-                    var total = document.getElementById('topup-total');
-                    var calc = function () {
-                        var c = parseFloat(input.value || '0') || 0;
-                        total.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(c * price));
-                    };
-                    input.addEventListener('input', calc);
-                    calc();
+                // ----- Mitra picker: pastikan input berisi slug, lalu navigasi ke ?mitra=slug -----
+                var picker = document.getElementById('mitra-picker');
+                if (picker) {
+                    var input = document.getElementById('mitra-search');
+                    var list = document.getElementById('mitra-list');
+                    var slugToName = {};
+                    Array.prototype.slice.call(list.options).forEach(function (o) { slugToName[o.value] = o.dataset.name; });
+
+                    input.addEventListener('change', function () {
+                        var v = input.value.trim();
+                        // Bila user mengetik nama, cocokkan ke slug.
+                        if (v && !slugToName[v]) {
+                            var found = Object.keys(slugToName).find(function (s) {
+                                return s === v || slugToName[s].toLowerCase() === v.toLowerCase();
+                            });
+                            if (found) { input.value = found; }
+                        }
+                    });
+                    picker.addEventListener('submit', function () {
+                        input.value = (input.value || '').trim();
+                    });
                 }
             })();
         </script>

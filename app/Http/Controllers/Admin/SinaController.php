@@ -27,9 +27,6 @@ use Yajra\DataTables\Facades\DataTables;
  */
 class SinaController extends Controller
 {
-    /** Kunci setelan harga token global (berlaku untuk semua mitra). */
-    public const TOKEN_PRICE_KEY = 'token_price_per_credit';
-
     public function __construct(protected SinaCreditService $credits)
     {
     }
@@ -56,8 +53,8 @@ class SinaController extends Controller
 
     /**
      * Mitra yang sedang dikelola pada halaman ini.
-     * Principal bebas memilih mitra (dari query `mitra`/input `mitra_id`),
-     * sedangkan user mitra selalu terkunci pada mitra miliknya.
+     * Principal bebas memilih mitra lewat query `mitra` (berisi slug) atau
+     * input `mitra_id`, sedangkan user mitra selalu terkunci pada mitranya.
      */
     protected function resolveMitra(Request $request): ?Mitra
     {
@@ -68,7 +65,12 @@ class SinaController extends Controller
                 ?? (app()->bound('active_mitra') ? app('active_mitra') : null);
         }
 
-        $id = $request->input('mitra_id') ?? $request->query('mitra');
+        $slug = $request->query('mitra');
+        if ($slug && $mitra = Mitra::where('slug', $slug)->first()) {
+            return $mitra;
+        }
+
+        $id = $request->input('mitra_id');
         if ($id && $mitra = Mitra::find($id)) {
             return $mitra;
         }
@@ -76,6 +78,17 @@ class SinaController extends Controller
         return app()->bound('active_mitra')
             ? app('active_mitra')
             : Mitra::orderBy('id')->first();
+    }
+
+    /** Setelan harga/tagihan kredit SINA (global). */
+    protected function pricing(): array
+    {
+        return [
+            'billing_enabled'  => (bool) Setting::get('sina_credit_billing_enabled', true, 'sina'),
+            'credit_per_chat'  => (int) Setting::get('sina_credit_per_chat', 1, 'sina'),
+            'credit_per_1000'  => (int) Setting::get('sina_credit_per_1000_tokens', 1, 'sina'),
+            'unit'             => (string) Setting::get('sina_unit', 'sina_credit', 'sina'),
+        ];
     }
 
     public function index(Request $request)
@@ -96,7 +109,7 @@ class SinaController extends Controller
             'isPrincipal'    => $isPrincipal,
             'wallet'         => $wallet,
             'config'         => $config,
-            'tokenPrice'     => (float) Setting::get(self::TOKEN_PRICE_KEY, 0, 'sina'),
+            'pricing'        => $this->pricing(),
             'canUpdate'      => $this->can('update'),
             'canManagePrice' => $isPrincipal && $this->can('update'),
             'providers'      => $this->providerOptions(),
@@ -133,8 +146,8 @@ class SinaController extends Controller
             ->addIndexColumn()
             ->editColumn('created_at', fn ($r) => optional($r->created_at)->format('Y-m-d H:i'))
             ->editColumn('credits', fn ($r) => number_format((int) $r->credits))
-            ->editColumn('price_per_credit', fn ($r) => 'Rp ' . number_format((float) $r->price_per_credit, 0, ',', '.'))
-            ->editColumn('total_amount', fn ($r) => 'Rp ' . number_format((float) $r->total_amount, 0, ',', '.'))
+            ->editColumn('price_per_credit', fn ($r) => number_format((int) $r->price_per_credit) . ' /chat')
+            ->editColumn('total_amount', fn ($r) => number_format((int) $r->total_amount))
             ->rawColumns([])
             ->toJson();
     }
@@ -176,19 +189,25 @@ class SinaController extends Controller
         return back()->with('success', 'Konfigurasi EndPoin Penyedia SINA berhasil disimpan.');
     }
 
-    /** Simpan harga token per kredit (global, semua mitra). */
-    public function saveTokenPrice(Request $request)
+    /** Simpan setelan harga/tagihan kredit SINA (global, semua mitra). */
+    public function savePricing(Request $request)
     {
         $this->authorizeAbility('update');
         abort_unless(auth()->user()->isPrincipal(), 403, __('messages.forbidden'));
 
         $data = $request->validate([
-            self::TOKEN_PRICE_KEY => ['required', 'numeric', 'min:0'],
+            'billing_enabled'        => ['nullable', 'boolean'],
+            'sina_credit_per_chat'   => ['required', 'integer', 'min:1'],
+            'sina_credit_per_1000_tokens' => ['required', 'integer', 'min:1'],
+            'sina_unit'              => ['required', 'string', 'max:50'],
         ]);
 
-        Setting::put(self::TOKEN_PRICE_KEY, $data[self::TOKEN_PRICE_KEY], 'sina');
+        Setting::put('sina_credit_billing_enabled', $request->boolean('billing_enabled') ? 1 : 0, 'sina');
+        Setting::put('sina_credit_per_chat', $data['sina_credit_per_chat'], 'sina');
+        Setting::put('sina_credit_per_1000_tokens', $data['sina_credit_per_1000_tokens'], 'sina');
+        Setting::put('sina_unit', $data['sina_unit'], 'sina');
 
-        return back()->with('success', 'Harga token SINA AI berhasil disimpan.');
+        return back()->with('success', 'Harga & aturan tagihan kredit SINA AI berhasil disimpan.');
     }
 
     /** Tambah kredit (top-up) mitra terpilih dan catat riwayatnya. */
@@ -204,18 +223,19 @@ class SinaController extends Controller
         ]);
 
         $credits = (int) $data['credits'];
-        $price = (float) Setting::get(self::TOKEN_PRICE_KEY, 0, 'sina');
+        $pricing = $this->pricing();
         $wallet = $this->credits->walletFor($mitra);
 
-        DB::connection('central')->transaction(function () use ($wallet, $mitra, $credits, $price, $data) {
+        DB::connection('central')->transaction(function () use ($wallet, $mitra, $credits, $pricing, $data) {
             $this->credits->topUp($wallet, $credits);
 
             AiTopup::create([
                 'mitra_id'         => $mitra->id,
                 'wallet_id'        => $wallet->id,
                 'credits'          => $credits,
-                'price_per_credit' => $price,
-                'total_amount'     => $price * $credits,
+                // Snapshot aturan tagihan saat top-up (1 chat = credit_per_chat token).
+                'price_per_credit' => $pricing['credit_per_chat'],
+                'total_amount'     => $pricing['credit_per_chat'] * $credits,
                 'note'             => $data['note'] ?? null,
                 'created_by'       => auth()->id(),
             ]);

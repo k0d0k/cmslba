@@ -84,7 +84,7 @@ Route::middleware(['auth', 'tenant'])
         Route::get('sina/data', [SinaController::class, 'data'])->name('sina.data');
         Route::get('sina/topups', [SinaController::class, 'topups'])->name('sina.topups');
         Route::post('sina/config', [SinaController::class, 'updateConfig'])->name('sina.config');
-        Route::post('sina/token-price', [SinaController::class, 'saveTokenPrice'])->name('sina.token-price');
+        Route::post('sina/token-price', [SinaController::class, 'savePricing'])->name('sina.pricing');
         Route::post('sina/topup', [SinaController::class, 'topUp'])->name('sina.topup');
 
         // Manajemen menu dinamis (drag & drop)
