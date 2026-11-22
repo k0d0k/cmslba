@@ -263,6 +263,15 @@ function initSelect2(root = document) {
                 inputTooShort: () => 'Ketik untuk mencari',
             },
         });
+
+        // Jika select berada dalam form dengan data-submit-on-change, otomatis
+        // submit form saat pilihan berubah (mis. picker mitra → ?mitra=slug).
+        const form = el.closest('form');
+        if (form && form.dataset.submitOnChange === '1') {
+            $el.on('change', function () {
+                form.requestSubmit();
+            });
+        }
     });
 }
 

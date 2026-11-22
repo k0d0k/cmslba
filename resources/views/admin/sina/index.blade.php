@@ -40,7 +40,7 @@
 
                 @if($isPrincipal)
                     {{-- Select2 untuk memilih mitra (bisa dicari); navigasi ke ?mitra=slug --}}
-                    <form id="mitra-picker" method="GET" action="{{ route('admin.sina.index') }}" class="flex items-center gap-2" style="min-width:320px">
+                    <form id="mitra-picker" method="GET" action="{{ route('admin.sina.index') }}" data-submit-on-change="1" class="flex items-center gap-2" style="min-width:320px">
                         <label class="text-xs text-slate-500 whitespace-nowrap" for="mitra-select">Mitra</label>
                         <select id="mitra-select" name="mitra" class="js-select2" data-placeholder="Cari mitra..." data-allow-clear="0" style="width:100%">
                             @foreach($mitras as $m)
@@ -361,19 +361,17 @@
                 } catch (e) {}
                 show(initial);
 
-                // ----- Mitra picker (Select2): navigasi ke ?mitra=slug saat pilihan berubah -----
-                // Pakai event native 'change' karena Select2 memicu event asli pada <select>,
-                // jadi tidak bergantung pada timing jQuery/select2 yang dimuat via module async.
+                // ----- Mitra picker (Select2): navigasi saat pilihan berubah -----
+                // Ditangani oleh initSelect2() di app.js: form dengan
+                // data-submit-on-change="1" akan di-submit otomatis (method GET)
+                // sehingga URL menjadi ?mitra=slug_mitra. Native change di sini
+                // hanya sebagai fallback bila app.js belum termuat.
                 var picker = document.getElementById('mitra-picker');
                 var selEl = document.getElementById('mitra-select');
-                if (picker && selEl) {
+                if (picker && selEl && !picker.dataset.submitOnChangeHandled) {
+                    picker.dataset.submitOnChangeHandled = '1';
                     selEl.addEventListener('change', function () {
-                        var slug = selEl.value;
-                        if (slug) {
-                            var sep = picker.action.indexOf('?') > -1 ? '&' : '?';
-                            var url = picker.action + sep + 'mitra=' + encodeURIComponent(slug);
-                            window.location.href = url;
-                        }
+                        picker.requestSubmit();
                     });
                 }
             })();
