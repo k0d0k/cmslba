@@ -16,7 +16,7 @@ class Brand extends Model
     protected $fillable = ['slug', 'sku', 'name', 'is_active'];
 
     protected $casts = [
-        
+        'is_active' => 'boolean',
     ];
 
     public $slug_source = 'name';
