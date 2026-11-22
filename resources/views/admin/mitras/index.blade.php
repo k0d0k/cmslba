@@ -6,14 +6,13 @@
 @section('content')
     @php
         $columns = [
-            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false],
-            ['data' => 'name',        'name' => 'name'],
-            ['data' => 'slug',        'name' => 'slug'],
-            ['data' => 'db_name',     'name' => 'db_name'],
-            ['data' => 'brand',       'name' => 'brand'],
-            ['data' => 'langganan',   'name' => 'langganan'],
-            ['data' => 'status',      'name' => 'status'],
-            ['data' => 'actions',    'name' => 'actions', 'orderable' => false, 'searchable' => false],
+            ['data' => 'logo',      'name' => 'logo', 'orderable' => false, 'searchable' => false],
+            ['data' => 'name',      'name' => 'name'],
+            ['data' => 'slug',      'name' => 'slug'],
+            ['data' => 'db_name',   'name' => 'db_name'],
+            ['data' => 'brand',     'name' => 'brand'],
+            ['data' => 'langganan', 'name' => 'langganan'],
+            ['data' => 'status',    'name' => 'status'],
         ];
 
         $hasActions = ($canUpdate ?? false) || ($canDelete ?? false);
@@ -37,6 +36,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Logo</th>
                         <th>{{ __('common.name') }}</th>
                         <th>Slug (Frontpage)</th>
                         <th>Database</th>

@@ -15,11 +15,25 @@
     <div class="card max-w-5xl">
         <div class="card-header">{{ $mitra ? __('common.edit') : __('common.add') }} Mitra</div>
 
-        <form method="POST" action="{{ $action }}" class="card-body space-y-4">
+        <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="card-body space-y-4">
             @csrf
             @if($mitra)
                 @method('PUT')
             @endif
+
+            <div>
+                <label class="form-label">Logo</label>
+                @if($mitra?->logo)
+                    <div class="mb-2">
+                        <button type="button" class="js-image-preview inline-block" data-full-src="{{ \Illuminate\Support\Facades\Storage::url($mitra->logo) }}">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($mitra->logo) }}" alt="Logo" class="h-16 rounded-lg object-contain border border-slate-200 bg-white p-1 cursor-pointer hover:opacity-80">
+                        </button>
+                    </div>
+                @endif
+                <input type="file" name="logo" accept="image/*" class="form-control">
+                @error('logo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <p class="text-xs text-slate-400 mt-1">Format: JPG, PNG, GIF, WEBP. Maks 2 MB.</p>
+            </div>
 
             <div>
                 <label class="form-label">{{ __('common.name') }} Mitra</label>

@@ -21,7 +21,9 @@
                 <label class="form-label">Logo</label>
                 @if($settings['logo'])
                     <div class="mb-2">
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($settings['logo']) }}" alt="Logo" class="h-16 rounded-lg object-contain border border-slate-200 bg-white p-1">
+                        <button type="button" class="js-image-preview inline-block" data-full-src="{{ \Illuminate\Support\Facades\Storage::url($settings['logo']) }}">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($settings['logo']) }}" alt="Logo" class="h-16 rounded-lg object-contain border border-slate-200 bg-white p-1 cursor-pointer hover:opacity-80">
+                        </button>
                     </div>
                 @endif
                 <input type="file" name="logo" accept="image/*" class="form-control">

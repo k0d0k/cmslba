@@ -66,6 +66,16 @@ class MitraController extends Controller
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
+            ->editColumn('logo', function ($m) {
+                if (! $m->logo) {
+                    return '<span class="text-slate-400">-</span>';
+                }
+                $url = e(\Illuminate\Support\Facades\Storage::url($m->logo));
+
+                return '<button type="button" class="js-image-preview inline-block align-middle" data-full-src="' . $url . '">'
+                    . '<img src="' . $url . '" alt="" class="w-10 h-10 rounded object-cover border border-slate-200 cursor-pointer hover:opacity-80">'
+                    . '</button>';
+            })
             ->editColumn('status', fn ($m) => '<span class="badge badge-' . ($m->status === 'active' ? 'success' : 'warning') . '">' . $m->status . '</span>')
             ->addColumn('brand', fn ($m) => $m->brands->pluck('name')->implode(', '))
             ->addColumn('langganan', fn ($m) => $m->subscriptions->first()?->subscription?->name)
@@ -83,7 +93,7 @@ class MitraController extends Controller
 
                 return $html;
             })
-            ->rawColumns(['status', 'actions'])
+            ->rawColumns(['logo', 'status', 'actions'])
             ->toJson();
     }
 
@@ -107,6 +117,12 @@ class MitraController extends Controller
         $initialSubscriptionId = $data['initial_subscription_id'] ?? null;
         $initialSeats = $data['initial_seats'] ?? 1;
         unset($data['brand_ids'], $data['primary_brand_id'], $data['initial_subscription_id'], $data['initial_seats']);
+
+        // Logo ditangani terpisah (simpan berkas, bukan objek UploadedFile).
+        unset($data['logo']);
+        if ($logo = $this->storeLogo($request)) {
+            $data['logo'] = $logo;
+        }
 
         $initialPackage = $initialSubscriptionId
             ? Subscription::findOrFail($initialSubscriptionId)
@@ -149,6 +165,13 @@ class MitraController extends Controller
         $this->authorizeAbility('update');
         $data = $this->validated($request, $mitra->id);
         unset($data['brand_ids'], $data['primary_brand_id'], $data['initial_subscription_id'], $data['initial_seats']);
+
+        // Logo hanya diganti bila ada berkas baru diunggah.
+        unset($data['logo']);
+        if ($logo = $this->storeLogo($request)) {
+            $data['logo'] = $logo;
+        }
+
         $mitra->update($data);
 
         return redirect()->route('admin.mitras.index')->with('success', __('messages.updated'));
@@ -346,6 +369,7 @@ class MitraController extends Controller
             'email'  => ['nullable', 'email'],
             'phone'  => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string'],
+            'logo'   => ['nullable', 'image', 'max:2048'],
             'skin'   => ['nullable', 'string'],
             'locale' => ['nullable', 'in:id,en,ms'],
             'status' => ['required', 'in:pending,active,suspended'],
@@ -356,6 +380,19 @@ class MitraController extends Controller
             'initial_subscription_id' => ['nullable', 'exists:subscription,id'],
             'initial_seats' => ['required_with:initial_subscription_id', 'integer', 'min:1'],
         ]);
+    }
+
+    /**
+     * Simpan berkas logo bila ada di request, lalu kembalikan path-nya.
+     * Bila tidak ada berkas baru, kembalikan null (agar logo lama tetap dipakai).
+     */
+    protected function storeLogo(Request $request): ?string
+    {
+        if ($request->hasFile('logo')) {
+            return $request->file('logo')->store('uploads/mitras', 'public');
+        }
+
+        return null;
     }
 
     protected function seedTenant(Mitra $mitra): void

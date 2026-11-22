@@ -277,6 +277,54 @@ function initSelect2(root = document) {
 
 window.initSelect2 = initSelect2;
 
+/**
+ * Modal preview gambar. Elemen pemicu cukup beri class `js-image-preview`
+ * dan atribut `data-full-src` (URL gambar ukuran penuh). Bila tidak ada,
+ * fallback ke `src` gambar pertama di dalam elemen tersebut.
+ */
+function initImagePreview() {
+    const modal = document.getElementById('image-preview-modal');
+    const img = document.getElementById('image-preview-img');
+    const closeBtn = document.getElementById('image-preview-close');
+    if (!modal || !img) return;
+
+    const open = (src) => {
+        if (!src) return;
+        img.src = src;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    };
+    const close = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        img.src = '';
+    };
+
+    document.addEventListener('click', (e) => {
+        const trigger = e.target.closest('.js-image-preview');
+        if (trigger) {
+            e.preventDefault();
+            const src = trigger.dataset.fullSrc || trigger.querySelector('img')?.src || trigger.src;
+            open(src);
+            return;
+        }
+        // Klik tombol tutup atau backdrop (bukan area gambar) -> tutup.
+        if (e.target === closeBtn || closeBtn?.contains(e.target)) {
+            close();
+        } else if (e.target === modal) {
+            close();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            close();
+        }
+    });
+}
+
+window.initImagePreview = initImagePreview;
+
 // Jalankan inisialisasi. Karena select2 dimuat via dynamic import (await),
 // module ini selesai setelah DOM siap; jadi jalankan langsung bila document
 // sudah loaded, selain itu tunggu DOMContentLoaded. Tambah fallback window.load
@@ -289,6 +337,7 @@ function boot() {
     initDataTables();
     initMenuSortable();
     initSelect2();
+    initImagePreview();
 }
 
 if (document.readyState === 'loading') {

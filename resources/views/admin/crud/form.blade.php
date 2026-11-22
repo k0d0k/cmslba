@@ -64,7 +64,9 @@
                     @elseif($type === 'image')
                         @if($value)
                             <div class="mb-2">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url($value) }}" alt="" class="w-20 h-20 rounded-lg object-cover border border-slate-200">
+                                <button type="button" class="js-image-preview inline-block" data-full-src="{{ \Illuminate\Support\Facades\Storage::url($value) }}">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($value) }}" alt="" class="w-20 h-20 rounded-lg object-cover border border-slate-200 cursor-pointer hover:opacity-80">
+                                </button>
                             </div>
                         @endif
                         <input type="file" name="{{ $name }}" accept="image/*" class="form-control">

@@ -183,9 +183,16 @@ abstract class BaseCrudController extends Controller
                     ? '<span class="badge bg-success">' . __('common.yes') . '</span>'
                     : '<span class="badge bg-secondary">' . __('common.no') . '</span>');
             } elseif ($type === 'image') {
-                $dt->editColumn($name, fn ($row) => $row->{$name}
-                    ? '<img src="' . e(\Illuminate\Support\Facades\Storage::url($row->{$name})) . '" alt="" class="w-10 h-10 rounded object-cover border border-slate-200">'
-                    : '<span class="text-slate-400">-</span>');
+                $dt->editColumn($name, function ($row) use ($name) {
+                    if (! $row->{$name}) {
+                        return '<span class="text-slate-400">-</span>';
+                    }
+                    $url = e(\Illuminate\Support\Facades\Storage::url($row->{$name}));
+
+                    return '<button type="button" class="js-image-preview inline-block align-middle" data-full-src="' . $url . '">'
+                        . '<img src="' . $url . '" alt="" class="w-10 h-10 rounded object-cover border border-slate-200 cursor-pointer hover:opacity-80">'
+                        . '</button>';
+                });
             } elseif (in_array($type, ['date', 'datetime'], true)) {
                 $dt->editColumn($name, fn ($row) => optional($row->{$name})->format('Y-m-d'));
             } elseif ($type === 'select' && ! empty($f['options'])) {

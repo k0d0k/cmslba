@@ -13,7 +13,9 @@
                 <label class="form-label">{{ __('common.picture') }}</label>
                 <div class="flex items-center gap-4">
                     @if($user->avatar)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($user->avatar) }}" alt="" class="w-16 h-16 rounded-full object-cover border border-slate-200">
+                        <button type="button" class="js-image-preview inline-block" data-full-src="{{ \Illuminate\Support\Facades\Storage::url($user->avatar) }}">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($user->avatar) }}" alt="" class="w-16 h-16 rounded-full object-cover border border-slate-200 cursor-pointer hover:opacity-80">
+                        </button>
                     @else
                         <span class="w-16 h-16 rounded-full grid place-items-center text-white text-xl font-semibold" style="background: var(--color-primary)">
                             {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
