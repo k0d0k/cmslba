@@ -87,4 +87,23 @@ class Mitra extends Model
     {
         return $this->status === 'active';
     }
+
+    /**
+     * Langganan aktif milik mitra (status active/trialing dan current_period_end
+     * belum lewat). Null bila tidak ada.
+     */
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+            ->whereIn('status', ['active', 'trialing'])
+            ->whereNotNull('current_period_end')
+            ->where('current_period_end', '>', now())
+            ->first();
+    }
+
+    /** True bila mitra memiliki langganan yang masih berlaku. */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription() !== null;
+    }
 }

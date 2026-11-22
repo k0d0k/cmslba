@@ -27,6 +27,7 @@ Route::get('/', function () {
 });
 
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
+Route::get('login/expired', [AuthController::class, 'showExpired'])->name('login.expired');
 Route::post('login', [AuthController::class, 'login'])->name('login.attempt');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 

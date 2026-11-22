@@ -19,6 +19,12 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    /** Halaman pemberitahuan masa berlangganan mitra habis. */
+    public function showExpired()
+    {
+        return view('auth.expired');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -44,6 +50,19 @@ class AuthController extends Controller
         }
         if ($user->skin) {
             $request->session()->put('skin', $user->skin);
+        }
+
+        // User mitra hanya boleh masuk jika masa berlangganannya masih berlaku.
+        // Principal (level pusat) selalu bisa login.
+        if (! $user->isPrincipal() && $user->mitra_id) {
+            $mitra = $user->mitra()->with('subscriptions')->first();
+            if (! $mitra || ! $mitra->hasActiveSubscription()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login.expired');
+            }
         }
 
         return redirect()->intended(route('admin.dashboard'));
