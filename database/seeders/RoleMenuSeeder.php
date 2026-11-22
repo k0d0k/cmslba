@@ -17,6 +17,7 @@ class RoleMenuSeeder extends Seeder
             'pelanggan' => ['view', 'export'],
             'cabang'    => ['view'],
             'users'     => ['view'],
+            'brand'     => ['view'],
             'modules'   => ['view'],
             'subscriptions' => ['view'],
             'setting_aplikasi' => ['view'],
@@ -26,6 +27,7 @@ class RoleMenuSeeder extends Seeder
             'pelanggan' => ['view', 'create', 'update', 'delete', 'export'],
             'cabang'    => ['view', 'create', 'update', 'delete'],
             'mitras'    => ['view'],
+            'brand'     => ['view'],
             'users'     => ['view', 'create', 'update', 'delete'],
         ],
         'admin_mitra' => [
@@ -33,12 +35,14 @@ class RoleMenuSeeder extends Seeder
             'pelanggan' => ['view', 'create', 'update', 'delete', 'export'],
             'cabang'    => ['view', 'create', 'update', 'delete'],
             'mitras'    => ['view'],
+            'brand'     => ['view'],
             'users'     => ['view', 'create', 'update', 'delete'],
         ],
         'staff_admin' => [
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'create', 'update'],
             'cabang'    => ['view'],
+            'brand'     => ['view'],
         ],
         'operator' => [
             'dashboard' => ['view'],
