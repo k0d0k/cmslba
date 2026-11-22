@@ -110,7 +110,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label">Lampirkan Merek</label>
+                        <label class="form-label">Lampirkan Brand</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             @foreach($brands as $brand)
                                 <label class="flex items-center gap-2 text-sm text-slate-700">
@@ -123,9 +123,9 @@
                         @error('brand_ids') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         @error('brand_ids.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         <div class="mt-3">
-                            <label class="form-label">Merek utama</label>
+                            <label class="form-label">Brand utama</label>
                             <select name="primary_brand_id" class="form-control">
-                                <option value="">Merek pertama menjadi utama</option>
+                                <option value="">Brand pertama menjadi utama</option>
                                 @foreach($brands as $brand)
                                     <option value="{{ $brand->id }}" @selected((string) old('primary_brand_id') === (string) $brand->id)>{{ $brand->name }}</option>
                                 @endforeach
@@ -144,10 +144,12 @@
                 <a href="{{ route('admin.mitras.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
             </div>
         </form>
-
+        </div>
+        
         @if($mitra)
+    <div class="card max-w-5xl mb-5">
+        <div class="card-header">Langganan &amp; Lisensi Mitra</div>
             <section class="border-t-4 border-slate-900 p-4 space-y-4">
-                <h3 class="font-semibold text-slate-700">Langganan &amp; Lisensi</h3>
                 <form method="POST" action="{{ route('admin.mitras.subscriptions.store', $mitra) }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                     @csrf
                     <div class="sm:col-span-2">
@@ -168,7 +170,7 @@
                             <input type="number" name="seats" min="1" value="{{ old('seats', 1) }}" class="form-control" required>
                             @error('seats') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary whitespace-nowrap">Langganankan tenant</button>
+                        <button type="submit" class="btn btn-primary whitespace-nowrap">Langganankan Mitra</button>
                     </div>
                 </form>
 
@@ -213,15 +215,16 @@
                     </table>
                 </div>
             </section>
-
+    </div>
+    <div class="card max-w-5xl mb-5">
+        <div class="card-header">Brand</div>
             <section class="border-t border-slate-200 p-4 space-y-4">
-                <h3 class="font-semibold text-slate-700">Merek</h3>
                 <form method="POST" action="{{ route('admin.mitras.brands.store', $mitra) }}" class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-3 items-end">
                     @csrf
                     <div>
-                        <label class="form-label">Lampirkan merek</label>
+                        <label class="form-label">Lampirkan Brand</label>
                         <select name="brand_id" class="form-control" required>
-                            <option value="">Pilih merek</option>
+                            <option value="">Pilih Brand</option>
                             @foreach($availableBrands as $brand)
                                 <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                             @endforeach
@@ -230,9 +233,9 @@
                     </div>
                     <label class="flex items-center gap-2 text-sm text-slate-600 pb-2">
                         <input type="checkbox" name="is_primary" value="1" class="form-check">
-                        Merek utama
+                        Brand utama
                     </label>
-                    <button type="submit" class="btn btn-primary">Lampirkan Merek</button>
+                    <button type="submit" class="btn btn-primary">Lampirkan Brand</button>
                 </form>
 
                 <div class="divide-y divide-slate-100 border-t border-slate-100">
@@ -242,7 +245,7 @@
                                 <div class="font-medium text-slate-800">{{ $brand->name }}</div>
                                 <div class="text-sm text-slate-500">
                                     {{ in_array(strtolower((string) $brand->is_active), ['1', 'active', 'yes', 'true'], true) ? 'Aktif' : 'Nonaktif' }}
-                                    @if($brand->pivot->is_primary) &middot; Merek utama @endif
+                                    @if($brand->pivot->is_primary) &middot; Brand utama @endif
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
@@ -252,7 +255,7 @@
                                         <button type="submit" class="btn btn-secondary btn-sm">Jadikan utama</button>
                                     </form>
                                 @endunless
-                                <form method="POST" action="{{ route('admin.mitras.brands.destroy', [$mitra, $brand]) }}" onsubmit="return confirm('Lepaskan merek ini dari mitra?')">
+                                <form method="POST" action="{{ route('admin.mitras.brands.destroy', [$mitra, $brand]) }}" onsubmit="return confirm('Lepaskan brand ini dari mitra?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-secondary btn-sm">Lepaskan</button>
@@ -260,7 +263,7 @@
                             </div>
                         </div>
                     @empty
-                        <p class="py-4 text-sm text-slate-500">Belum ada merek yang dilampirkan.</p>
+                        <p class="py-4 text-sm text-slate-500">Belum ada brand yang dilampirkan.</p>
                     @endforelse
                 </div>
             </section>
