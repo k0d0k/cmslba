@@ -175,6 +175,9 @@ abstract class BaseCrudController extends Controller
         $dt = DataTables::eloquent($this->query())->addIndexColumn();
 
         foreach ($this->fields() as $f) {
+            if (! empty($f['hide_in_table'])) {
+                continue;
+            }
             $name = $f['name'];
             $type = $f['type'] ?? 'string';
 

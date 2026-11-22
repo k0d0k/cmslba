@@ -34,6 +34,7 @@ class UserController extends BaseCrudController
             ['name' => 'avatar', 'type' => 'image', 'label' => 'Foto', 'nullable' => true],
             ['name' => 'name', 'type' => 'string', 'label' => 'Nama', 'nullable' => false],
             ['name' => 'email', 'type' => 'email', 'label' => 'Email', 'nullable' => false, 'unique' => true],
+            ['name' => 'password', 'type' => 'password', 'label' => 'Password', 'nullable' => true, 'hide_in_table' => true],
             ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
             ['name' => 'role', 'type' => 'select', 'label' => 'Role', 'nullable' => true, 'options' => $this->roleOptions()],
             ['name' => 'mitra_id', 'type' => 'relation', 'label' => 'Mitra', 'nullable' => true, 'relation' => ['model' => \App\Models\Mitra::class, 'label' => 'name']],

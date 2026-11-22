@@ -4,7 +4,8 @@
 
 @section('content')
     @php
-        $columns = collect($fields)->map(fn ($f) => ['data' => $f['name'], 'name' => $f['name']])->values()->all();
+        $tableFields = collect($fields)->reject(fn ($f) => !empty($f['hide_in_table']))->values();
+        $columns = $tableFields->map(fn ($f) => ['data' => $f['name'], 'name' => $f['name']])->all();
         $hasActions = $canUpdate || $canDelete;
     @endphp
 
@@ -24,7 +25,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        @foreach($fields as $f)
+                        @foreach($tableFields as $f)
                             <th>{{ $f['label'] ?? $f['name'] }}</th>
                         @endforeach
                         @if($hasActions)
