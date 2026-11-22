@@ -13,7 +13,7 @@ class Brand extends Model
 
     protected $table = 'brands';
 
-    protected $fillable = ['slug', 'sku', 'name', 'is_active'];
+    protected $fillable = ['slug', 'sku', 'name', 'image', 'is_active'];
 
     protected $casts = [
         'is_active' => 'boolean',
