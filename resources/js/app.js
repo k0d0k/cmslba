@@ -7,13 +7,19 @@ import 'datatables.net-dt/css/dataTables.dataTables.css';
 import 'datatables.net-responsive-dt/css/responsive.dataTables.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import 'select2/dist/css/select2.min.css';
-import select2 from 'select2';
 
+// Set jQuery ke window SEBELUM select2 dimuat agar UMD select2 menempel
+// pada instance jQuery yang sama dengan $ (penting agar $.fn.select2 tersedia).
 window.$ = window.jQuery = $;
 window.Sortable = Sortable;
 window.Swal = Swal;
-// Pasangkan select2 ke instance jQuery global.
-select2($);
+
+// Dynamic import select2 setelah jQuery global tersedia.
+const select2Module = await import('select2');
+const select2Factory = select2Module.default ?? select2Module;
+if (typeof select2Factory === 'function') {
+    select2Factory($);
+}
 
 /**
  * Ganti elemen <i data-lucide="nama-ikon"> menjadi SVG.
@@ -262,7 +268,11 @@ function initSelect2(root = document) {
 
 window.initSelect2 = initSelect2;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Jalankan inisialisasi. Karena select2 dimuat via dynamic import (await),
+// module ini selesai setelah DOM siap; jadi jalankan langsung bila document
+// sudah loaded, selain itu tunggu DOMContentLoaded. Tambah fallback window.load
+// dan retry agar select2 tetap ter-init walau timing load bervariasi.
+function boot() {
     initIcons();
     initSidebar();
     initDeletes();
@@ -270,4 +280,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initDataTables();
     initMenuSortable();
     initSelect2();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+} else {
+    boot();
+}
+window.addEventListener('load', () => initSelect2());
+// Retry select2 beberapa kali untuk berjaga-jaga.
+let retries = 0;
+const retrySelect2 = () => {
+    initSelect2();
+    if (retries++ < 5) setTimeout(retrySelect2, 400);
+};
+setTimeout(retrySelect2, 300);
