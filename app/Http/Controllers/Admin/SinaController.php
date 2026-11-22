@@ -4,20 +4,32 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AiProviderConfig;
+use App\Models\AiTopup;
 use App\Models\AiUsageRecord;
 use App\Models\Menu;
 use App\Models\Mitra;
+use App\Models\Setting;
 use App\Services\MenuService;
 use App\Services\SinaCreditService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 /**
- * Integrasi SINA AI (Data Master): konfigurasi penyedia, saldo kredit,
- * riwayat pemakaian, dan top-up kredit per mitra aktif.
+ * Integrasi SINA AI (Data Master).
+ *
+ * Halaman bertab:
+ *  - EndPoin Penyedia SINA : konfigurasi penyedia AI per mitra.
+ *  - Token & Harga         : harga token per kredit (global, dipakai sebagai
+ *                            dasar perhitungan top-up).
+ *  - Saldo Kredit SINA AI  : saldo kredit + riwayat pemakaian per mitra.
+ *  - Tambah Kredit         : top-up kredit per mitra beserta riwayatnya.
  */
 class SinaController extends Controller
 {
+    /** Kunci setelan harga token global (berlaku untuk semua mitra). */
+    public const TOKEN_PRICE_KEY = 'token_price_per_credit';
+
     public function __construct(protected SinaCreditService $credits)
     {
     }
@@ -42,36 +54,61 @@ class SinaController extends Controller
         abort_unless($this->can($ability), 403, __('messages.forbidden'));
     }
 
-    /** Mitra yang sedang aktif pada sesi (di-bind oleh middleware ResolveTenant). */
-    protected function activeMitra(): ?Mitra
+    /**
+     * Mitra yang sedang dikelola pada halaman ini.
+     * Principal bebas memilih mitra (dari query `mitra`/input `mitra_id`),
+     * sedangkan user mitra selalu terkunci pada mitra miliknya.
+     */
+    protected function resolveMitra(Request $request): ?Mitra
     {
-        return app()->bound('active_mitra') ? app('active_mitra') : null;
+        $user = auth()->user();
+
+        if ($user && ! $user->isPrincipal()) {
+            return Mitra::find($user->mitra_id)
+                ?? (app()->bound('active_mitra') ? app('active_mitra') : null);
+        }
+
+        $id = $request->input('mitra_id') ?? $request->query('mitra');
+        if ($id && $mitra = Mitra::find($id)) {
+            return $mitra;
+        }
+
+        return app()->bound('active_mitra')
+            ? app('active_mitra')
+            : Mitra::orderBy('id')->first();
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorizeAbility('view');
 
-        $mitra = $this->activeMitra();
+        $user = auth()->user();
+        $isPrincipal = $user->isPrincipal();
+        $mitra = $this->resolveMitra($request);
         $wallet = $mitra ? $this->credits->walletFor($mitra) : null;
         $config = $mitra
             ? AiProviderConfig::where('mitra_id', $mitra->id)->orderByDesc('is_default')->first()
             : null;
 
         return view('admin.sina.index', [
-            'mitra'      => $mitra,
-            'wallet'     => $wallet,
-            'config'     => $config,
-            'canUpdate'  => $this->can('update'),
-            'providers'  => $this->providerOptions(),
+            'mitra'          => $mitra,
+            'mitras'         => $isPrincipal ? Mitra::orderBy('name')->get() : collect(),
+            'isPrincipal'    => $isPrincipal,
+            'wallet'         => $wallet,
+            'config'         => $config,
+            'tokenPrice'     => (float) Setting::get(self::TOKEN_PRICE_KEY, 0, 'sina'),
+            'canUpdate'      => $this->can('update'),
+            'canManagePrice' => $isPrincipal && $this->can('update'),
+            'providers'      => $this->providerOptions(),
         ]);
     }
 
-    public function data()
+    /** Riwayat pemakaian kredit (DataTables). */
+    public function data(Request $request)
     {
         $this->authorizeAbility('view');
 
-        $mitra = $this->activeMitra();
+        $mitra = $this->resolveMitra($request);
         $query = AiUsageRecord::query()
             ->when($mitra, fn ($q) => $q->where('mitra_id', $mitra->id), fn ($q) => $q->whereRaw('1 = 0'));
 
@@ -83,10 +120,30 @@ class SinaController extends Controller
             ->toJson();
     }
 
+    /** Riwayat top-up kredit (DataTables). */
+    public function topups(Request $request)
+    {
+        $this->authorizeAbility('view');
+
+        $mitra = $this->resolveMitra($request);
+        $query = AiTopup::query()
+            ->when($mitra, fn ($q) => $q->where('mitra_id', $mitra->id), fn ($q) => $q->whereRaw('1 = 0'));
+
+        return DataTables::eloquent($query)
+            ->addIndexColumn()
+            ->editColumn('created_at', fn ($r) => optional($r->created_at)->format('Y-m-d H:i'))
+            ->editColumn('credits', fn ($r) => number_format((int) $r->credits))
+            ->editColumn('price_per_credit', fn ($r) => 'Rp ' . number_format((float) $r->price_per_credit, 0, ',', '.'))
+            ->editColumn('total_amount', fn ($r) => 'Rp ' . number_format((float) $r->total_amount, 0, ',', '.'))
+            ->rawColumns([])
+            ->toJson();
+    }
+
+    /** Simpan konfigurasi penyedia AI untuk mitra terpilih. */
     public function updateConfig(Request $request)
     {
         $this->authorizeAbility('update');
-        $mitra = $this->activeMitra();
+        $mitra = $this->resolveMitra($request);
         abort_unless($mitra, 404);
 
         $data = $request->validate([
@@ -116,23 +173,55 @@ class SinaController extends Controller
             'is_default' => $request->boolean('is_default'),
         ])->save();
 
-        return back()->with('success', 'Konfigurasi SINA AI berhasil disimpan.');
+        return back()->with('success', 'Konfigurasi EndPoin Penyedia SINA berhasil disimpan.');
     }
 
+    /** Simpan harga token per kredit (global, semua mitra). */
+    public function saveTokenPrice(Request $request)
+    {
+        $this->authorizeAbility('update');
+        abort_unless(auth()->user()->isPrincipal(), 403, __('messages.forbidden'));
+
+        $data = $request->validate([
+            self::TOKEN_PRICE_KEY => ['required', 'numeric', 'min:0'],
+        ]);
+
+        Setting::put(self::TOKEN_PRICE_KEY, $data[self::TOKEN_PRICE_KEY], 'sina');
+
+        return back()->with('success', 'Harga token SINA AI berhasil disimpan.');
+    }
+
+    /** Tambah kredit (top-up) mitra terpilih dan catat riwayatnya. */
     public function topUp(Request $request)
     {
         $this->authorizeAbility('update');
-        $mitra = $this->activeMitra();
+        $mitra = $this->resolveMitra($request);
         abort_unless($mitra, 404);
 
         $data = $request->validate([
             'credits' => ['required', 'integer', 'min:1'],
+            'note'    => ['nullable', 'string', 'max:255'],
         ]);
 
+        $credits = (int) $data['credits'];
+        $price = (float) Setting::get(self::TOKEN_PRICE_KEY, 0, 'sina');
         $wallet = $this->credits->walletFor($mitra);
-        $this->credits->topUp($wallet, (int) $data['credits']);
 
-        return back()->with('success', 'Saldo kredit SINA AI berhasil ditambah.');
+        DB::connection('central')->transaction(function () use ($wallet, $mitra, $credits, $price, $data) {
+            $this->credits->topUp($wallet, $credits);
+
+            AiTopup::create([
+                'mitra_id'         => $mitra->id,
+                'wallet_id'        => $wallet->id,
+                'credits'          => $credits,
+                'price_per_credit' => $price,
+                'total_amount'     => $price * $credits,
+                'note'             => $data['note'] ?? null,
+                'created_by'       => auth()->id(),
+            ]);
+        });
+
+        return back()->with('success', 'Kredit SINA AI berhasil ditambahkan.');
     }
 
     /** Pilihan penyedia AI yang didukung. */

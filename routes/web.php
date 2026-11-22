@@ -79,10 +79,12 @@ Route::middleware(['auth', 'tenant'])
         Route::get('setting-aplikasi', [SettingAppController::class, 'edit'])->name('setting-app.index');
         Route::post('setting-aplikasi', [SettingAppController::class, 'update'])->name('setting-app.update');
 
-        // Integrasi SINA AI (Data Master): konfigurasi, saldo kredit, riwayat, top-up.
+        // Integrasi SINA AI (Data Master): konfigurasi, harga token, saldo kredit, riwayat, top-up.
         Route::get('sina', [SinaController::class, 'index'])->name('sina.index');
         Route::get('sina/data', [SinaController::class, 'data'])->name('sina.data');
+        Route::get('sina/topups', [SinaController::class, 'topups'])->name('sina.topups');
         Route::post('sina/config', [SinaController::class, 'updateConfig'])->name('sina.config');
+        Route::post('sina/token-price', [SinaController::class, 'saveTokenPrice'])->name('sina.token-price');
         Route::post('sina/topup', [SinaController::class, 'topUp'])->name('sina.topup');
 
         // Manajemen menu dinamis (drag & drop)
