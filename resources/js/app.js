@@ -325,6 +325,45 @@ function initImagePreview() {
 
 window.initImagePreview = initImagePreview;
 
+/**
+ * Modal generic (bukan image preview).
+ *   - Pemicu: elemen dengan atribut `data-modal-target="<id-modal>"`
+ *   - Penutup: elemen dengan `data-modal-close` (di dalam modal)
+ *   - Modal terbuka = class `open` pada elemen dengan atribut `data-modal`
+ */
+function initModal() {
+    document.addEventListener('click', (e) => {
+        const openTrigger = e.target.closest('[data-modal-target]');
+        if (openTrigger) {
+            e.preventDefault();
+            const id = openTrigger.dataset.modalTarget;
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('open');
+            return;
+        }
+
+        const closeTrigger = e.target.closest('[data-modal-close]');
+        if (closeTrigger) {
+            e.preventDefault();
+            closeTrigger.closest('[data-modal]')?.classList.remove('open');
+            return;
+        }
+
+        // Klik backdrop (overlay) -> tutup.
+        if (e.target.matches('[data-modal]')) {
+            e.target.classList.remove('open');
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('[data-modal].open').forEach((m) => m.classList.remove('open'));
+        }
+    });
+}
+
+window.initModal = initModal;
+
 // Jalankan inisialisasi. Karena select2 dimuat via dynamic import (await),
 // module ini selesai setelah DOM siap; jadi jalankan langsung bila document
 // sudah loaded, selain itu tunggu DOMContentLoaded. Tambah fallback window.load
@@ -338,6 +377,7 @@ function boot() {
     initMenuSortable();
     initSelect2();
     initImagePreview();
+    initModal();
 }
 
 if (document.readyState === 'loading') {

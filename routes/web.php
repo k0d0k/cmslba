@@ -98,6 +98,7 @@ Route::middleware(['auth', 'tenant'])
 
             // Assign menu + permission CRUD per role
             Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+            Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
             Route::get('roles/{role}/assign', [RoleController::class, 'assign'])->name('roles.assign');
             Route::post('roles/{role}/assign', [RoleController::class, 'saveAssign'])->name('roles.assign.save');
 

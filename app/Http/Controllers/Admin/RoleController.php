@@ -20,7 +20,65 @@ class RoleController extends Controller
         $roles = Role::withCount('users')->orderBy('name')->get();
         $config = config('lbacloud.roles');
 
-        return view('admin.roles.index', compact('roles', 'config'));
+        // Gabungkan meta role custom dari tabel settings (group roles_meta).
+        $customMeta = DB::connection('central')->table('settings')
+            ->where('group', 'roles_meta')
+            ->get()
+            ->mapWithKeys(function ($row) {
+                $name = str_replace('roles_meta.', '', $row->key);
+
+                return [$name => json_decode($row->value, true) ?: []];
+            })->all();
+
+        foreach ($roles as $role) {
+            if (! isset($config[$role->name]) && isset($customMeta[$role->name])) {
+                $config[$role->name] = $customMeta[$role->name];
+            }
+        }
+
+        // Jumlah menu yang di-assign per role.
+        $menuCount = DB::connection('central')->table('role_menu')
+            ->select('role_id', DB::raw('COUNT(*) as total'))
+            ->groupBy('role_id')
+            ->pluck('total', 'role_id')
+            ->all();
+
+        return view('admin.roles.index', compact('roles', 'config', 'menuCount'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100|alpha_dash|unique:roles,name',
+            'label' => 'required|string|max:150',
+            'scope' => 'required|in:principal,mitra',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $role = Role::create([
+            'name' => $validated['name'],
+            'guard_name' => 'web',
+        ]);
+
+        // Simpan meta role (label, scope, description) ke config runtime via cache?
+        // Karena config 'lbacloud.roles' bersifat statis di file, kita simpan
+        // ke tabel roles? Tidak. Spatie Role tidak punya kolom label.
+        // Alternatif: simpan di settings tabel (group roles).
+        DB::connection('central')->table('settings')->updateOrInsert(
+            ['key' => 'roles_meta.' . $role->name, 'group' => 'roles_meta'],
+            [
+                'value' => json_encode([
+                    'label' => $validated['label'],
+                    'scope' => $validated['scope'],
+                    'description' => $validated['description'] ?? null,
+                ]),
+                'updated_at' => now(),
+                'created_at' => now(),
+            ],
+        );
+
+        return redirect()->route('admin.roles.index')
+            ->with('success', 'Role "' . $validated['label'] . '" berhasil ditambahkan.');
     }
 
     public function assign(Role $role)
