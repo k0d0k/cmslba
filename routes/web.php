@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PreferenceController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SinaController;
 use App\Http\Controllers\Admin\SettingAppController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FrontpageController;
@@ -77,6 +78,12 @@ Route::middleware(['auth', 'tenant'])
         // Setting aplikasi (form tunggal): nama, logo, bahasa, telepon, email, alamat, map.
         Route::get('setting-aplikasi', [SettingAppController::class, 'edit'])->name('setting-app.index');
         Route::post('setting-aplikasi', [SettingAppController::class, 'update'])->name('setting-app.update');
+
+        // Integrasi SINA AI (Data Master): konfigurasi, saldo kredit, riwayat, top-up.
+        Route::get('sina', [SinaController::class, 'index'])->name('sina.index');
+        Route::get('sina/data', [SinaController::class, 'data'])->name('sina.data');
+        Route::post('sina/config', [SinaController::class, 'updateConfig'])->name('sina.config');
+        Route::post('sina/topup', [SinaController::class, 'topUp'])->name('sina.topup');
 
         // Manajemen menu dinamis (drag & drop)
         Route::middleware('role:admin_principal')->group(function () {

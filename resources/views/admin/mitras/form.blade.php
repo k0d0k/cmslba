@@ -204,7 +204,7 @@
                                                 <button class="btn btn-secondary btn-sm" type="submit">Aktifkan</button>
                                             </form>
                                         @else
-                                            <form method="POST" action="{{ route('admin.mitras.subscriptions.cancel', [$mitra, $mitraSubscription]) }}" onsubmit="return confirm('Batalkan langganan ini?')">
+                                            <form method="POST" action="{{ route('admin.mitras.subscriptions.cancel', [$mitra, $mitraSubscription]) }}" class="js-confirm" data-title="Batalkan Langganan" data-confirm="Batalkan langganan ini?" data-confirm-text="Ya, Batalkan" data-danger="1">
                                                 @csrf
                                                 <button class="btn btn-secondary btn-sm" type="submit">Batalkan</button>
                                             </form>
@@ -258,7 +258,7 @@
                                         <button type="submit" class="btn btn-secondary btn-sm">Jadikan utama</button>
                                     </form>
                                 @endunless
-                                <form method="POST" action="{{ route('admin.mitras.brands.destroy', [$mitra, $brand]) }}" onsubmit="return confirm('Lepaskan brand ini dari mitra?')">
+                                <form method="POST" action="{{ route('admin.mitras.brands.destroy', [$mitra, $brand]) }}" class="js-confirm" data-title="Lepaskan Brand" data-confirm="Lepaskan brand ini dari mitra?" data-confirm-text="Ya, Lepaskan" data-danger="1">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-secondary btn-sm">Lepaskan</button>

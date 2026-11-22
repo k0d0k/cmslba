@@ -1,12 +1,15 @@
 import './bootstrap';
 import $ from 'jquery';
 import Sortable from 'sortablejs';
+import Swal from 'sweetalert2';
 import { createIcons, icons } from 'lucide';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 import 'datatables.net-responsive-dt/css/responsive.dataTables.css';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 window.$ = window.jQuery = $;
 window.Sortable = Sortable;
+window.Swal = Swal;
 
 /**
  * Ganti elemen <i data-lucide="nama-ikon"> menjadi SVG.
@@ -63,28 +66,72 @@ function initDeletes() {
     document.addEventListener('click', async (e) => {
         const btn = e.target.closest('.js-delete');
         if (!btn) return;
-        if (!confirm('Yakin ingin menghapus data ini?')) return;
 
-        const res = await fetch(btn.dataset.url, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content,
-                'Accept': 'application/json',
-            },
+        const result = await window.Swal.fire({
+            icon: 'warning',
+            title: btn.dataset.title || 'Konfirmasi Hapus',
+            text: btn.dataset.confirm || 'Yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            reverseButtons: true,
+            focusCancel: true,
         });
-        if (res.ok) {
-            window.location.reload();
-        } else {
-            alert('Gagal menghapus data.');
+        if (!result.isConfirmed) return;
+
+        try {
+            const res = await fetch(btn.dataset.url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content,
+                    'Accept': 'application/json',
+                },
+            });
+            if (res.ok) {
+                await window.Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Data berhasil dihapus.',
+                    timer: 1400,
+                    showConfirmButton: false,
+                });
+                window.location.reload();
+            } else {
+                window.Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal menghapus data.' });
+            }
+        } catch (err) {
+            window.Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan saat menghapus data.' });
         }
     });
 }
 
 function initConfirmForms() {
-    document.addEventListener('submit', (e) => {
+    document.addEventListener('submit', async (e) => {
         const form = e.target.closest('form.js-confirm');
         if (!form) return;
-        if (!confirm(form.dataset.confirm || 'Yakin?')) e.preventDefault();
+        // Sudah dikonfirmasi sebelumnya -> lanjutkan submit.
+        if (form.dataset.confirmed === '1') return;
+
+        e.preventDefault();
+        const result = await window.Swal.fire({
+            icon: form.dataset.icon || 'question',
+            title: form.dataset.title || 'Konfirmasi',
+            text: form.dataset.confirm || 'Yakin ingin melanjutkan?',
+            showCancelButton: true,
+            confirmButtonText: form.dataset.confirmText || 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: form.dataset.danger === '1' ? '#dc2626' : undefined,
+            cancelButtonColor: '#64748b',
+            reverseButtons: true,
+            focusCancel: true,
+        });
+
+        if (result.isConfirmed) {
+            form.dataset.confirmed = '1';
+            form.requestSubmit ? form.requestSubmit() : form.submit();
+        }
     });
 }
 

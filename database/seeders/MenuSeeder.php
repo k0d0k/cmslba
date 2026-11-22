@@ -11,7 +11,7 @@ class MenuSeeder extends Seeder
      * Susunan menu admin:
      *   Dashboard
      *   Data Mitra  -> Multi Mitra, Cabang, Pelanggan
-     *   Data Master -> Brand, Registry Modul, Paket Langganan, User
+     *   Data Master -> Brand, Registry Modul, Paket Langganan, User, Integrasi SINA AI
      *   Pengaturan  -> Setting, Menu Dinamis, Role & Akses, CRUD Generator
      *
      * Urutan array sengaja disusun agar parent selalu dibuat sebelum anak.
@@ -71,6 +71,11 @@ class MenuSeeder extends Seeder
                 'key' => 'users', 'icon' => 'user-cog', 'sort' => 3, 'parent' => 'master',
                 'title' => ['id' => 'User', 'en' => 'Users', 'ms' => 'Pengguna'],
                 'route_name' => 'admin.users.index', 'resource' => 'User', 'is_crud' => true,
+            ],
+            [
+                'key' => 'sina_ai', 'icon' => 'brain-circuit', 'sort' => 4, 'parent' => 'master',
+                'title' => ['id' => 'Integrasi SINA AI', 'en' => 'SINA AI Integration', 'ms' => 'Integrasi SINA AI'],
+                'route_name' => 'admin.sina.index',
             ],
 
             // ── Pengaturan (group) ──────────────────────────────────────

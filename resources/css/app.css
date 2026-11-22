@@ -250,3 +250,17 @@ body.sidebar-open #sidebar-backdrop { display: block; }
 
 /* Ikon di dalam tombol topbar */
 .btn svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+
+/* ================= SweetAlert2 (selaraskan dengan tema) ================= */
+.swal2-popup { font-family: var(--font-sans); border-radius: .75rem; }
+.swal2-title { font-size: 1.05rem; font-weight: 600; }
+.swal2-html-container { font-size: .875rem; color: #475569; }
+.swal2-styled.swal2-confirm,
+.swal2-styled.swal2-cancel {
+    border-radius: .5rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    padding: .55rem 1.1rem;
+}
+.swal2-styled.swal2-confirm { background-color: var(--color-primary); box-shadow: none; }
+.swal2-styled.swal2-cancel { background-color: #64748b; }

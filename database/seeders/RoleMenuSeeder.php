@@ -20,6 +20,7 @@ class RoleMenuSeeder extends Seeder
             'brand'     => ['view'],
             'modules'   => ['view'],
             'subscriptions' => ['view'],
+            'sina_ai'   => ['view'],
             'setting_aplikasi' => ['view'],
         ],
         'pemilik_mitra' => [
@@ -29,6 +30,7 @@ class RoleMenuSeeder extends Seeder
             'mitras'    => ['view'],
             'brand'     => ['view'],
             'users'     => ['view', 'create', 'update', 'delete'],
+            'sina_ai'   => ['view', 'update'],
         ],
         'admin_mitra' => [
             'dashboard' => ['view'],
@@ -37,6 +39,7 @@ class RoleMenuSeeder extends Seeder
             'mitras'    => ['view'],
             'brand'     => ['view'],
             'users'     => ['view', 'create', 'update', 'delete'],
+            'sina_ai'   => ['view', 'update'],
         ],
         'staff_admin' => [
             'dashboard' => ['view'],
