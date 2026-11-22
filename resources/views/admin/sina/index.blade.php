@@ -361,14 +361,17 @@
                 } catch (e) {}
                 show(initial);
 
-                // ----- Mitra picker (Select2): otomatis navigasi ke ?mitra=slug saat pilihan berubah -----
+                // ----- Mitra picker (Select2): navigasi ke ?mitra=slug saat pilihan berubah -----
+                // Pakai event native 'change' karena Select2 memicu event asli pada <select>,
+                // jadi tidak bergantung pada timing jQuery/select2 yang dimuat via module async.
                 var picker = document.getElementById('mitra-picker');
-                if (picker && window.jQuery && typeof window.jQuery.fn.select2 === 'function') {
-                    var $sel = window.jQuery('#mitra-select');
-                    $sel.on('change', function () {
-                        var slug = $sel.val();
+                var selEl = document.getElementById('mitra-select');
+                if (picker && selEl) {
+                    selEl.addEventListener('change', function () {
+                        var slug = selEl.value;
                         if (slug) {
-                            var url = picker.action + (picker.action.indexOf('?') > -1 ? '&' : '?') + 'mitra=' + encodeURIComponent(slug);
+                            var sep = picker.action.indexOf('?') > -1 ? '&' : '?';
+                            var url = picker.action + sep + 'mitra=' + encodeURIComponent(slug);
                             window.location.href = url;
                         }
                     });
