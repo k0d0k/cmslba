@@ -76,15 +76,39 @@ class User extends Authenticatable implements FilamentUser
     /** True bila user termasuk level pusat (principal). */
     public function isPrincipal(): bool
     {
-        return $this->hasAnyRole(config('lbacloud.roles')
-            ? collect(config('lbacloud.roles'))->filter(fn ($r) => $r['scope'] === 'principal')->keys()->all()
-            : []);
+        $principalRoles = collect(config('lbacloud.roles'))
+            ->filter(fn ($r) => ($r['scope'] ?? '') === 'principal')
+            ->keys()
+            ->all();
+
+        return $this->hasAnyRole($principalRoles);
     }
 
     /** Nama role pertama — dipakai untuk kolom/select pada menu User. */
     public function getRoleAttribute(): ?string
     {
         return $this->roles->first()?->name;
+    }
+
+    /** Label role pertama (untuk tampilan). Fallback ke nama role. */
+    public function getRoleLabelAttribute(): string
+    {
+        $name = $this->roles->first()?->name;
+        if (! $name) {
+            return '-';
+        }
+
+        return app(\App\Services\RoleService::class)->label($name);
+    }
+
+    /** Nama user + label role (untuk dropdown Akun User di Pelanggan). */
+    public function getNameWithRoleAttribute(): string
+    {
+        $role = $this->role_label;
+
+        return $role && $role !== '-'
+            ? $this->name . ' (' . $role . ')'
+            : $this->name;
     }
 
     public function mitra(): BelongsTo

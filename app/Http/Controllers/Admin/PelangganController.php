@@ -23,7 +23,7 @@ class PelangganController extends BaseCrudController
         ['name' => 'name', 'type' => 'string', 'label' => 'Nama', 'nullable' => false],
         ['name' => 'email', 'type' => 'email', 'label' => 'Email', 'nullable' => true],
         ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
-        ['name' => 'user_id', 'type' => 'relation', 'label' => 'Akun User', 'nullable' => true, 'relation' => ['model' => \App\Models\User::class, 'label' => 'name']],
+        ['name' => 'user_id', 'type' => 'relation', 'label' => 'Akun User', 'nullable' => true, 'relation' => ['model' => \App\Models\User::class, 'label' => 'name_with_role', 'with' => ['roles']]],
         ['name' => 'cabang_id', 'type' => 'relation', 'label' => 'Cabang', 'nullable' => true, 'relation' => ['model' => \App\Models\Tenant\Cabang::class, 'label' => 'name']],
         ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => false],
     ];

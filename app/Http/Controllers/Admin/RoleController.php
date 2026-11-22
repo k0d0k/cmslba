@@ -5,36 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Services\MenuService;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function __construct(protected MenuService $menuService)
-    {
+    public function __construct(
+        protected MenuService $menuService,
+        protected RoleService $roleService,
+    ) {
     }
 
     public function index()
     {
         $roles = Role::withCount('users')->orderBy('name')->get();
-        $config = config('lbacloud.roles');
-
-        // Gabungkan meta role custom dari tabel settings (group roles_meta).
-        $customMeta = DB::connection('central')->table('settings')
-            ->where('group', 'roles_meta')
-            ->get()
-            ->mapWithKeys(function ($row) {
-                $name = str_replace('roles_meta.', '', $row->key);
-
-                return [$name => json_decode($row->value, true) ?: []];
-            })->all();
-
-        foreach ($roles as $role) {
-            if (! isset($config[$role->name]) && isset($customMeta[$role->name])) {
-                $config[$role->name] = $customMeta[$role->name];
-            }
-        }
+        $config = $this->roleService->allMeta();
 
         // Jumlah menu yang di-assign per role.
         $menuCount = DB::connection('central')->table('role_menu')

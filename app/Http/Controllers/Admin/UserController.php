@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
@@ -17,21 +18,14 @@ class UserController extends BaseCrudController
     protected string $title = 'User';
     protected string $menuKey = 'users';
 
-    /** Cache opsi role agar tidak query berulang. */
-    protected ?array $roleOptionsCache = null;
+    public function __construct(protected RoleService $roleService)
+    {
+    }
 
     /** Daftar role yang sudah ada: [nama => label]. */
     protected function roleOptions(): array
     {
-        if ($this->roleOptionsCache !== null) {
-            return $this->roleOptionsCache;
-        }
-
-        return $this->roleOptionsCache = Role::query()
-            ->orderBy('name')
-            ->pluck('name')
-            ->mapWithKeys(fn ($name) => [$name => config("lbacloud.roles.{$name}.label", $name)])
-            ->all();
+        return $this->roleService->labels();
     }
 
     protected function fields(): array

@@ -27,6 +27,11 @@ return [
             'scope'      => 'mitra',
             'description' => 'Administrator mitra, akses data mitra & seluruh cabangnya.',
         ],
+        'user_mitra'        => [
+            'label'      => 'User Mitra',
+            'scope'      => 'mitra',
+            'description' => 'Akun user pelanggan/mitra yang bisa login ke panel mitra.',
+        ],
         'staff_admin'       => [
             'label'      => 'Staff Admin',
             'scope'      => 'mitra',

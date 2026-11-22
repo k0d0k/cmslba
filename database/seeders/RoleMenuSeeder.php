@@ -41,6 +41,10 @@ class RoleMenuSeeder extends Seeder
             'users'     => ['view', 'create', 'update', 'delete'],
             'sina_ai'   => ['view', 'update'],
         ],
+        'user_mitra' => [
+            'dashboard' => ['view'],
+            'pelanggan' => ['view'],
+        ],
         'staff_admin' => [
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'create', 'update'],

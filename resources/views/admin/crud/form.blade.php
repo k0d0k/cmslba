@@ -50,7 +50,12 @@
                         @php
                             $relModel = $f['relation']['model'];
                             $relLabel = $f['relation']['label'] ?? 'name';
-                            $relRows = class_exists($relModel) ? $relModel::query()->get() : collect();
+                            $relWith = $f['relation']['with'] ?? [];
+                            $relQuery = class_exists($relModel) ? $relModel::query() : null;
+                            if ($relQuery && !empty($relWith)) {
+                                $relQuery->with($relWith);
+                            }
+                            $relRows = $relQuery ? $relQuery->get() : collect();
                         @endphp
                         <select name="{{ $name }}" class="form-control">
                             <option value="">-</option>
