@@ -2,18 +2,24 @@
 
 @section('title', 'Multi Mitra')
 
+
 @section('content')
     @php
         $columns = [
-            ['data' => 'name',      'name' => 'name'],
-            ['data' => 'slug',      'name' => 'slug'],
-            ['data' => 'db_name',   'name' => 'db_name'],
-            ['data' => 'brand',     'name' => 'brand'],
-            ['data' => 'langganan', 'name' => 'langganan'],
-            ['data' => 'status',    'name' => 'status'],
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'orderable' => false, 'searchable' => false],
+            ['data' => 'name',        'name' => 'name'],
+            ['data' => 'slug',        'name' => 'slug'],
+            ['data' => 'db_name',     'name' => 'db_name'],
+            ['data' => 'brand',       'name' => 'brand'],
+            ['data' => 'langganan',   'name' => 'langganan'],
+            ['data' => 'status',      'name' => 'status'],
+            ['data' => 'actions',    'name' => 'actions', 'orderable' => false, 'searchable' => false],
         ];
+
         $hasActions = ($canUpdate ?? false) || ($canDelete ?? false);
     @endphp
+
+
 
     <div class="card">
         <div class="card-header flex items-center justify-between">
