@@ -6,10 +6,14 @@ import { createIcons, icons } from 'lucide';
 import 'datatables.net-dt/css/dataTables.dataTables.css';
 import 'datatables.net-responsive-dt/css/responsive.dataTables.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import 'select2/dist/css/select2.min.css';
+import select2 from 'select2';
 
 window.$ = window.jQuery = $;
 window.Sortable = Sortable;
 window.Swal = Swal;
+// Pasangkan select2 ke instance jQuery global.
+select2($);
 
 /**
  * Ganti elemen <i data-lucide="nama-ikon"> menjadi SVG.
@@ -238,6 +242,26 @@ function initMenuSortable() {
     el.querySelectorAll('.submenu').forEach((sub) => make(sub));
 }
 
+function initSelect2(root = document) {
+    if (!window.$ || typeof window.$.fn?.select2 !== 'function') return;
+    root.querySelectorAll('select.js-select2').forEach((el) => {
+        const $el = window.$(el);
+        if ($el.data('select2')) return; // sudah di-init
+        $el.select2({
+            width: '100%',
+            placeholder: el.dataset.placeholder || 'Pilih...',
+            allowClear: el.dataset.allowClear === '1',
+            language: {
+                noResults: () => 'Tidak ada data yang cocok',
+                searching: () => 'Mencari...',
+                inputTooShort: () => 'Ketik untuk mencari',
+            },
+        });
+    });
+}
+
+window.initSelect2 = initSelect2;
+
 document.addEventListener('DOMContentLoaded', () => {
     initIcons();
     initSidebar();
@@ -245,4 +269,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initConfirmForms();
     initDataTables();
     initMenuSortable();
+    initSelect2();
 });

@@ -39,18 +39,17 @@
                 </div>
 
                 @if($isPrincipal)
-                    {{-- Combobox mitra yang bisa dicari; navigasi ke ?mitra=slug (aman, tanpa id) --}}
-                    <form id="mitra-picker" method="GET" action="{{ route('admin.sina.index') }}" class="flex items-center gap-2">
-                        <label class="text-xs text-slate-500" for="mitra-search">Mitra</label>
-                        <input id="mitra-search" list="mitra-list" name="mitra" value="{{ $mitra->slug }}"
-                               class="form-control" style="min-width:240px"
-                               placeholder="Cari mitra..." autocomplete="off">
-                        <datalist id="mitra-list">
+                    {{-- Select2 untuk memilih mitra (bisa dicari); navigasi ke ?mitra=slug --}}
+                    <form id="mitra-picker" method="GET" action="{{ route('admin.sina.index') }}" class="flex items-center gap-2" style="min-width:320px">
+                        <label class="text-xs text-slate-500 whitespace-nowrap" for="mitra-select">Mitra</label>
+                        <select id="mitra-select" name="mitra" class="js-select2" data-placeholder="Cari mitra..." data-allow-clear="0" style="width:100%">
                             @foreach($mitras as $m)
-                                <option value="{{ $m->slug }}" data-name="{{ $m->name }}">{{ $m->name }}</option>
+                                <option value="{{ $m->slug }}" @selected($mitra->id === $m->id)>{{ $m->name }}</option>
                             @endforeach
-                        </datalist>
-                        <button type="submit" class="btn btn-primary btn-sm">Buka</button>
+                        </select>
+                        <noscript>
+                            <button type="submit" class="btn btn-primary btn-sm">Buka</button>
+                        </noscript>
                     </form>
                 @else
                     <span class="badge badge-secondary">{{ $mitra->name }}</span>
@@ -362,26 +361,16 @@
                 } catch (e) {}
                 show(initial);
 
-                // ----- Mitra picker: pastikan input berisi slug, lalu navigasi ke ?mitra=slug -----
+                // ----- Mitra picker (Select2): otomatis navigasi ke ?mitra=slug saat pilihan berubah -----
                 var picker = document.getElementById('mitra-picker');
-                if (picker) {
-                    var input = document.getElementById('mitra-search');
-                    var list = document.getElementById('mitra-list');
-                    var slugToName = {};
-                    Array.prototype.slice.call(list.options).forEach(function (o) { slugToName[o.value] = o.dataset.name; });
-
-                    input.addEventListener('change', function () {
-                        var v = input.value.trim();
-                        // Bila user mengetik nama, cocokkan ke slug.
-                        if (v && !slugToName[v]) {
-                            var found = Object.keys(slugToName).find(function (s) {
-                                return s === v || slugToName[s].toLowerCase() === v.toLowerCase();
-                            });
-                            if (found) { input.value = found; }
+                if (picker && window.jQuery && typeof window.jQuery.fn.select2 === 'function') {
+                    var $sel = window.jQuery('#mitra-select');
+                    $sel.on('change', function () {
+                        var slug = $sel.val();
+                        if (slug) {
+                            var url = picker.action + (picker.action.indexOf('?') > -1 ? '&' : '?') + 'mitra=' + encodeURIComponent(slug);
+                            window.location.href = url;
                         }
-                    });
-                    picker.addEventListener('submit', function () {
-                        input.value = (input.value || '').trim();
                     });
                 }
             })();
