@@ -42,7 +42,7 @@ class AuditTrailController extends Controller
         $this->authorizeAbility('view');
 
         return view('admin.audit.index', [
-            'title'   => 'Jejak Audit',
+            'title'   => __('audit.title'),
             'filters' => [
                 'event' => $request->query('event'),
                 'from'  => $request->query('from'),
@@ -126,19 +126,9 @@ class AuditTrailController extends Controller
         ]);
     }
 
-    /** Opsi jenis kejadian untuk filter. */
+    /** Opsi jenis kejadian untuk filter (mengikuti bahasa aktif). */
     protected function eventOptions(): array
     {
-        return [
-            'login'        => 'Login',
-            'logout'       => 'Logout',
-            'login_failed' => 'Login Gagal',
-            'create'       => 'Tambah Data',
-            'update'       => 'Ubah Data',
-            'delete'       => 'Hapus Data',
-            'view'         => 'Lihat Halaman',
-            'request'      => 'Aksi',
-            'error'        => 'Error',
-        ];
+        return __('audit.events');
     }
 }

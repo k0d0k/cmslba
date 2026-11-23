@@ -42,7 +42,7 @@ class AuthController extends Controller
         if (! Auth::attempt([$field => $credentials['email'], 'password' => $credentials['password']], $request->boolean('remember'))) {
             $this->audit->log([
                 'event'       => 'login_failed',
-                'description' => 'Percobaan login gagal: ' . $credentials['email'],
+                'description' => __('audit.desc_login_failed', ['email' => $credentials['email']]),
                 'user_email'  => $credentials['email'],
                 'status_code' => 422,
             ]);
@@ -59,7 +59,7 @@ class AuthController extends Controller
 
         $this->audit->log([
             'event'       => 'login',
-            'description' => 'Login berhasil: ' . $user->email,
+            'description' => __('audit.desc_login', ['email' => $user->email]),
             'user'        => $user,
             'status_code' => 200,
         ]);
@@ -78,7 +78,7 @@ class AuthController extends Controller
             if (! $mitra || ! $mitra->hasActiveSubscription()) {
                 $this->audit->log([
                     'event'       => 'logout',
-                    'description' => 'Login ditolak: masa langganan mitra tidak aktif (' . $user->email . ')',
+                    'description' => __('audit.desc_login_rejected', ['email' => $user->email]),
                     'user'        => $user,
                     'status_code' => 302,
                 ]);
@@ -101,7 +101,7 @@ class AuthController extends Controller
         if ($user) {
             $this->audit->log([
                 'event'       => 'logout',
-                'description' => 'Logout: ' . $user->email,
+                'description' => __('audit.desc_logout', ['email' => $user->email]),
                 'user'        => $user,
                 'status_code' => 302,
             ]);

@@ -38,21 +38,14 @@ class AuditLog extends Model
         'updated_at' => 'datetime',
     ];
 
-    /** Label jenis kejadian (untuk tampilan). */
+    /** Label jenis kejadian (untuk tampilan, mengikuti bahasa aktif). */
     public function eventLabel(): string
     {
-        return match ($this->event) {
-            'login'        => 'Login',
-            'logout'       => 'Logout',
-            'login_failed' => 'Login Gagal',
-            'create'       => 'Tambah Data',
-            'update'       => 'Ubah Data',
-            'delete'       => 'Hapus Data',
-            'view'         => 'Lihat Halaman',
-            'request'      => 'Aksi',
-            'error'        => 'Error',
-            default        => ucfirst((string) $this->event),
-        };
+        $key = 'audit.events.' . $this->event;
+        $label = __($key);
+
+        // Fallback bila kunci terjemahan tidak ditemukan.
+        return $label === $key ? ucfirst((string) $this->event) : $label;
     }
 
     /** Kelas warna badge per jenis kejadian. */

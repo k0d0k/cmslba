@@ -5,10 +5,10 @@
 @section('content')
     @php
         $columns = [
-            ['data' => 'created_at', 'name' => 'created_at', 'title' => 'Waktu'],
-            ['data' => 'event', 'name' => 'event', 'title' => 'Kejadian'],
-            ['data' => 'user_name', 'name' => 'user_name', 'title' => 'Pengguna'],
-            ['data' => 'description', 'name' => 'description', 'title' => 'Deskripsi'],
+            ['data' => 'created_at', 'name' => 'created_at', 'title' => __('audit.columns.created_at')],
+            ['data' => 'event', 'name' => 'event', 'title' => __('audit.columns.event')],
+            ['data' => 'user_name', 'name' => 'user_name', 'title' => __('audit.columns.user')],
+            ['data' => 'description', 'name' => 'description', 'title' => __('audit.columns.description')],
             ['data' => 'detail', 'name' => 'detail', 'title' => __('common.detail'), 'orderable' => false, 'searchable' => false],
         ];
     @endphp
@@ -21,20 +21,20 @@
         <div class="card-body border-b border-slate-100">
             <form method="GET" action="{{ route('admin.audit.index') }}" class="flex flex-wrap items-end gap-3">
                 <div>
-                    <label class="block text-xs font-medium text-slate-500 mb-1">Kejadian</label>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('audit.columns.event') }}</label>
                     <select name="event" class="form-input">
-                        <option value="">Semua</option>
+                        <option value="">{{ __('audit.all') }}</option>
                         @foreach($events as $key => $label)
                             <option value="{{ $key }}" @selected(($filters['event'] ?? '') === $key)>{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-500 mb-1">Dari</label>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('audit.from') }}</label>
                     <input type="date" name="from" value="{{ $filters['from'] ?? '' }}" class="form-input">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-500 mb-1">Sampai</label>
+                    <label class="block text-xs font-medium text-slate-500 mb-1">{{ __('audit.to') }}</label>
                     <input type="date" name="to" value="{{ $filters['to'] ?? '' }}" class="form-input">
                 </div>
                 <div class="flex items-center gap-2">
@@ -66,33 +66,19 @@
     <div id="audit-detail-modal" class="modal-overlay hidden" data-modal>
         <div class="modal-box w-full max-w-2xl">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
-                <h3 class="text-lg font-semibold text-slate-800">Detail Jejak Audit</h3>
+                <h3 class="text-lg font-semibold text-slate-800">{{ __('audit.modal_title') }}</h3>
                 <button type="button" class="text-slate-400 hover:text-slate-600 text-xl leading-none" data-modal-close>&times;</button>
             </div>
 
-            <div id="audit-detail-loading" class="py-8 text-center text-slate-400">Memuat...</div>
+            <div id="audit-detail-loading" class="py-8 text-center text-slate-400">{{ __('audit.loading') }}</div>
             <dl id="audit-detail-body" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-3 text-sm"></dl>
         </div>
     </div>
 
     <script>
         (function () {
-            const labels = {
-                created_at: 'Waktu',
-                event: 'Kejadian',
-                user: 'Pengguna',
-                mitra_id: 'Mitra',
-                module: 'Modul',
-                description: 'Deskripsi',
-                subject: 'Objek',
-                method: 'Metode',
-                route_name: 'Nama Rute',
-                url: 'URL',
-                status_code: 'Status',
-                ip: 'IP',
-                user_agent: 'User Agent',
-                properties: 'Properti',
-            };
+            const labels = @json(__('audit.fields'));
+            const msgLoadFailed = @json(__('audit.load_failed'));
 
             const escapeHtml = (v) => String(v ?? '')
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -122,7 +108,7 @@
 
                 try {
                     const res = await fetch(btn.dataset.url, { headers: { 'Accept': 'application/json' } });
-                    if (!res.ok) throw new Error('Gagal memuat detail');
+                    if (!res.ok) throw new Error(msgLoadFailed);
                     const d = await res.json();
 
                     let html = '';
