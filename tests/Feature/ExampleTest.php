@@ -7,11 +7,11 @@ use Tests\TestCase;
 class ExampleTest extends TestCase
 {
     /**
-     * Root mengarahkan tamu ke halaman login.
+     * Root menampilkan frontpage publik.
      */
-    public function test_root_redirects_guests_to_login(): void
+    public function test_root_renders_frontpage(): void
     {
-        $this->get('/')->assertRedirect(route('login'));
+        $this->get('/')->assertStatus(200);
     }
 
     /**

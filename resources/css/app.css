@@ -286,3 +286,21 @@ body.sidebar-open #sidebar-backdrop { display: block; }
     max-height: 90vh;
     overflow-y: auto;
 }
+
+/* ================= Frontpage publik ================= */
+.fp-hero { background: linear-gradient(135deg, var(--color-primary), #1c2434); }
+body.tpl-midnight .fp-hero { background: linear-gradient(135deg, #0c1725, #1e293b); }
+body.tpl-emerald .fp-hero { background: linear-gradient(135deg, #059669, #064e3b); }
+
+/* ================= Website builder (editor) ================= */
+.wt-tab {
+    padding: .5rem .9rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: #64748b;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+}
+.wt-tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+.wt-panel { display: none; }
+.wt-panel.active { display: block; }

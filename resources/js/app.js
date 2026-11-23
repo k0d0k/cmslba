@@ -364,6 +364,51 @@ function initModal() {
 
 window.initModal = initModal;
 
+/**
+ * Editor website/frontpage: tab bahasa + baris berulang (layanan/fitur/FAQ/media).
+ * Baris baru dikloning dari <template data-row-template> dengan placeholder
+ * `__INDEX__` diganti nilai unik.
+ */
+function initWebsiteBuilder() {
+    const form = document.getElementById('wt-form');
+    if (!form) return;
+
+    // Tab bahasa.
+    form.querySelectorAll('[data-wt-tab]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const code = btn.dataset.wtTab;
+            form.querySelectorAll('[data-wt-tab]').forEach((b) => b.classList.toggle('active', b === btn));
+            form.querySelectorAll('[data-wt-panel]').forEach((p) => p.classList.toggle('active', p.dataset.wtPanel === code));
+        });
+    });
+
+    // Tambah baris.
+    form.querySelectorAll('[data-repeat-add]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const container = document.getElementById(btn.dataset.repeatAdd);
+            const tpl = container?.querySelector('template[data-row-template]');
+            const rows = container?.querySelector('[data-repeat-rows]');
+            if (!tpl || !rows) return;
+
+            const idx = 'r' + Date.now() + Math.floor(Math.random() * 1000);
+            const wrap = document.createElement('div');
+            wrap.innerHTML = tpl.innerHTML.replace(/__INDEX__/g, idx).trim();
+            rows.appendChild(wrap.firstElementChild);
+            if (window.initIcons) window.initIcons(rows);
+        });
+    });
+
+    // Hapus baris (delegasi).
+    form.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-repeat-remove]');
+        if (btn) {
+            btn.closest('[data-repeat-row]')?.remove();
+        }
+    });
+}
+
+window.initWebsiteBuilder = initWebsiteBuilder;
+
 // Jalankan inisialisasi. Karena select2 dimuat via dynamic import (await),
 // module ini selesai setelah DOM siap; jadi jalankan langsung bila document
 // sudah loaded, selain itu tunggu DOMContentLoaded. Tambah fallback window.load
@@ -378,6 +423,7 @@ function boot() {
     initSelect2();
     initImagePreview();
     initModal();
+    initWebsiteBuilder();
 }
 
 if (document.readyState === 'loading') {

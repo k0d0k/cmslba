@@ -46,6 +46,11 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'Pelanggan', 'en' => 'Customers', 'ms' => 'Pelanggan'],
                 'route_name' => 'admin.pelanggan.index', 'resource' => 'Pelanggan', 'is_crud' => true,
             ],
+            [
+                'key' => 'mitra_website', 'icon' => 'globe', 'sort' => 3, 'parent' => 'mitra',
+                'title' => ['id' => 'Website Mitra', 'en' => 'Partner Website', 'ms' => 'Laman Rakan'],
+                'route_name' => 'admin.mitra_website.index',
+            ],
 
             // ── Data Master (group) ─────────────────────────────────────
             [
@@ -81,6 +86,11 @@ class MenuSeeder extends Seeder
                 'key' => 'payment_providers', 'icon' => 'wallet', 'sort' => 5, 'parent' => 'master',
                 'title' => ['id' => 'Metode Pembayaran', 'en' => 'Payment Methods', 'ms' => 'Kaedah Pembayaran'],
                 'route_name' => 'admin.payment_providers.index', 'resource' => 'PaymentProvider', 'is_crud' => true,
+            ],
+            [
+                'key' => 'website', 'icon' => 'globe', 'sort' => 6, 'parent' => 'master',
+                'title' => ['id' => 'Website / Frontpage', 'en' => 'Website / Frontpage', 'ms' => 'Laman / Frontpage'],
+                'route_name' => 'admin.website.index',
             ],
 
             // ── Pengaturan (group) ──────────────────────────────────────

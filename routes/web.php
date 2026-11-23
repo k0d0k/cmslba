@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PreferenceController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SinaController;
 use App\Http\Controllers\Admin\SettingAppController;
+use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\FrontpageController;
 use App\Http\Controllers\MitraRegistrationController;
@@ -20,11 +21,8 @@ use Illuminate\Support\Facades\Route;
 | Publik
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('admin.dashboard')
-        : redirect()->route('login');
-});
+// Frontpage platform (landing page publik).
+Route::get('/', [FrontpageController::class, 'platform'])->name('home');
 
 Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('login/expired', [AuthController::class, 'showExpired'])->name('login.expired');
@@ -80,6 +78,14 @@ Route::middleware(['auth', 'tenant'])
         Route::get('setting-aplikasi', [SettingAppController::class, 'edit'])->name('setting-app.index');
         Route::post('setting-aplikasi', [SettingAppController::class, 'update'])->name('setting-app.update');
 
+        // Kelola website/frontpage platform (Principal).
+        Route::get('website', [WebsiteController::class, 'platform'])->name('website.index');
+        Route::post('website', [WebsiteController::class, 'savePlatform'])->name('website.save');
+
+        // Kelola website/frontpage mitra aktif.
+        Route::get('mitra-website', [WebsiteController::class, 'mitra'])->name('mitra_website.index');
+        Route::post('mitra-website', [WebsiteController::class, 'saveMitra'])->name('mitra_website.save');
+
         // Integrasi SINA AI (Data Master): konfigurasi, harga token, saldo kredit, riwayat, top-up.
         Route::get('sina', [SinaController::class, 'index'])->name('sina.index');
         Route::get('sina/data', [SinaController::class, 'data'])->name('sina.data');
@@ -114,6 +120,6 @@ Route::middleware(['auth', 'tenant'])
 | Frontpage mitra: http://domain/{nama-mitra}   (HARUS paling bawah)
 |--------------------------------------------------------------------------
 */
-Route::get('{mitraSlug}', [FrontpageController::class, 'show'])
+Route::get('{mitraSlug}', [FrontpageController::class, 'mitra'])
     ->where('mitraSlug', '[a-z0-9\-]+')
     ->name('frontpage.mitra');
