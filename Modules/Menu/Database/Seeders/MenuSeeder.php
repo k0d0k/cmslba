@@ -10,9 +10,13 @@ class MenuSeeder extends Seeder
     /**
      * Susunan menu admin:
      *   Dashboard
-     *   Data Mitra  -> Multi Mitra, Cabang, Pelanggan
-     *   Data Master -> Brand, Registry Modul, Paket Langganan, User, Integrasi SINA AI
-     *   Pengaturan  -> Setting, Menu Dinamis, Role & Akses, CRUD Generator
+     *   Data Mitra   -> Multi Mitra, Cabang, Pelanggan
+     *   Data Master  -> Brand, Registry Modul, Paket Langganan, User, Integrasi SINA AI
+     *   Modul        -> Janji Temu (appointments)
+     *   Konsultasi   -> Konsultasi (consultations)
+     *   Perdagangan  -> Produk, Kategori Produk, Pesanan, Invoice, Transaksi Pembayaran, Stok Inventaris (commerce)
+     *   LBA          -> Pemeriksaan, Asesmen, Gambar, Laporan, Review (lba)
+     *   Pengaturan   -> Setting, Menu Dinamis, Role & Akses, CRUD Generator
      *
      * Urutan array sengaja disusun agar parent selalu dibuat sebelum anak.
      */
@@ -105,9 +109,99 @@ class MenuSeeder extends Seeder
                 'module_key' => 'appointments', 'is_crud' => true,
             ],
 
+            // ── Consultations (group) ───────────────────────────────────
+            [
+                'key' => 'consultations_group', 'icon' => 'messages-square', 'sort' => 4, 'type' => 'group',
+                'title' => ['id' => 'Konsultasi', 'en' => 'Consultations', 'ms' => 'Konsultasi'],
+            ],
+            [
+                'key' => 'consultations', 'icon' => 'message-square', 'sort' => 0, 'parent' => 'consultations_group',
+                'title' => ['id' => 'Konsultasi', 'en' => 'Consultations', 'ms' => 'Konsultasi'],
+                'route_name' => 'admin.consultations.index', 'resource' => 'Consultation',
+                'module_key' => 'consultations', 'is_crud' => true,
+            ],
+
+            // ── Commerce (group) ────────────────────────────────────────
+            [
+                'key' => 'commerce_group', 'icon' => 'store', 'sort' => 5, 'type' => 'group',
+                'title' => ['id' => 'Perdagangan', 'en' => 'Commerce', 'ms' => 'Perdagangan'],
+            ],
+            [
+                'key' => 'products', 'icon' => 'package', 'sort' => 0, 'parent' => 'commerce_group',
+                'title' => ['id' => 'Produk', 'en' => 'Products', 'ms' => 'Produk'],
+                'route_name' => 'admin.products.index', 'resource' => 'Product',
+                'module_key' => 'commerce', 'is_crud' => true,
+            ],
+            [
+                'key' => 'product_categories', 'icon' => 'tags', 'sort' => 1, 'parent' => 'commerce_group',
+                'title' => ['id' => 'Kategori Produk', 'en' => 'Product Categories', 'ms' => 'Kategori Produk'],
+                'route_name' => 'admin.product_categories.index', 'resource' => 'ProductCategory',
+                'module_key' => 'commerce', 'is_crud' => true,
+            ],
+            [
+                'key' => 'orders', 'icon' => 'receipt', 'sort' => 2, 'parent' => 'commerce_group',
+                'title' => ['id' => 'Pesanan', 'en' => 'Orders', 'ms' => 'Pesanan'],
+                'route_name' => 'admin.orders.index', 'resource' => 'Order',
+                'module_key' => 'commerce', 'is_crud' => true,
+            ],
+            [
+                'key' => 'invoices', 'icon' => 'file-text', 'sort' => 3, 'parent' => 'commerce_group',
+                'title' => ['id' => 'Invoice', 'en' => 'Invoices', 'ms' => 'Invois'],
+                'route_name' => 'admin.invoices.index', 'resource' => 'Invoice',
+                'module_key' => 'commerce', 'is_crud' => true,
+            ],
+            [
+                'key' => 'payment_transactions', 'icon' => 'credit-card', 'sort' => 4, 'parent' => 'commerce_group',
+                'title' => ['id' => 'Transaksi Pembayaran', 'en' => 'Payment Transactions', 'ms' => 'Transaksi Pembayaran'],
+                'route_name' => 'admin.payment_transactions.index', 'resource' => 'PaymentTransaction',
+                'module_key' => 'commerce', 'is_crud' => true,
+            ],
+            [
+                'key' => 'inventory_stocks', 'icon' => 'boxes', 'sort' => 5, 'parent' => 'commerce_group',
+                'title' => ['id' => 'Stok Inventaris', 'en' => 'Inventory Stocks', 'ms' => 'Stok Inventori'],
+                'route_name' => 'admin.inventory_stocks.index', 'resource' => 'InventoryStock',
+                'module_key' => 'commerce', 'is_crud' => true,
+            ],
+
+            // ── LBA (group) ─────────────────────────────────────────────
+            [
+                'key' => 'lba_group', 'icon' => 'microscope', 'sort' => 6, 'type' => 'group',
+                'title' => ['id' => 'LBA', 'en' => 'LBA', 'ms' => 'LBA'],
+            ],
+            [
+                'key' => 'lba_examinations', 'icon' => 'clipboard-list', 'sort' => 0, 'parent' => 'lba_group',
+                'title' => ['id' => 'Pemeriksaan LBA', 'en' => 'LBA Examinations', 'ms' => 'Pemeriksaan LBA'],
+                'route_name' => 'admin.lba_examinations.index', 'resource' => 'LbaExamination',
+                'module_key' => 'lba', 'is_crud' => true,
+            ],
+            [
+                'key' => 'lba_assessments', 'icon' => 'clipboard-check', 'sort' => 1, 'parent' => 'lba_group',
+                'title' => ['id' => 'Asesmen LBA', 'en' => 'LBA Assessments', 'ms' => 'Penilaian LBA'],
+                'route_name' => 'admin.lba_assessments.index', 'resource' => 'LbaAssessment',
+                'module_key' => 'lba', 'is_crud' => true,
+            ],
+            [
+                'key' => 'lba_images', 'icon' => 'image', 'sort' => 2, 'parent' => 'lba_group',
+                'title' => ['id' => 'Gambar LBA', 'en' => 'LBA Images', 'ms' => 'Imej LBA'],
+                'route_name' => 'admin.lba_images.index', 'resource' => 'LbaImage',
+                'module_key' => 'lba', 'is_crud' => true,
+            ],
+            [
+                'key' => 'lba_report_versions', 'icon' => 'file-badge', 'sort' => 3, 'parent' => 'lba_group',
+                'title' => ['id' => 'Laporan LBA', 'en' => 'LBA Reports', 'ms' => 'Laporan LBA'],
+                'route_name' => 'admin.lba_report_versions.index', 'resource' => 'LbaReportVersion',
+                'module_key' => 'lba', 'is_crud' => true,
+            ],
+            [
+                'key' => 'lba_reviews', 'icon' => 'check-check', 'sort' => 4, 'parent' => 'lba_group',
+                'title' => ['id' => 'Review LBA', 'en' => 'LBA Reviews', 'ms' => 'Semakan LBA'],
+                'route_name' => 'admin.lba_reviews.index', 'resource' => 'LbaReview',
+                'module_key' => 'lba', 'is_crud' => true,
+            ],
+
             // ── Pengaturan (group) ──────────────────────────────────────
             [
-                'key' => 'pengaturan', 'icon' => 'settings', 'sort' => 4, 'type' => 'group',
+                'key' => 'pengaturan', 'icon' => 'settings', 'sort' => 7, 'type' => 'group',
                 'title' => ['id' => 'Pengaturan', 'en' => 'Settings', 'ms' => 'Tetapan'],
             ],
             [

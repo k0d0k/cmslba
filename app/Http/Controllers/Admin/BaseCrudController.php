@@ -80,10 +80,15 @@ abstract class BaseCrudController extends Controller
     {
         $query = ($this->model)::query();
 
+        // Eager-load relasi. Nama relasi diturunkan dari nama field (mis. `patient_id`
+        // -> `patient()`), sama seperti saat kolom relasi ditampilkan di data().
         $relations = collect($this->fields())
-            ->pluck('relation.model')
-            ->filter()
-            ->map(fn ($m) => class_basename($m))
+            ->filter(fn ($f) => ($f['type'] ?? null) === 'relation'
+                && ! empty($f['relation']['model'])
+                && isset($f['name']))
+            ->map(fn ($f) => Str::of($f['name'])->replace('_id', '')->camel()->toString())
+            ->unique()
+            ->values()
             ->all();
         if ($relations) {
             $query->with($relations);
