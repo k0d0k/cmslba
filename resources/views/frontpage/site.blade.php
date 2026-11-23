@@ -7,6 +7,15 @@
         $seo = $content['seo'] ?? [];
         $seoTitle = $seo['title'] ?: $brandName;
         $seoDesc  = $seo['description'] ?? '';
+        $hero     = $content['hero'] ?? [];
+        $heroImage = $hero['image'] ?? '';
+        $services = $content['services'] ?? [];
+        $features = $content['features'] ?? [];
+        $faqs     = $content['faq'] ?? [];
+        $contact  = array_filter($content['contact'] ?? []);
+        $tagClass = fn ($tag) => (preg_match('/tersedia|available/i', (string) $tag)) ? 'fp-badge--available' : 'fp-badge--planned';
+        $heroBtnUrl  = ! empty($hero['button_url']) ? $hero['button_url'] : route('login');
+        $heroBtnText = ! empty($hero['button_text']) ? $hero['button_text'] : __('common.login');
     @endphp
     <title>{{ $seoTitle }}</title>
     @if($seoDesc)<meta name="description" content="{{ $seoDesc }}">@endif
@@ -15,7 +24,7 @@
     @if(!empty($seo['og_image']))<meta property="og:image" content="{{ $seo['og_image'] }}">@endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="tpl-{{ $template }} bg-white text-slate-800">
+<body class="tpl-{{ $template }} fp-body">
 
     @if($isPreview)
         <div class="bg-amber-100 text-amber-900 text-center text-xs py-1.5 px-4">
@@ -23,138 +32,205 @@
         </div>
     @endif
 
-    {{-- ============ Nav ============ --}}
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center gap-4">
-            <a href="{{ url('/') }}" class="flex items-center gap-2 font-semibold">
+    {{-- ============ Header ============ --}}
+    <header class="fp-header">
+        <div class="fp-container flex h-16 items-center justify-between gap-4">
+            <a href="{{ url('/') }}" class="fp-brand">
                 @if($mitra?->logo)
                     <img src="{{ \Illuminate\Support\Facades\Storage::url($mitra->logo) }}" alt="{{ $brandName }}" class="w-8 h-8 rounded-lg object-contain">
                 @else
-                    <span class="w-8 h-8 rounded-lg grid place-items-center font-bold text-white" style="background: var(--color-primary)">{{ strtoupper(substr($brandName, 0, 1)) }}</span>
+                    <span class="fp-brand__mark">{{ strtoupper(substr($brandName, 0, 1)) }}</span>
                 @endif
-                <span>{{ $brandName }}</span>
+                <span class="fp-brand__name">{{ $brandName }}</span>
             </a>
 
-            <nav class="hidden md:flex items-center gap-6 text-sm text-slate-600 ml-6">
-                @if(!empty($content['services']))<a href="#layanan" class="hover:text-slate-900">Layanan</a>@endif
-                @if(!empty($content['features']))<a href="#fitur" class="hover:text-slate-900">Fitur</a>@endif
-                @if(!empty($content['faq']))<a href="#faq" class="hover:text-slate-900">FAQ</a>@endif
-                @if(array_filter($content['contact'] ?? []))<a href="#kontak" class="hover:text-slate-900">Kontak</a>@endif
+            <nav class="hidden items-center gap-8 lg:flex">
+                @if($services)<a href="#layanan" class="fp-nav-link">Layanan</a>@endif
+                @if($features)<a href="#fitur" class="fp-nav-link">Fitur</a>@endif
+                @if($faqs)<a href="#faq" class="fp-nav-link">FAQ</a>@endif
+                @if($contact)<a href="#kontak" class="fp-nav-link">Kontak</a>@endif
             </nav>
 
-            <div class="ml-auto flex items-center gap-2">
+            <div class="hidden items-center gap-3 lg:flex">
                 @auth
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Dashboard</a>
+                    <a href="{{ route('admin.dashboard') }}" class="fp-btn fp-btn--primary">{{ __('common.dashboard') }}</a>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-secondary">{{ __('common.login') }}</a>
-                    <a href="{{ route('mitra.register') }}" class="btn btn-primary">{{ __('common.register') }}</a>
+                    <a href="{{ route('login') }}" class="fp-btn fp-btn--outline">{{ __('common.login') }}</a>
+                    <a href="{{ route('mitra.register') }}" class="fp-btn fp-btn--primary">{{ __('common.register') }}</a>
                 @endauth
             </div>
+
+            {{-- Menu mobile --}}
+            <details class="relative lg:hidden">
+                <summary class="fp-btn fp-btn--outline fp-btn--sm cursor-pointer list-none">Menu</summary>
+                <nav class="absolute right-0 top-[calc(100%+0.5rem)] w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl z-50">
+                    @if($services)<a href="#layanan" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Layanan</a>@endif
+                    @if($features)<a href="#fitur" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Fitur</a>@endif
+                    @if($faqs)<a href="#faq" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">FAQ</a>@endif
+                    @if($contact)<a href="#kontak" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Kontak</a>@endif
+                    <div class="my-2 border-t border-slate-100"></div>
+                    @auth
+                        <a href="{{ route('admin.dashboard') }}" class="fp-btn fp-btn--primary mb-1 w-full">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="fp-btn fp-btn--outline mb-1 w-full">{{ __('common.login') }}</a>
+                        <a href="{{ route('mitra.register') }}" class="fp-btn fp-btn--primary w-full">{{ __('common.register') }}</a>
+                    @endauth
+                </nav>
+            </details>
         </div>
     </header>
 
-    {{-- ============ Hero ============ --}}
-    @php $hero = $content['hero'] ?? []; @endphp
-    <section class="fp-hero text-white">
-        <div class="max-w-6xl mx-auto px-4 py-20 text-center">
-            @if(!empty($hero['eyebrow']))
-                <div class="text-xs sm:text-sm uppercase tracking-widest opacity-80 mb-3">{{ $hero['eyebrow'] }}</div>
-            @endif
-            <h1 class="text-3xl sm:text-5xl font-bold leading-tight max-w-3xl mx-auto">{{ $hero['title'] ?? '' }}</h1>
-            @if(!empty($hero['subtitle']))
-                <p class="max-w-2xl mx-auto mt-5 opacity-90 text-sm sm:text-base">{{ $hero['subtitle'] }}</p>
-            @endif
-            <div class="flex flex-wrap gap-3 justify-center mt-8">
-                @php
-                    $btnUrl = !empty($hero['button_url']) ? $hero['button_url'] : route('login');
-                    $btnText = !empty($hero['button_text']) ? $hero['button_text'] : __('common.login');
-                @endphp
-                <a href="{{ $btnUrl }}" class="btn" style="background:#fff; color: var(--color-primary)">{{ $btnText }}</a>
-                <a href="{{ route('mitra.register') }}" class="btn" style="background: rgba(255,255,255,.15); color:#fff;">{{ __('common.register') }}</a>
+    <main>
+        {{-- ============ Hero ============ --}}
+        <section class="fp-container pt-12 sm:pt-16 lg:pt-20">
+            <div class="fp-hero-panel {{ $heroImage ? 'has-image' : '' }} px-6 py-14 sm:px-10 sm:py-16 lg:px-16 lg:py-24"
+                 @if($heroImage) style="background-image:url('{{ $heroImage }}')" @endif>
+                <div class="relative z-10 max-w-3xl">
+                    @if(!empty($hero['eyebrow']))
+                        <p class="fp-eyebrow !text-[var(--fp-mint)]">{{ $hero['eyebrow'] }}</p>
+                    @endif
+                    <h1 class="mt-4 text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">{{ $hero['title'] ?? '' }}</h1>
+                    @if(!empty($hero['subtitle']))
+                        <p class="mt-5 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{{ $hero['subtitle'] }}</p>
+                    @endif
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="{{ $heroBtnUrl }}" class="fp-btn fp-btn--primary">{{ $heroBtnText }}</a>
+                        @guest
+                            <a href="{{ route('mitra.register') }}" class="fp-btn fp-btn--light">{{ __('common.register') }}</a>
+                        @endguest
+                    </div>
+                    @if($features)
+                        <ul class="mt-10 grid gap-x-6 gap-y-3 text-sm text-white/70 sm:grid-cols-2">
+                            @foreach(array_slice($features, 0, 4) as $f)
+                                <li class="flex items-start gap-2.5">
+                                    <span class="fp-dot"></span>
+                                    <span>{{ $f['title'] ?? '' }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
             </div>
-        </div>
-    </section>
-
-    <main class="max-w-6xl mx-auto px-4">
+        </section>
 
         {{-- ============ Layanan ============ --}}
-        @if(!empty($content['services']))
-            <section id="layanan" class="py-16">
-                <h2 class="text-2xl font-bold text-center">Layanan</h2>
-                <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 mt-8">
-                    @foreach($content['services'] as $item)
-                        <div class="card p-6">
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-semibold text-lg">{{ $item['title'] ?? '' }}</h3>
-                                @if(!empty($item['tag']))<span class="badge badge-secondary">{{ $item['tag'] }}</span>@endif
-                            </div>
-                            <p class="text-sm text-slate-600 mt-2">{{ $item['description'] ?? '' }}</p>
-                        </div>
-                    @endforeach
+        @if($services)
+            <section id="layanan" class="fp-section">
+                <div class="fp-container">
+                    <div class="fp-reveal max-w-2xl">
+                        <p class="fp-eyebrow">Platform</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Layanan</h2>
+                        @if(!empty($hero['subtitle']))
+                            <p class="mt-4 text-base leading-relaxed">{{ $hero['subtitle'] }}</p>
+                        @endif
+                    </div>
+                    <div class="mt-10 grid gap-6 md:grid-cols-3">
+                        @foreach($services as $item)
+                            <article class="fp-card fp-reveal">
+                                <div class="flex items-center justify-between gap-3">
+                                    <h3 class="text-lg font-semibold text-[var(--fp-navy)]">{{ $item['title'] ?? '' }}</h3>
+                                    @if(!empty($item['tag']))
+                                        <span class="fp-badge {{ $tagClass($item['tag']) }}">{{ $item['tag'] }}</span>
+                                    @endif
+                                </div>
+                                <p class="text-sm leading-relaxed">{{ $item['description'] ?? '' }}</p>
+                            </article>
+                        @endforeach
+                    </div>
                 </div>
             </section>
         @endif
 
         {{-- ============ Fitur ============ --}}
-        @if(!empty($content['features']))
-            <section id="fitur" class="py-16 border-t border-slate-100">
-                <h2 class="text-2xl font-bold text-center">Fitur</h2>
-                <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mt-8">
-                    @foreach($content['features'] as $item)
-                        <div class="p-5 rounded-xl bg-slate-50 border border-slate-100">
-                            <h3 class="font-semibold">{{ $item['title'] ?? '' }}</h3>
-                            <p class="text-sm text-slate-600 mt-2">{{ $item['description'] ?? '' }}</p>
-                        </div>
-                    @endforeach
+        @if($features)
+            <section id="fitur" class="fp-section border-t border-[var(--fp-line)] bg-white">
+                <div class="fp-container">
+                    <div class="fp-reveal max-w-2xl">
+                        <p class="fp-eyebrow">Kemampuan</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Fitur</h2>
+                    </div>
+                    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        @foreach($features as $i => $item)
+                            <article class="fp-card fp-reveal">
+                                <span class="fp-num">{{ $i + 1 }}</span>
+                                <h3 class="text-base font-semibold text-[var(--fp-navy)]">{{ $item['title'] ?? '' }}</h3>
+                                <p class="text-sm leading-relaxed">{{ $item['description'] ?? '' }}</p>
+                            </article>
+                        @endforeach
+                    </div>
                 </div>
             </section>
         @endif
 
-        {{-- ============ Media ============ --}}
-        @if(!empty($media))
-            <section class="py-16 border-t border-slate-100">
-                <h2 class="text-2xl font-bold text-center">Galeri</h2>
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-8">
-                    @foreach($media as $m)
-                        <figure class="rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
-                            <img src="{{ $m['url'] }}" alt="{{ $m['alt'] ?? '' }}" class="w-full h-48 object-cover">
-                        </figure>
-                    @endforeach
+        {{-- ============ Galeri ============ --}}
+        @if($media)
+            <section class="fp-section">
+                <div class="fp-container">
+                    <div class="fp-reveal max-w-2xl">
+                        <p class="fp-eyebrow">Media</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Galeri</h2>
+                    </div>
+                    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($media as $m)
+                            <figure class="overflow-hidden rounded-xl border border-[var(--fp-line)] bg-white">
+                                <img src="{{ $m['url'] }}" alt="{{ $m['alt'] ?? '' }}" class="h-52 w-full object-cover">
+                            </figure>
+                        @endforeach
+                    </div>
                 </div>
             </section>
         @endif
 
         {{-- ============ FAQ ============ --}}
-        @if(!empty($content['faq']))
-            <section id="faq" class="py-16 border-t border-slate-100">
-                <h2 class="text-2xl font-bold text-center">FAQ</h2>
-                <div class="max-w-3xl mx-auto mt-8 space-y-3">
-                    @foreach($content['faq'] as $item)
-                        <details class="card p-5">
-                            <summary class="font-semibold cursor-pointer">{{ $item['question'] ?? '' }}</summary>
-                            <p class="text-sm text-slate-600 mt-2">{{ $item['answer'] ?? '' }}</p>
-                        </details>
-                    @endforeach
+        @if($faqs)
+            <section id="faq" class="fp-section border-t border-[var(--fp-line)] bg-white">
+                <div class="fp-container">
+                    <div class="fp-reveal max-w-2xl">
+                        <p class="fp-eyebrow">Pertanyaan</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">FAQ</h2>
+                    </div>
+                    <div class="mx-auto mt-10 max-w-3xl space-y-3">
+                        @foreach($faqs as $item)
+                            <details class="fp-faq">
+                                <summary class="flex items-center justify-between gap-4">
+                                    <span>{{ $item['question'] ?? '' }}</span>
+                                    <span class="text-[var(--fp-mist)]">+</span>
+                                </summary>
+                                <p class="mt-3 text-sm leading-relaxed">{{ $item['answer'] ?? '' }}</p>
+                            </details>
+                        @endforeach
+                    </div>
                 </div>
             </section>
         @endif
 
         {{-- ============ Kontak ============ --}}
-        @php $contact = array_filter($content['contact'] ?? []); @endphp
         @if($contact)
-            <section id="kontak" class="py-16 border-t border-slate-100">
-                <h2 class="text-2xl font-bold text-center">Kontak</h2>
-                <div class="max-w-xl mx-auto mt-6 text-sm text-slate-600 space-y-2 text-center">
-                    @if(!empty($contact['email']))<div>Email: <a class="underline" href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a></div>@endif
-                    @if(!empty($contact['phone']))<div>Telepon: {{ $contact['phone'] }}</div>@endif
-                    @if(!empty($contact['address']))<div>{{ $contact['address'] }}</div>@endif
+            <section id="kontak" class="fp-section">
+                <div class="fp-container">
+                    <div class="fp-hero-panel px-6 py-12 sm:px-10">
+                        <div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <p class="fp-eyebrow !text-[var(--fp-mint)]">Hubungi</p>
+                                <h2 class="mt-2 text-2xl font-semibold text-white sm:text-3xl">Kontak</h2>
+                            </div>
+                            <div class="text-sm text-white/80 space-y-1">
+                                @if(!empty($contact['email']))<div>Email: <a class="underline" href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a></div>@endif
+                                @if(!empty($contact['phone']))<div>Telepon: {{ $contact['phone'] }}</div>@endif
+                                @if(!empty($contact['address']))<div>{{ $contact['address'] }}</div>@endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         @endif
     </main>
 
-    <footer class="border-t border-slate-200 py-8 text-center text-xs text-slate-400">
-        &copy; {{ date('Y') }} {{ $brandName }} &middot; {{ config('app.name') }}
+    <footer class="border-t border-[var(--fp-line)] bg-white">
+        <div class="fp-container flex flex-col items-center justify-between gap-3 py-8 text-xs text-[var(--fp-mist)] sm:flex-row">
+            <span>&copy; {{ date('Y') }} {{ $brandName }}. All rights reserved.</span>
+            <span>{{ config('app.name') }}</span>
+        </div>
     </footer>
 </body>
 </html>

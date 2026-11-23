@@ -18,13 +18,16 @@ class WebsiteService
         ];
     }
 
-    /** Pilihan template tampilan frontpage. */
+    /** Pilihan template tampilan frontpage (warna soft, elegant, kekinian). */
     public static function templates(): array
     {
         return [
-            'default'  => 'Klinis (Teal)',
-            'midnight' => 'Midnight (Navy)',
-            'emerald'  => 'Emerald (Hijau)',
+            'default'  => 'Teal Klinis (bawaan)',
+            'sage'     => 'Sage Soft',
+            'sand'     => 'Sand Elegant',
+            'lavender' => 'Lavender Modern',
+            'sky'      => 'Sky Calm',
+            'rose'     => 'Rose Elegant',
         ];
     }
 
@@ -38,6 +41,7 @@ class WebsiteService
                 'subtitle'    => '',
                 'button_text' => '',
                 'button_url'  => '',
+                'image'       => '',
             ],
             'services' => [],
             'features' => [],

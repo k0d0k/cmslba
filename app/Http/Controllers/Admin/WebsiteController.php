@@ -140,6 +140,12 @@ class WebsiteController extends Controller
         foreach (array_keys(WebsiteService::locales()) as $code) {
             $in = $request->input("content.$code", []);
 
+            // Gambar hero: utamakan berkas terunggah, jika tidak pakai URL teks.
+            $heroImage = (string) ($in['hero']['image'] ?? '');
+            if ($file = $request->file("content.$code.hero.image_file")) {
+                $heroImage = Storage::url($file->store('uploads/website', 'public'));
+            }
+
             $locales[$code] = [
                 'hero' => [
                     'eyebrow'     => (string) ($in['hero']['eyebrow'] ?? ''),
@@ -147,6 +153,7 @@ class WebsiteController extends Controller
                     'subtitle'    => (string) ($in['hero']['subtitle'] ?? ''),
                     'button_text' => (string) ($in['hero']['button_text'] ?? ''),
                     'button_url'  => (string) ($in['hero']['button_url'] ?? ''),
+                    'image'       => $heroImage,
                 ],
                 'services' => $this->cleanRows($in['services'] ?? [], ['title', 'description', 'tag']),
                 'features' => $this->cleanRows($in['features'] ?? [], ['title', 'description']),

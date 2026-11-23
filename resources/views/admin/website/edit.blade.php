@@ -86,6 +86,18 @@
                                         <label class="form-label">URL tombol</label>
                                         <input type="text" name="content[{{ $code }}][hero][button_url]" value="{{ $d['hero']['button_url'] }}" class="{{ $field }}">
                                     </div>
+                                    <div class="sm:col-span-2">
+                                        <label class="form-label">Gambar hero (URL)</label>
+                                        <input type="text" name="content[{{ $code }}][hero][image]" value="{{ $d['hero']['image'] }}" placeholder="https://..." class="{{ $field }}">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label class="form-label">Atau unggah gambar hero</label>
+                                        <input type="file" name="content[{{ $code }}][hero][image_file]" accept="image/*" class="{{ $field }}">
+                                        @if(! empty($d['hero']['image']))
+                                            <img src="{{ $d['hero']['image'] }}" alt="" class="mt-2 h-24 rounded-lg object-cover border border-slate-200">
+                                        @endif
+                                        <p class="text-xs text-slate-400 mt-1">Kosongkan URL di atas bila tidak memakai gambar. Mengunggah berkas akan menggantikan URL.</p>
+                                    </div>
                                 </div>
                             </section>
 
