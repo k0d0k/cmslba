@@ -77,6 +77,11 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'Integrasi SINA AI', 'en' => 'SINA AI Integration', 'ms' => 'Integrasi SINA AI'],
                 'route_name' => 'admin.sina.index',
             ],
+            [
+                'key' => 'payment_providers', 'icon' => 'wallet', 'sort' => 5, 'parent' => 'master',
+                'title' => ['id' => 'Metode Pembayaran', 'en' => 'Payment Methods', 'ms' => 'Kaedah Pembayaran'],
+                'route_name' => 'admin.payment_providers.index', 'resource' => 'PaymentProvider', 'is_crud' => true,
+            ],
 
             // ── Pengaturan (group) ──────────────────────────────────────
             [

@@ -4,7 +4,9 @@
 
 @section('content')
     @php
-        $tableFields = collect($fields)->reject(fn ($f) => !empty($f['hide_in_table']))->values();
+        $tableFields = collect($fields)
+            ->reject(fn ($f) => !empty($f['hide_in_table']) || ($f['type'] ?? null) === 'section' || empty($f['name']))
+            ->values();
         $columns = $tableFields->map(fn ($f) => ['data' => $f['name'], 'name' => $f['name']])->all();
         $hasActions = $canUpdate || $canDelete;
     @endphp

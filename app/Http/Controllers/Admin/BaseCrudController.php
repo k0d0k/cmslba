@@ -100,6 +100,9 @@ abstract class BaseCrudController extends Controller
         $rules = [];
         foreach ($this->fields() as $f) {
             $type = $f['type'] ?? 'string';
+            if ($type === 'section' || ! isset($f['name'])) {
+                continue; // baris penanda bagian, bukan field.
+            }
             $name = $f['name'];
             $r = [];
             $r[] = ($f['nullable'] ?? false) ? 'nullable' : 'required';
@@ -136,8 +139,11 @@ abstract class BaseCrudController extends Controller
     {
         $data = [];
         foreach ($this->fields() as $f) {
-            $name = $f['name'];
+            $name = $f['name'] ?? null;
             $type = $f['type'] ?? 'string';
+            if ($type === 'section' || $name === null) {
+                continue; // baris penanda bagian, bukan field.
+            }
 
             if ($type === 'boolean') {
                 $data[$name] = $request->boolean($name);
@@ -175,11 +181,11 @@ abstract class BaseCrudController extends Controller
         $dt = DataTables::eloquent($this->query())->addIndexColumn();
 
         foreach ($this->fields() as $f) {
-            if (! empty($f['hide_in_table'])) {
+            $type = $f['type'] ?? 'string';
+            if (! empty($f['hide_in_table']) || $type === 'section' || ! isset($f['name'])) {
                 continue;
             }
             $name = $f['name'];
-            $type = $f['type'] ?? 'string';
 
             if ($type === 'boolean') {
                 $dt->editColumn($name, fn ($row) => $row->{$name}

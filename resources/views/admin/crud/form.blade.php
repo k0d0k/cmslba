@@ -18,8 +18,21 @@
 
             @foreach($fields as $f)
                 @php
-                    $name = $f['name'];
                     $type = $f['type'] ?? 'string';
+                @endphp
+
+                @if($type === 'section')
+                    <div class="pt-3 border-t border-slate-100 first:border-0 first:pt-0">
+                        <h3 class="text-sm font-semibold text-slate-700">{{ $f['title'] ?? '' }}</h3>
+                        @if(!empty($f['text']))
+                            <p class="text-xs text-slate-400 mt-1">{{ $f['text'] }}</p>
+                        @endif
+                    </div>
+                    @continue
+                @endif
+
+                @php
+                    $name = $f['name'];
                     $value = old($name, optional($record)->{$name} ?? ($f['default'] ?? null));
                 @endphp
 
@@ -97,12 +110,19 @@
 
                     @elseif($type === 'password')
                         <input type="password" name="{{ $name }}" value="" class="form-control" autocomplete="new-password">
-                        @if($record)
+                        @if($record && empty($f['hint']))
                             <p class="text-slate-400 text-xs mt-1">Biarkan kosong bila tidak ingin mengganti password.</p>
                         @endif
 
+                    @elseif($type === 'secret')
+                        <input type="password" name="{{ $name }}" value="" class="form-control" autocomplete="new-password" placeholder="••••••••">
+
                     @else
                         <input type="text" name="{{ $name }}" value="{{ $value }}" class="form-control">
+                    @endif
+
+                    @if(!empty($f['hint']))
+                        <p class="text-slate-400 text-xs mt-1">{{ $f['hint'] }}</p>
                     @endif
 
                     @error($name)
