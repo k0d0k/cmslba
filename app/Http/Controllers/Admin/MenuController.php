@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use App\Models\Module;
 use App\Services\MenuService;
 use Illuminate\Http\Request;
 
@@ -27,13 +28,18 @@ class MenuController extends Controller
             'tree'    => $tree,
             'parents' => $menus->whereNull('parent_id'),
             'edit'    => $edit,
+            'modules' => Module::orderBy('name')->pluck('name', 'code')->all(),
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        Menu::create($data);
+        $menu = Menu::create($data);
+
+        // Menu ber-modul: beri role default mitra akses penuh agar tampil bagi
+        // mitra yang paketnya memuat modul tersebut.
+        $this->menuService->grantMenuToDefaultMitraRole($menu);
 
         return redirect()->route('admin.menus.index')->with('success', __('messages.created'));
     }
@@ -42,6 +48,8 @@ class MenuController extends Controller
     {
         $data = $this->validated($request, $menu->id);
         $menu->update($data);
+
+        $this->menuService->grantMenuToDefaultMitraRole($menu);
 
         return redirect()->route('admin.menus.index')->with('success', __('messages.updated'));
     }
@@ -69,6 +77,7 @@ class MenuController extends Controller
             'title_id' => ['required', 'string', 'max:100'],
             'parent_id' => ['nullable', 'integer', 'exists:menus,id'],
             'type'     => ['required', 'in:group,link,header'],
+            'module_key' => ['nullable', 'string', 'exists:modules,code'],
         ]);
 
         return [
@@ -84,6 +93,7 @@ class MenuController extends Controller
             'url'        => $request->input('url'),
             'target'     => $request->input('target', '_self'),
             'sort'       => (int) $request->input('sort', 0),
+            'module_key' => $request->input('module_key') ?: null,
             'is_active'  => $request->boolean('is_active', true),
             'is_visible' => $request->boolean('is_visible', true),
         ];

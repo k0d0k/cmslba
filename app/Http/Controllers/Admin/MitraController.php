@@ -340,7 +340,7 @@ class MitraController extends Controller
         $start = now();
         $trialEnd = $package->trial_days > 0 ? $start->copy()->addDays($package->trial_days) : null;
 
-        return $mitra->subscriptions()->create([
+        $subscription = $mitra->subscriptions()->create([
             'subscriptions_id' => $package->id,
             'status' => $trialEnd ? 'trialing' : 'active',
             'seats' => $seats,
@@ -349,6 +349,12 @@ class MitraController extends Controller
             'current_period_start' => $start,
             'current_period_end' => $this->periodEnd($package, $start),
         ]);
+
+        // Beri role default mitra kemampuan penuh atas menu yang termasuk
+        // modul pada paket ini, agar menunya otomatis tampil setelah login.
+        app(MenuService::class)->grantPackageMenusToDefaultMitraRole($package);
+
+        return $subscription;
     }
 
     protected function periodEnd(Subscription $package, $start)

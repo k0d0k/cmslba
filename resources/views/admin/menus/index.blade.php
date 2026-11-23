@@ -68,6 +68,17 @@
                     </div>
 
                     <div>
+                        <label class="form-label">{{ __('menus.module') }}</label>
+                        <select name="module_key" class="form-control">
+                            <option value="">{{ __('menus.module_none') }}</option>
+                            @foreach($modules as $code => $name)
+                                <option value="{{ $code }}" @selected(old('module_key', $edit?->module_key) === $code)>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="form-hint">{{ __('menus.module_hint') }}</p>
+                    </div>
+
+                    <div>
                         <label class="form-label">{{ __('menus.route_name') }}</label>
                         <input type="text" name="route_name" value="{{ old('route_name', $edit?->route_name) }}" class="form-control" placeholder="admin.pelanggan.index">
                     </div>

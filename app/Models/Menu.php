@@ -25,6 +25,7 @@ class Menu extends Model
         'is_visible',
         'is_crud',
         'resource',
+        'module_key',
     ];
 
     protected $casts = [
