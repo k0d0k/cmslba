@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function __construct(protected AuditLogger $audit)
+    {
+    }
+
     public function showLogin()
     {
         if (Auth::check()) {
@@ -35,6 +40,13 @@ class AuthController extends Controller
         $field = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'slug';
 
         if (! Auth::attempt([$field => $credentials['email'], 'password' => $credentials['password']], $request->boolean('remember'))) {
+            $this->audit->log([
+                'event'       => 'login_failed',
+                'description' => 'Percobaan login gagal: ' . $credentials['email'],
+                'user_email'  => $credentials['email'],
+                'status_code' => 422,
+            ]);
+
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
@@ -44,6 +56,13 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $user->forceFill(['last_login_at' => now()])->save();
+
+        $this->audit->log([
+            'event'       => 'login',
+            'description' => 'Login berhasil: ' . $user->email,
+            'user'        => $user,
+            'status_code' => 200,
+        ]);
 
         if ($user->locale) {
             $request->session()->put('locale', $user->locale);
@@ -57,6 +76,13 @@ class AuthController extends Controller
         if (! $user->isPrincipal() && $user->mitra_id) {
             $mitra = $user->mitra()->with('subscriptions')->first();
             if (! $mitra || ! $mitra->hasActiveSubscription()) {
+                $this->audit->log([
+                    'event'       => 'logout',
+                    'description' => 'Login ditolak: masa langganan mitra tidak aktif (' . $user->email . ')',
+                    'user'        => $user,
+                    'status_code' => 302,
+                ]);
+
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -70,6 +96,17 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user) {
+            $this->audit->log([
+                'event'       => 'logout',
+                'description' => 'Logout: ' . $user->email,
+                'user'        => $user,
+                'status_code' => 302,
+            ]);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

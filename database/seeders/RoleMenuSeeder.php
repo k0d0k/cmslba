@@ -24,6 +24,7 @@ class RoleMenuSeeder extends Seeder
             'payment_providers' => ['view'],
             'website'   => ['view'],
             'setting_aplikasi' => ['view'],
+            'audit_trail' => ['view'],
         ],
         'pemilik_mitra' => [
             'dashboard' => ['view'],
@@ -35,6 +36,7 @@ class RoleMenuSeeder extends Seeder
             'sina_ai'   => ['view', 'update'],
             'payment_providers' => ['view'],
             'mitra_website' => ['view', 'create', 'update'],
+            'audit_trail' => ['view'],
         ],
         'admin_mitra' => [
             'dashboard' => ['view'],
@@ -46,6 +48,7 @@ class RoleMenuSeeder extends Seeder
             'sina_ai'   => ['view', 'update'],
             'payment_providers' => ['view'],
             'mitra_website' => ['view', 'create', 'update'],
+            'audit_trail' => ['view'],
         ],
         'user_mitra' => [
             'dashboard' => ['view'],

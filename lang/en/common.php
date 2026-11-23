@@ -47,4 +47,5 @@ return [
     'all_branches' => 'All Branches',
     'picture'      => 'Picture',
     'reset_password' => 'Reset Password',
+    'detail'       => 'Detail',
 ];

@@ -47,4 +47,5 @@ return [
     'all_branches' => 'Semua Cabang',
     'picture'      => 'Foto',
     'reset_password' => 'Reset Password',
+    'detail'       => 'Detail',
 ];

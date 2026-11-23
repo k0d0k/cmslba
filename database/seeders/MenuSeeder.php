@@ -118,6 +118,11 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'CRUD Generator', 'en' => 'CRUD Generator', 'ms' => 'Penjana CRUD'],
                 'route_name' => 'admin.generator.index',
             ],
+            [
+                'key' => 'audit_trail', 'icon' => 'history', 'sort' => 4, 'parent' => 'pengaturan',
+                'title' => ['id' => 'Jejak Audit', 'en' => 'Audit Trail', 'ms' => 'Jejak Audit'],
+                'route_name' => 'admin.audit.index',
+            ],
         ];
 
         $created = [];

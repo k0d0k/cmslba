@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\AuditTrailController;
 use App\Http\Controllers\Admin\CrudGeneratorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController;
@@ -85,6 +86,11 @@ Route::middleware(['auth', 'tenant'])
         // Kelola website/frontpage mitra aktif.
         Route::get('mitra-website', [WebsiteController::class, 'mitra'])->name('mitra_website.index');
         Route::post('mitra-website', [WebsiteController::class, 'saveMitra'])->name('mitra_website.save');
+
+        // Jejak Audit (Audit Trail): aktivitas login s.d. logout, aksi ubah data, dan error/bug.
+        Route::get('audit-trail', [AuditTrailController::class, 'index'])->name('audit.index');
+        Route::get('audit-trail/data', [AuditTrailController::class, 'data'])->name('audit.data');
+        Route::get('audit-trail/{id}', [AuditTrailController::class, 'show'])->name('audit.show');
 
         // Integrasi SINA AI (Data Master): konfigurasi, harga token, saldo kredit, riwayat, top-up.
         Route::get('sina', [SinaController::class, 'index'])->name('sina.index');

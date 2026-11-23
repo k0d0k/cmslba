@@ -47,4 +47,5 @@ return [
     'all_branches' => 'Semua Cawangan',
     'picture'      => 'Gambar',
     'reset_password' => 'Set Semula Kata Laluan',
+    'detail'       => 'Perincian',
 ];
