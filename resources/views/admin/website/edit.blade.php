@@ -223,6 +223,11 @@
                                         <label class="form-label">Alamat</label>
                                         <input type="text" name="content[{{ $code }}][contact][address]" value="{{ $d['contact']['address'] }}" class="{{ $field }}">
                                     </div>
+                                    <div class="sm:col-span-3">
+                                        <label class="form-label">Embed Google Maps</label>
+                                        <textarea name="content[{{ $code }}][contact][map_embed]" rows="3" placeholder="Tempelkan kode &lt;iframe&gt; dari Google Maps, atau cukup URL embed" class="{{ $field }}">{{ $d['contact']['map_embed'] ?? '' }}</textarea>
+                                        <p class="text-xs text-slate-400 mt-1">Buka Google Maps &rarr; Bagikan &rarr; Sematkan peta, lalu tempelkan kodenya di sini.</p>
+                                    </div>
                                 </div>
                             </section>
 

@@ -12,7 +12,19 @@
         $services = $content['services'] ?? [];
         $features = $content['features'] ?? [];
         $faqs     = $content['faq'] ?? [];
-        $contact  = array_filter($content['contact'] ?? []);
+        $contactRaw = $content['contact'] ?? [];
+        $contact  = array_filter(['email' => $contactRaw['email'] ?? '', 'phone' => $contactRaw['phone'] ?? '', 'address' => $contactRaw['address'] ?? '']);
+
+        // Embed Google Maps: terima kode <iframe> dari Google Maps atau sekadar URL embed.
+        $mapEmbed  = trim($contactRaw['map_embed'] ?? '');
+        $mapIframe = '';
+        if ($mapEmbed !== '') {
+            if (stripos($mapEmbed, '<iframe') !== false && preg_match('/<iframe\b[^>]*>(?:.*?<\/iframe>)?/is', $mapEmbed, $m)) {
+                $mapIframe = $m[0];
+            } else {
+                $mapIframe = '<iframe src="' . e($mapEmbed) . '" width="100%" height="380" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
+            }
+        }
         $tagClass = fn ($tag) => (preg_match('/tersedia|available/i', (string) $tag)) ? 'fp-badge--available' : 'fp-badge--planned';
         $heroBtnUrl  = ! empty($hero['button_url']) ? $hero['button_url'] : route('login');
         $heroBtnText = ! empty($hero['button_text']) ? $hero['button_text'] : __('common.login');
@@ -49,6 +61,7 @@
                 @if($features)<a href="#fitur" class="fp-nav-link">Fitur</a>@endif
                 @if($faqs)<a href="#faq" class="fp-nav-link">FAQ</a>@endif
                 @if($contact)<a href="#kontak" class="fp-nav-link">Kontak</a>@endif
+                @if($mapIframe)<a href="#lokasi" class="fp-nav-link">Lokasi</a>@endif
             </nav>
 
             <div class="hidden items-center gap-3 lg:flex">
@@ -68,6 +81,7 @@
                     @if($features)<a href="#fitur" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Fitur</a>@endif
                     @if($faqs)<a href="#faq" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">FAQ</a>@endif
                     @if($contact)<a href="#kontak" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Kontak</a>@endif
+                    @if($mapIframe)<a href="#lokasi" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Lokasi</a>@endif
                     <div class="my-2 border-t border-slate-100"></div>
                     @auth
                         <a href="{{ route('admin.dashboard') }}" class="fp-btn fp-btn--primary mb-1 w-full">Dashboard</a>
@@ -220,6 +234,24 @@
                                 @if(!empty($contact['address']))<div>{{ $contact['address'] }}</div>@endif
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+        @endif
+
+        {{-- ============ Lokasi (Google Maps) ============ --}}
+        @if($mapIframe)
+            <section id="lokasi" class="fp-section border-t border-[var(--fp-line)] bg-white">
+                <div class="fp-container">
+                    <div class="fp-reveal max-w-2xl">
+                        <p class="fp-eyebrow">Lokasi</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Peta Lokasi</h2>
+                        @if(!empty($contact['address']))
+                            <p class="mt-4 text-base leading-relaxed">{{ $contact['address'] }}</p>
+                        @endif
+                    </div>
+                    <div class="fp-map fp-reveal mt-8">
+                        {!! $mapIframe !!}
                     </div>
                 </div>
             </section>

@@ -46,7 +46,7 @@ class WebsiteService
             'services' => [],
             'features' => [],
             'faq'      => [],
-            'contact'  => ['email' => '', 'phone' => '', 'address' => ''],
+            'contact'  => ['email' => '', 'phone' => '', 'address' => '', 'map_embed' => ''],
             'seo'      => ['title' => '', 'description' => '', 'og_image' => ''],
         ];
     }

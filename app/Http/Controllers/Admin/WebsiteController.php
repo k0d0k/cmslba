@@ -159,9 +159,10 @@ class WebsiteController extends Controller
                 'features' => $this->cleanRows($in['features'] ?? [], ['title', 'description']),
                 'faq'      => $this->cleanRows($in['faq'] ?? [], ['question', 'answer']),
                 'contact'  => [
-                    'email'   => (string) ($in['contact']['email'] ?? ''),
-                    'phone'   => (string) ($in['contact']['phone'] ?? ''),
-                    'address' => (string) ($in['contact']['address'] ?? ''),
+                    'email'     => (string) ($in['contact']['email'] ?? ''),
+                    'phone'     => (string) ($in['contact']['phone'] ?? ''),
+                    'address'   => (string) ($in['contact']['address'] ?? ''),
+                    'map_embed' => (string) ($in['contact']['map_embed'] ?? ''),
                 ],
                 'seo' => [
                     'title'       => (string) ($in['seo']['title'] ?? ''),

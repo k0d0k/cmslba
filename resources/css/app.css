@@ -393,6 +393,10 @@ body.fp-body { background: var(--fp-canvas); color: var(--fp-ink); }
 .fp-faq summary { cursor: pointer; font-weight: 600; color: var(--fp-navy); list-style: none; }
 .fp-faq summary::-webkit-details-marker { display: none; }
 
+.fp-map { overflow: hidden; border: 1px solid var(--fp-line); border-radius: var(--fp-radius); background: #fff; box-shadow: 0 1px 2px rgba(20, 38, 61, .04); }
+.fp-map iframe { display: block; width: 100%; height: 380px; border: 0; }
+@media (min-width: 1024px) { .fp-map iframe { height: 440px; } }
+
 @media (prefers-reduced-motion: no-preference) {
     .fp-reveal { animation: fp-rise .6s cubic-bezier(.22, 1, .36, 1) both; }
 }
