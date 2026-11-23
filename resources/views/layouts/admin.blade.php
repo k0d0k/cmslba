@@ -77,7 +77,7 @@
                 <i data-lucide="menu"></i>
             </button>
 
-            <div class="font-semibold text-slate-700 truncate">@yield('title', 'Dashboard')</div>
+            <div class="font-semibold text-slate-700 truncate">@yield('title', __('common.dashboard'))</div>
 
             <div class="ml-auto flex items-center gap-2">
 
@@ -219,7 +219,7 @@
             @if($appFooter)
                 {{ $appFooter }}
             @else
-                &copy; {{ date('Y') }} {{ config('app.name') }} &middot; LBA Cloud Boilerplate
+                &copy; {{ date('Y') }} {{ config('app.name') }} &middot; {{ __('common.lba_boilerplate') }}
             @endif
         </footer>
     </div>
@@ -228,7 +228,7 @@
 {{-- Modal preview gambar (dipicu oleh elemen .js-image-preview) --}}
 <div id="image-preview-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true">
     <div class="relative">
-        <button type="button" id="image-preview-close" class="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-white text-slate-700 shadow-lg grid place-items-center hover:bg-slate-100 text-xl leading-none" aria-label="Tutup">&times;</button>
+        <button type="button" id="image-preview-close" class="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-white text-slate-700 shadow-lg grid place-items-center hover:bg-slate-100 text-xl leading-none" aria-label="{{ __('common.close') }}">&times;</button>
         <img id="image-preview-img" src="" alt="" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl bg-white">
     </div>
 </div>

@@ -40,7 +40,7 @@
 
     @if($isPreview)
         <div class="bg-amber-100 text-amber-900 text-center text-xs py-1.5 px-4">
-            Pratinjau draf — halaman ini belum dipublikasikan.
+            {{ __('frontpage.preview_draft') }}
         </div>
     @endif
 
@@ -57,11 +57,11 @@
             </a>
 
             <nav class="hidden items-center gap-8 lg:flex">
-                @if($services)<a href="#layanan" class="fp-nav-link">Layanan</a>@endif
-                @if($features)<a href="#fitur" class="fp-nav-link">Fitur</a>@endif
-                @if($faqs)<a href="#faq" class="fp-nav-link">FAQ</a>@endif
-                @if($contact)<a href="#kontak" class="fp-nav-link">Kontak</a>@endif
-                @if($mapIframe)<a href="#lokasi" class="fp-nav-link">Lokasi</a>@endif
+                @if($services)<a href="#layanan" class="fp-nav-link">{{ __('frontpage.services') }}</a>@endif
+                @if($features)<a href="#fitur" class="fp-nav-link">{{ __('frontpage.features') }}</a>@endif
+                @if($faqs)<a href="#faq" class="fp-nav-link">{{ __('frontpage.faq') }}</a>@endif
+                @if($contact)<a href="#kontak" class="fp-nav-link">{{ __('frontpage.contact') }}</a>@endif
+                @if($mapIframe)<a href="#lokasi" class="fp-nav-link">{{ __('frontpage.location') }}</a>@endif
             </nav>
 
             <div class="hidden items-center gap-3 lg:flex">
@@ -75,16 +75,16 @@
 
             {{-- Menu mobile --}}
             <details class="relative lg:hidden">
-                <summary class="fp-btn fp-btn--outline fp-btn--sm cursor-pointer list-none">Menu</summary>
+                <summary class="fp-btn fp-btn--outline fp-btn--sm cursor-pointer list-none">{{ __('frontpage.menu') }}</summary>
                 <nav class="absolute right-0 top-[calc(100%+0.5rem)] w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl z-50">
-                    @if($services)<a href="#layanan" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Layanan</a>@endif
-                    @if($features)<a href="#fitur" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Fitur</a>@endif
-                    @if($faqs)<a href="#faq" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">FAQ</a>@endif
-                    @if($contact)<a href="#kontak" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Kontak</a>@endif
-                    @if($mapIframe)<a href="#lokasi" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Lokasi</a>@endif
+                    @if($services)<a href="#layanan" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">{{ __('frontpage.services') }}</a>@endif
+                    @if($features)<a href="#fitur" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">{{ __('frontpage.features') }}</a>@endif
+                    @if($faqs)<a href="#faq" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">{{ __('frontpage.faq') }}</a>@endif
+                    @if($contact)<a href="#kontak" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">{{ __('frontpage.contact') }}</a>@endif
+                    @if($mapIframe)<a href="#lokasi" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">{{ __('frontpage.location') }}</a>@endif
                     <div class="my-2 border-t border-slate-100"></div>
                     @auth
-                        <a href="{{ route('admin.dashboard') }}" class="fp-btn fp-btn--primary mb-1 w-full">Dashboard</a>
+                        <a href="{{ route('admin.dashboard') }}" class="fp-btn fp-btn--primary mb-1 w-full">{{ __('common.dashboard') }}</a>
                     @else
                         <a href="{{ route('login') }}" class="fp-btn fp-btn--outline mb-1 w-full">{{ __('common.login') }}</a>
                         <a href="{{ route('mitra.register') }}" class="fp-btn fp-btn--primary w-full">{{ __('common.register') }}</a>
@@ -132,8 +132,8 @@
             <section id="layanan" class="fp-section">
                 <div class="fp-container">
                     <div class="fp-reveal max-w-2xl">
-                        <p class="fp-eyebrow">Platform</p>
-                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Layanan</h2>
+                        <p class="fp-eyebrow">{{ __('frontpage.platform') }}</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">{{ __('frontpage.services') }}</h2>
                         @if(!empty($hero['subtitle']))
                             <p class="mt-4 text-base leading-relaxed">{{ $hero['subtitle'] }}</p>
                         @endif
@@ -160,8 +160,8 @@
             <section id="fitur" class="fp-section border-t border-[var(--fp-line)] bg-white">
                 <div class="fp-container">
                     <div class="fp-reveal max-w-2xl">
-                        <p class="fp-eyebrow">Kemampuan</p>
-                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Fitur</h2>
+                        <p class="fp-eyebrow">{{ __('frontpage.capabilities') }}</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">{{ __('frontpage.features') }}</h2>
                     </div>
                     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         @foreach($features as $i => $item)
@@ -181,8 +181,8 @@
             <section class="fp-section">
                 <div class="fp-container">
                     <div class="fp-reveal max-w-2xl">
-                        <p class="fp-eyebrow">Media</p>
-                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Galeri</h2>
+                        <p class="fp-eyebrow">{{ __('frontpage.media') }}</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">{{ __('frontpage.gallery') }}</h2>
                     </div>
                     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach($media as $m)
@@ -200,8 +200,8 @@
             <section id="faq" class="fp-section border-t border-[var(--fp-line)] bg-white">
                 <div class="fp-container">
                     <div class="fp-reveal max-w-2xl">
-                        <p class="fp-eyebrow">Pertanyaan</p>
-                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">FAQ</h2>
+                        <p class="fp-eyebrow">{{ __('frontpage.questions') }}</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">{{ __('frontpage.faq') }}</h2>
                     </div>
                     <div class="mx-auto mt-10 max-w-3xl space-y-3">
                         @foreach($faqs as $item)
@@ -225,12 +225,12 @@
                     <div class="fp-hero-panel px-6 py-12 sm:px-10">
                         <div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                             <div>
-                                <p class="fp-eyebrow !text-[var(--fp-mint)]">Hubungi</p>
-                                <h2 class="mt-2 text-2xl font-semibold text-white sm:text-3xl">Kontak</h2>
+                                <p class="fp-eyebrow !text-[var(--fp-mint)]">{{ __('frontpage.contact_us') }}</p>
+                                <h2 class="mt-2 text-2xl font-semibold text-white sm:text-3xl">{{ __('frontpage.contact') }}</h2>
                             </div>
                             <div class="text-sm text-white/80 space-y-1">
-                                @if(!empty($contact['email']))<div>Email: <a class="underline" href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a></div>@endif
-                                @if(!empty($contact['phone']))<div>Telepon: {{ $contact['phone'] }}</div>@endif
+                                @if(!empty($contact['email']))<div>{{ __('common.email') }}: <a class="underline" href="mailto:{{ $contact['email'] }}">{{ $contact['email'] }}</a></div>@endif
+                                @if(!empty($contact['phone']))<div>{{ __('common.phone') }}: {{ $contact['phone'] }}</div>@endif
                                 @if(!empty($contact['address']))<div>{{ $contact['address'] }}</div>@endif
                             </div>
                         </div>
@@ -244,8 +244,8 @@
             <section id="lokasi" class="fp-section border-t border-[var(--fp-line)] bg-white">
                 <div class="fp-container">
                     <div class="fp-reveal max-w-2xl">
-                        <p class="fp-eyebrow">Lokasi</p>
-                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">Peta Lokasi</h2>
+                        <p class="fp-eyebrow">{{ __('frontpage.location') }}</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-[var(--fp-navy)] sm:text-4xl">{{ __('frontpage.map_title') }}</h2>
                         @if(!empty($contact['address']))
                             <p class="mt-4 text-base leading-relaxed">{{ $contact['address'] }}</p>
                         @endif
@@ -260,7 +260,7 @@
 
     <footer class="border-t border-[var(--fp-line)] bg-white">
         <div class="fp-container flex flex-col items-center justify-between gap-3 py-8 text-xs text-[var(--fp-mist)] sm:flex-row">
-            <span>&copy; {{ date('Y') }} {{ $brandName }}. All rights reserved.</span>
+            <span>&copy; {{ date('Y') }} {{ $brandName }}. {{ __('frontpage.all_rights') }}</span>
             <span>{{ config('app.name') }}</span>
         </div>
     </footer>

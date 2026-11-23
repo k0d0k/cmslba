@@ -186,7 +186,7 @@ class SinaController extends Controller
             'is_default' => $request->boolean('is_default'),
         ])->save();
 
-        return back()->with('success', 'Konfigurasi EndPoin Penyedia SINA berhasil disimpan.');
+        return back()->with('success', __('sina.flash_config_saved'));
     }
 
     /** Simpan setelan harga/tagihan kredit SINA (global, semua mitra). */
@@ -207,7 +207,7 @@ class SinaController extends Controller
         Setting::put('sina_credit_per_1000_tokens', $data['sina_credit_per_1000_tokens'], 'sina');
         Setting::put('sina_unit', $data['sina_unit'], 'sina');
 
-        return back()->with('success', 'Harga & aturan tagihan kredit SINA AI berhasil disimpan.');
+        return back()->with('success', __('sina.flash_pricing_saved'));
     }
 
     /** Tambah kredit (top-up) mitra terpilih dan catat riwayatnya. */
@@ -241,20 +241,20 @@ class SinaController extends Controller
             ]);
         });
 
-        return back()->with('success', 'Kredit SINA AI berhasil ditambahkan.');
+        return back()->with('success', __('sina.flash_topup_added'));
     }
 
     /** Pilihan penyedia AI yang didukung. */
     protected function providerOptions(): array
     {
         return [
-            'ollama'    => 'Ollama (lokal)',
-            'openai'    => 'OpenAI',
-            'azure'     => 'Azure OpenAI',
-            'anthropic' => 'Anthropic Claude',
-            'gemini'    => 'Google Gemini',
-            'groq'      => 'Groq',
-            'custom'    => 'Custom (OpenAI compatible)',
+            'ollama'    => __('sina.provider_ollama'),
+            'openai'    => __('sina.provider_openai'),
+            'azure'     => __('sina.provider_azure'),
+            'anthropic' => __('sina.provider_anthropic'),
+            'gemini'    => __('sina.provider_gemini'),
+            'groq'      => __('sina.provider_groq'),
+            'custom'    => __('sina.provider_custom'),
         ];
     }
 }

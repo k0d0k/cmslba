@@ -15,8 +15,12 @@ class UserController extends BaseCrudController
 {
     protected string $model = User::class;
     protected string $routeName = 'admin.users';
-    protected string $title = 'User';
     protected string $menuKey = 'users';
+
+    protected function title(): string
+    {
+        return __('common.user');
+    }
 
     public function __construct(protected RoleService $roleService)
     {
@@ -31,14 +35,14 @@ class UserController extends BaseCrudController
     protected function fields(): array
     {
         return [
-            ['name' => 'avatar', 'type' => 'image', 'label' => 'Foto', 'nullable' => true],
-            ['name' => 'name', 'type' => 'string', 'label' => 'Nama', 'nullable' => false],
-            ['name' => 'email', 'type' => 'email', 'label' => 'Email', 'nullable' => false, 'unique' => true],
-            ['name' => 'password', 'type' => 'password', 'label' => 'Password', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
-            ['name' => 'role', 'type' => 'select', 'label' => 'Role', 'nullable' => true, 'options' => $this->roleOptions()],
-            ['name' => 'mitra_id', 'type' => 'relation', 'label' => 'Mitra', 'nullable' => true, 'relation' => ['model' => \App\Models\Mitra::class, 'label' => 'name']],
-            ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => true, 'default' => true],
+            ['name' => 'avatar', 'type' => 'image', 'label' => __('common.picture'), 'nullable' => true],
+            ['name' => 'name', 'type' => 'string', 'label' => __('common.name'), 'nullable' => false],
+            ['name' => 'email', 'type' => 'email', 'label' => __('common.email'), 'nullable' => false, 'unique' => true],
+            ['name' => 'password', 'type' => 'password', 'label' => __('common.password'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
+            ['name' => 'role', 'type' => 'select', 'label' => __('common.role'), 'nullable' => true, 'options' => $this->roleOptions()],
+            ['name' => 'mitra_id', 'type' => 'relation', 'label' => __('common.mitra'), 'nullable' => true, 'relation' => ['model' => \App\Models\Mitra::class, 'label' => 'name']],
+            ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => true, 'default' => true],
         ];
     }
 

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title'      => 'Role & Akses',
+    'heading'    => 'Role &amp; Hak Akses Menu',
+    'add'        => '+ Tambah Role',
+    'col_role'        => 'Role',
+    'col_scope'       => 'Scope',
+    'col_description' => 'Deskripsi',
+    'col_user'        => 'User',
+    'col_access'      => 'Akses',
+    'modal_title'     => 'Tambah Role Baru',
+    'name_code'       => 'Nama Role (kode)',
+    'name_hint'       => 'Hanya huruf, angka, garis bawah, dan strip.',
+    'name_placeholder' => 'mis. supervisor_mitra',
+    'label'           => 'Label',
+    'label_placeholder' => 'mis. Supervisor Mitra',
+    'scope'           => 'Scope',
+    'scope_principal' => 'Principal (Pusat)',
+    'scope_mitra'     => 'Mitra',
+    'description'     => 'Deskripsi',
+    'description_placeholder' => 'Deskripsi singkat role ini...',
+    'menu'            => 'Menu',
+    'assign_hint'     => 'Centang kemampuan CRUD untuk tiap menu.',
+    'menu_count'      => ':count menu',
+    'created'         => 'Role ":label" berhasil ditambahkan.',
+];

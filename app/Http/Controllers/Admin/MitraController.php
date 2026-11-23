@@ -81,7 +81,7 @@ class MitraController extends Controller
             ->addColumn('langganan', fn ($m) => $m->subscriptions->first()?->subscription?->name)
             ->addColumn('actions', function ($m) {
                 $html = '<div class="flex flex-wrap gap-2 items-center">';
-                $html .= '<a href="' . route('admin.sina.index', ['mitra' => $m->slug]) . '" class="btn btn-sm btn-secondary" title="Integrasi SINA AI">'
+                $html .= '<a href="' . route('admin.sina.index', ['mitra' => $m->slug]) . '" class="btn btn-sm btn-secondary" title="' . e(__('sina.title')) . '">'
                     . '<i data-lucide="brain-circuit"></i> SINA AI</a>';
                 if ($this->can('update')) {
                     $html .= '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
@@ -129,7 +129,7 @@ class MitraController extends Controller
             : null;
         if ($initialPackage?->seat_limit !== null && $initialSeats > $initialPackage->seat_limit) {
             throw ValidationException::withMessages([
-                'initial_seats' => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+                'initial_seats' => __('mitra.seat_exceed'),
             ]);
         }
 
@@ -201,13 +201,13 @@ class MitraController extends Controller
 
         if ($package->seat_limit !== null && $data['seats'] > $package->seat_limit) {
             return back()->withErrors([
-                'seats' => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+                'seats' => __('mitra.seat_exceed'),
             ])->withInput();
         }
 
         $this->createSubscription($mitra, $package, (int) $data['seats']);
 
-        return back()->with('success', 'Paket langganan berhasil ditambahkan.');
+        return back()->with('success', __('mitra.subscription_added'));
     }
 
     public function cancelSubscription(Mitra $mitra, MitraSubscription $subscription)
@@ -220,7 +220,7 @@ class MitraController extends Controller
             'cancelled_at' => now(),
         ]);
 
-        return back()->with('success', 'Langganan berhasil dibatalkan.');
+        return back()->with('success', __('mitra.subscription_cancelled'));
     }
 
     public function activateSubscription(Mitra $mitra, MitraSubscription $subscription)
@@ -238,7 +238,7 @@ class MitraController extends Controller
             'ended_at' => null,
         ]);
 
-        return back()->with('success', 'Langganan berhasil diaktifkan.');
+        return back()->with('success', __('mitra.subscription_activated'));
     }
 
     public function attachBrand(Request $request, Mitra $mitra)
@@ -268,7 +268,7 @@ class MitraController extends Controller
             $brandId => ['is_primary' => $isPrimary],
         ]);
 
-        return back()->with('success', 'Merek berhasil dilampirkan.');
+        return back()->with('success', __('mitra.brand_attached'));
     }
 
     public function makePrimaryBrand(Mitra $mitra, Brand $brand)
@@ -285,7 +285,7 @@ class MitraController extends Controller
             'updated_at' => now(),
         ]);
 
-        return back()->with('success', 'Merek utama berhasil diubah.');
+        return back()->with('success', __('mitra.brand_primary_updated'));
     }
 
     public function detachBrand(Mitra $mitra, Brand $brand)
@@ -309,7 +309,7 @@ class MitraController extends Controller
             }
         }
 
-        return back()->with('success', 'Merek berhasil dilepaskan.');
+        return back()->with('success', __('mitra.brand_detached'));
     }
 
     protected function syncBrands(Mitra $mitra, array $brandIds, mixed $primaryBrandId = null): void
@@ -333,7 +333,7 @@ class MitraController extends Controller
     {
         if ($package->seat_limit !== null && $seats > $package->seat_limit) {
             throw ValidationException::withMessages([
-                'seats' => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+                'seats' => __('mitra.seat_exceed'),
             ]);
         }
 

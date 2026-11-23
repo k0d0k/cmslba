@@ -37,6 +37,15 @@ abstract class BaseCrudController extends Controller
         return $this->fields;
     }
 
+    /**
+     * Judul halaman. Property `$title` dipakai sebagai fallback mentah;
+     * subclass bawaan meng-override method ini agar judul ikut ter-translate.
+     */
+    protected function title(): string
+    {
+        return $this->title;
+    }
+
     protected function user()
     {
         return auth()->user();
@@ -167,7 +176,7 @@ abstract class BaseCrudController extends Controller
         return view($this->view . '.index', [
             'fields'    => $this->fields(),
             'routeName' => $this->routeName,
-            'title'     => $this->title,
+            'title'     => $this->title(),
             'canCreate' => $this->can('create'),
             'canUpdate' => $this->can('update'),
             'canDelete' => $this->can('delete'),
@@ -251,7 +260,7 @@ abstract class BaseCrudController extends Controller
         return view($this->view . '.form', [
             'fields'    => $this->fields(),
             'routeName' => $this->routeName,
-            'title'     => $this->title,
+            'title'     => $this->title(),
             'record'    => null,
         ]);
     }
@@ -280,7 +289,7 @@ abstract class BaseCrudController extends Controller
         return view($this->view . '.form', [
             'fields'    => $this->fields(),
             'routeName' => $this->routeName,
-            'title'     => $this->title,
+            'title'     => $this->title(),
             'record'    => $record,
         ]);
     }

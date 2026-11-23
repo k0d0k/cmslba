@@ -7,7 +7,7 @@
         @php $children = $item->children_tree ?? collect(); @endphp
         <li data-id="{{ $item->id }}" class="card p-2">
             <div class="flex items-center gap-2">
-                <span class="drag-handle cursor-move text-slate-400 select-none" title="Geser untuk mengubah urutan">&#8942;&#8942;</span>
+                <span class="drag-handle cursor-move text-slate-400 select-none" title="{{ __('menus.drag_hint') }}">&#8942;&#8942;</span>
 
                 <span class="badge badge-secondary">{{ $item->type }}</span>
                 <span class="font-medium text-slate-700 text-sm">{{ $item->label() }}</span>

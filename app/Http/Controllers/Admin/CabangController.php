@@ -22,16 +22,13 @@ class CabangController extends BaseCrudController
     protected string $model = \App\Models\Tenant\Cabang::class;
     protected string $view = 'admin.crud';
     protected string $routeName = 'admin.cabang';
-    protected string $title = 'Cabang';
     protected string $menuKey = 'cabang';
     protected bool $hasCabang = false;
-    protected array $fields = [
-        ['name' => 'name', 'type' => 'string', 'label' => 'Nama Cabang', 'nullable' => false],
-        ['name' => 'code', 'type' => 'string', 'label' => 'Kode', 'nullable' => true],
-        ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
-        ['name' => 'address', 'type' => 'text', 'label' => 'Alamat', 'nullable' => true],
-        ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => false],
-    ];
+
+    protected function title(): string
+    {
+        return __('common.branch');
+    }
 
     /** Cache definisi field agar query mitra hanya dijalankan sekali per request. */
     private ?array $resolvedFields = null;
@@ -42,7 +39,13 @@ class CabangController extends BaseCrudController
             return $this->resolvedFields;
         }
 
-        $fields = $this->fields;
+        $fields = [
+            ['name' => 'name', 'type' => 'string', 'label' => __('common.branch_name'), 'nullable' => false],
+            ['name' => 'code', 'type' => 'string', 'label' => __('common.code'), 'nullable' => true],
+            ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
+            ['name' => 'address', 'type' => 'text', 'label' => __('common.address'), 'nullable' => true],
+            ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => false],
+        ];
         $isPrincipal = $this->isPrincipal();
         $mitra = $this->currentMitra();
 

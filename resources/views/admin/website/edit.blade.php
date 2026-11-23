@@ -17,17 +17,17 @@
             <div class="card-header flex flex-wrap items-center gap-2">
                 <span>{{ $title }}</span>
                 <span class="badge {{ $website->isPublished() ? 'badge-success' : 'badge-warning' }}">
-                    {{ $website->isPublished() ? 'Dipublikasikan' : 'Draf' }}
+                    {{ $website->isPublished() ? __('website.published') : __('website.draft') }}
                 </span>
                 <div class="ml-auto flex flex-wrap items-center gap-2">
                     <a href="{{ $previewUrl }}" target="_blank" rel="noopener" class="btn btn-secondary">
-                        <i data-lucide="external-link"></i> Pratinjau
+                        <i data-lucide="external-link"></i> {{ __('website.preview') }}
                     </a>
                     <button type="submit" name="status" value="draft" class="btn btn-secondary">
-                        <i data-lucide="save"></i> Simpan Draf
+                        <i data-lucide="save"></i> {{ __('website.save_draft') }}
                     </button>
                     <button type="submit" name="status" value="published" class="btn btn-primary">
-                        <i data-lucide="upload-cloud"></i> Publikasikan
+                        <i data-lucide="upload-cloud"></i> {{ __('website.publish') }}
                     </button>
                 </div>
             </div>
@@ -35,11 +35,11 @@
             <div class="card-body space-y-6">
                 <div class="grid gap-4 sm:grid-cols-3">
                     <div>
-                        <label class="form-label">Nama Website</label>
+                        <label class="form-label">{{ __('website.website_name') }}</label>
                         <input type="text" value="{{ $website->name }}" class="form-control" disabled>
                     </div>
                     <div>
-                        <label class="form-label">Template</label>
+                        <label class="form-label">{{ __('website.template') }}</label>
                         <select name="template" class="form-control js-select2">
                             @foreach($templates as $key => $label)
                                 <option value="{{ $key }}" @selected(($website->template ?: 'default') === $key)>{{ $label }}</option>
@@ -47,7 +47,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="form-label">Alamat</label>
+                        <label class="form-label">{{ __('website.address') }}</label>
                         <input type="text" value="{{ $mitra ? url('/' . $mitra->slug) : url('/') }}" class="form-control" disabled>
                     </div>
                 </div>
@@ -68,35 +68,35 @@
 
                             {{-- Hero --}}
                             <section>
-                                <h3 class="text-sm font-semibold text-slate-700 mb-3">Hero</h3>
+                                <h3 class="text-sm font-semibold text-slate-700 mb-3">{{ __('website.hero') }}</h3>
                                 <div class="grid gap-3 sm:grid-cols-2">
                                     <div class="sm:col-span-2">
-                                        <label class="form-label">Judul</label>
+                                        <label class="form-label">{{ __('website.judul') }}</label>
                                         <input type="text" name="content[{{ $code }}][hero][title]" value="{{ $d['hero']['title'] }}" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-2">
-                                        <label class="form-label">Subjudul</label>
+                                        <label class="form-label">{{ __('website.subjudul') }}</label>
                                         <textarea name="content[{{ $code }}][hero][subtitle]" rows="2" class="{{ $field }}">{{ $d['hero']['subtitle'] }}</textarea>
                                     </div>
                                     <div>
-                                        <label class="form-label">Teks tombol</label>
+                                        <label class="form-label">{{ __('website.button_text') }}</label>
                                         <input type="text" name="content[{{ $code }}][hero][button_text]" value="{{ $d['hero']['button_text'] }}" class="{{ $field }}">
                                     </div>
                                     <div>
-                                        <label class="form-label">URL tombol</label>
+                                        <label class="form-label">{{ __('website.button_url') }}</label>
                                         <input type="text" name="content[{{ $code }}][hero][button_url]" value="{{ $d['hero']['button_url'] }}" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-2">
-                                        <label class="form-label">Gambar hero (URL)</label>
+                                        <label class="form-label">{{ __('website.hero_image_url') }}</label>
                                         <input type="text" name="content[{{ $code }}][hero][image]" value="{{ $d['hero']['image'] }}" placeholder="https://..." class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-2">
-                                        <label class="form-label">Atau unggah gambar hero</label>
+                                        <label class="form-label">{{ __('website.hero_image_upload') }}</label>
                                         <input type="file" name="content[{{ $code }}][hero][image_file]" accept="image/*" class="{{ $field }}">
                                         @if(! empty($d['hero']['image']))
                                             <img src="{{ $d['hero']['image'] }}" alt="" class="mt-2 h-24 rounded-lg object-cover border border-slate-200">
                                         @endif
-                                        <p class="text-xs text-slate-400 mt-1">Kosongkan URL di atas bila tidak memakai gambar. Mengunggah berkas akan menggantikan URL.</p>
+                                        <p class="text-xs text-slate-400 mt-1">{{ __('website.hero_image_hint') }}</p>
                                     </div>
                                 </div>
                             </section>
@@ -104,9 +104,9 @@
                             {{-- Layanan --}}
                             <section>
                                 <div class="flex items-center justify-between mb-3">
-                                    <h3 class="text-sm font-semibold text-slate-700">Layanan</h3>
+                                    <h3 class="text-sm font-semibold text-slate-700">{{ __('website.services') }}</h3>
                                     <button type="button" class="btn btn-secondary btn-sm" data-repeat-add="rp-service-{{ $code }}">
-                                        <i data-lucide="plus"></i> Tambah layanan
+                                        <i data-lucide="plus"></i> {{ __('website.add_service') }}
                                     </button>
                                 </div>
                                 <div id="rp-service-{{ $code }}" class="space-y-3">
@@ -114,13 +114,13 @@
                                         @foreach($d['services'] as $i => $row)
                                             <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
                                                 <div class="sm:col-span-4">
-                                                    <input type="text" name="content[{{ $code }}][services][{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" placeholder="Judul" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][services][{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" placeholder="{{ __('website.placeholder_title') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-2">
-                                                    <input type="text" name="content[{{ $code }}][services][{{ $i }}][tag]" value="{{ $row['tag'] ?? '' }}" placeholder="Label (ops.)" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][services][{{ $i }}][tag]" value="{{ $row['tag'] ?? '' }}" placeholder="{{ __('website.placeholder_tag') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-5">
-                                                    <input type="text" name="content[{{ $code }}][services][{{ $i }}][description]" value="{{ $row['description'] ?? '' }}" placeholder="Deskripsi" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][services][{{ $i }}][description]" value="{{ $row['description'] ?? '' }}" placeholder="{{ __('website.placeholder_description') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-1 text-right">
                                                     <button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button>
@@ -130,9 +130,9 @@
                                     </div>
                                     <template data-row-template>
                                         <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
-                                            <div class="sm:col-span-4"><input type="text" name="content[{{ $code }}][services][__INDEX__][title]" placeholder="Judul" class="{{ $field }}"></div>
-                                            <div class="sm:col-span-2"><input type="text" name="content[{{ $code }}][services][__INDEX__][tag]" placeholder="Label (ops.)" class="{{ $field }}"></div>
-                                            <div class="sm:col-span-5"><input type="text" name="content[{{ $code }}][services][__INDEX__][description]" placeholder="Deskripsi" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-4"><input type="text" name="content[{{ $code }}][services][__INDEX__][title]" placeholder="{{ __('website.placeholder_title') }}" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-2"><input type="text" name="content[{{ $code }}][services][__INDEX__][tag]" placeholder="{{ __('website.placeholder_tag') }}" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-5"><input type="text" name="content[{{ $code }}][services][__INDEX__][description]" placeholder="{{ __('website.placeholder_description') }}" class="{{ $field }}"></div>
                                             <div class="sm:col-span-1 text-right"><button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button></div>
                                         </div>
                                     </template>
@@ -142,9 +142,9 @@
                             {{-- Fitur --}}
                             <section>
                                 <div class="flex items-center justify-between mb-3">
-                                    <h3 class="text-sm font-semibold text-slate-700">Fitur</h3>
+                                    <h3 class="text-sm font-semibold text-slate-700">{{ __('website.features') }}</h3>
                                     <button type="button" class="btn btn-secondary btn-sm" data-repeat-add="rp-feature-{{ $code }}">
-                                        <i data-lucide="plus"></i> Tambah fitur
+                                        <i data-lucide="plus"></i> {{ __('website.add_feature') }}
                                     </button>
                                 </div>
                                 <div id="rp-feature-{{ $code }}" class="space-y-3">
@@ -152,10 +152,10 @@
                                         @foreach($d['features'] as $i => $row)
                                             <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
                                                 <div class="sm:col-span-4">
-                                                    <input type="text" name="content[{{ $code }}][features][{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" placeholder="Judul" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][features][{{ $i }}][title]" value="{{ $row['title'] ?? '' }}" placeholder="{{ __('website.placeholder_title') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-7">
-                                                    <input type="text" name="content[{{ $code }}][features][{{ $i }}][description]" value="{{ $row['description'] ?? '' }}" placeholder="Deskripsi" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][features][{{ $i }}][description]" value="{{ $row['description'] ?? '' }}" placeholder="{{ __('website.placeholder_description') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-1 text-right">
                                                     <button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button>
@@ -165,8 +165,8 @@
                                     </div>
                                     <template data-row-template>
                                         <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
-                                            <div class="sm:col-span-4"><input type="text" name="content[{{ $code }}][features][__INDEX__][title]" placeholder="Judul" class="{{ $field }}"></div>
-                                            <div class="sm:col-span-7"><input type="text" name="content[{{ $code }}][features][__INDEX__][description]" placeholder="Deskripsi" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-4"><input type="text" name="content[{{ $code }}][features][__INDEX__][title]" placeholder="{{ __('website.placeholder_title') }}" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-7"><input type="text" name="content[{{ $code }}][features][__INDEX__][description]" placeholder="{{ __('website.placeholder_description') }}" class="{{ $field }}"></div>
                                             <div class="sm:col-span-1 text-right"><button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button></div>
                                         </div>
                                     </template>
@@ -176,9 +176,9 @@
                             {{-- FAQ --}}
                             <section>
                                 <div class="flex items-center justify-between mb-3">
-                                    <h3 class="text-sm font-semibold text-slate-700">FAQ</h3>
+                                    <h3 class="text-sm font-semibold text-slate-700">{{ __('website.faq') }}</h3>
                                     <button type="button" class="btn btn-secondary btn-sm" data-repeat-add="rp-faq-{{ $code }}">
-                                        <i data-lucide="plus"></i> Tambah FAQ
+                                        <i data-lucide="plus"></i> {{ __('website.add_faq') }}
                                     </button>
                                 </div>
                                 <div id="rp-faq-{{ $code }}" class="space-y-3">
@@ -186,10 +186,10 @@
                                         @foreach($d['faq'] as $i => $row)
                                             <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
                                                 <div class="sm:col-span-4">
-                                                    <input type="text" name="content[{{ $code }}][faq][{{ $i }}][question]" value="{{ $row['question'] ?? '' }}" placeholder="Pertanyaan" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][faq][{{ $i }}][question]" value="{{ $row['question'] ?? '' }}" placeholder="{{ __('website.placeholder_question') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-7">
-                                                    <input type="text" name="content[{{ $code }}][faq][{{ $i }}][answer]" value="{{ $row['answer'] ?? '' }}" placeholder="Jawaban" class="{{ $field }}">
+                                                    <input type="text" name="content[{{ $code }}][faq][{{ $i }}][answer]" value="{{ $row['answer'] ?? '' }}" placeholder="{{ __('website.placeholder_answer') }}" class="{{ $field }}">
                                                 </div>
                                                 <div class="sm:col-span-1 text-right">
                                                     <button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button>
@@ -199,8 +199,8 @@
                                     </div>
                                     <template data-row-template>
                                         <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
-                                            <div class="sm:col-span-4"><input type="text" name="content[{{ $code }}][faq][__INDEX__][question]" placeholder="Pertanyaan" class="{{ $field }}"></div>
-                                            <div class="sm:col-span-7"><input type="text" name="content[{{ $code }}][faq][__INDEX__][answer]" placeholder="Jawaban" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-4"><input type="text" name="content[{{ $code }}][faq][__INDEX__][question]" placeholder="{{ __('website.placeholder_question') }}" class="{{ $field }}"></div>
+                                            <div class="sm:col-span-7"><input type="text" name="content[{{ $code }}][faq][__INDEX__][answer]" placeholder="{{ __('website.placeholder_answer') }}" class="{{ $field }}"></div>
                                             <div class="sm:col-span-1 text-right"><button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button></div>
                                         </div>
                                     </template>
@@ -209,42 +209,42 @@
 
                             {{-- Kontak --}}
                             <section>
-                                <h3 class="text-sm font-semibold text-slate-700 mb-3">Kontak</h3>
+                                <h3 class="text-sm font-semibold text-slate-700 mb-3">{{ __('website.contact') }}</h3>
                                 <div class="grid gap-3 sm:grid-cols-3">
                                     <div>
-                                        <label class="form-label">Email</label>
+                                        <label class="form-label">{{ __('website.email') }}</label>
                                         <input type="text" name="content[{{ $code }}][contact][email]" value="{{ $d['contact']['email'] }}" class="{{ $field }}">
                                     </div>
                                     <div>
-                                        <label class="form-label">Telepon</label>
+                                        <label class="form-label">{{ __('website.phone') }}</label>
                                         <input type="text" name="content[{{ $code }}][contact][phone]" value="{{ $d['contact']['phone'] }}" class="{{ $field }}">
                                     </div>
                                     <div>
-                                        <label class="form-label">Alamat</label>
+                                        <label class="form-label">{{ __('website.address_field') }}</label>
                                         <input type="text" name="content[{{ $code }}][contact][address]" value="{{ $d['contact']['address'] }}" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-3">
-                                        <label class="form-label">Embed Google Maps</label>
-                                        <textarea name="content[{{ $code }}][contact][map_embed]" rows="3" placeholder="Tempelkan kode &lt;iframe&gt; dari Google Maps, atau cukup URL embed" class="{{ $field }}">{{ $d['contact']['map_embed'] ?? '' }}</textarea>
-                                        <p class="text-xs text-slate-400 mt-1">Buka Google Maps &rarr; Bagikan &rarr; Sematkan peta, lalu tempelkan kodenya di sini.</p>
+                                        <label class="form-label">{{ __('website.map_embed') }}</label>
+                                        <textarea name="content[{{ $code }}][contact][map_embed]" rows="3" placeholder="{{ __('website.map_embed_placeholder') }}" class="{{ $field }}">{{ $d['contact']['map_embed'] ?? '' }}</textarea>
+                                        <p class="text-xs text-slate-400 mt-1">{{ __('website.map_embed_hint') }}</p>
                                     </div>
                                 </div>
                             </section>
 
                             {{-- SEO --}}
                             <section>
-                                <h3 class="text-sm font-semibold text-slate-700 mb-3">SEO</h3>
+                                <h3 class="text-sm font-semibold text-slate-700 mb-3">{{ __('website.seo') }}</h3>
                                 <div class="grid gap-3 sm:grid-cols-2">
                                     <div>
-                                        <label class="form-label">Judul SEO</label>
+                                        <label class="form-label">{{ __('website.seo_title') }}</label>
                                         <input type="text" name="content[{{ $code }}][seo][title]" value="{{ $d['seo']['title'] }}" class="{{ $field }}">
                                     </div>
                                     <div>
-                                        <label class="form-label">Gambar Open Graph (URL)</label>
+                                        <label class="form-label">{{ __('website.og_image') }}</label>
                                         <input type="text" name="content[{{ $code }}][seo][og_image]" value="{{ $d['seo']['og_image'] }}" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-2">
-                                        <label class="form-label">Deskripsi SEO</label>
+                                        <label class="form-label">{{ __('website.seo_description') }}</label>
                                         <textarea name="content[{{ $code }}][seo][description]" rows="2" class="{{ $field }}">{{ $d['seo']['description'] }}</textarea>
                                     </div>
                                 </div>
@@ -256,24 +256,24 @@
                 {{-- Media (bersama) --}}
                 <section class="border-t border-slate-100 pt-5">
                     <div class="flex items-center justify-between mb-1">
-                        <h3 class="text-sm font-semibold text-slate-700">Media</h3>
+                        <h3 class="text-sm font-semibold text-slate-700">{{ __('website.media') }}</h3>
                         <button type="button" class="btn btn-secondary btn-sm" data-repeat-add="rp-media">
-                            <i data-lucide="plus"></i> Tambah media
+                            <i data-lucide="plus"></i> {{ __('website.add_media') }}
                         </button>
                     </div>
-                    <p class="text-xs text-slate-400 mb-3">Unggah berkas (JPG, PNG, WEBP, GIF, SVG, maks 4 MB) atau isi URL gambar. Teks alternatif bersifat opsional.</p>
+                    <p class="text-xs text-slate-400 mb-3">{{ __('website.media_hint') }}</p>
                     <div id="rp-media" class="space-y-3">
                         <div data-repeat-rows class="space-y-3">
                             @foreach($mediaRows as $i => $row)
                                 <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
                                     <div class="sm:col-span-5">
-                                        <input type="text" name="media[{{ $i }}][url]" value="{{ $row['url'] ?? '' }}" placeholder="URL gambar" class="{{ $field }}">
+                                        <input type="text" name="media[{{ $i }}][url]" value="{{ $row['url'] ?? '' }}" placeholder="{{ __('website.image_url') }}" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-4">
                                         <input type="file" name="media[{{ $i }}][file]" accept="image/*" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-2">
-                                        <input type="text" name="media[{{ $i }}][alt]" value="{{ $row['alt'] ?? '' }}" placeholder="Teks alternatif" class="{{ $field }}">
+                                        <input type="text" name="media[{{ $i }}][alt]" value="{{ $row['alt'] ?? '' }}" placeholder="{{ __('website.alt_text') }}" class="{{ $field }}">
                                     </div>
                                     <div class="sm:col-span-1 text-right">
                                         <button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button>
@@ -283,9 +283,9 @@
                         </div>
                         <template data-row-template>
                             <div class="wt-row grid gap-2 sm:grid-cols-12 items-start bg-slate-50 border border-slate-100 rounded-lg p-3" data-repeat-row>
-                                <div class="sm:col-span-5"><input type="text" name="media[__INDEX__][url]" placeholder="URL gambar" class="{{ $field }}"></div>
+                                <div class="sm:col-span-5"><input type="text" name="media[__INDEX__][url]" placeholder="{{ __('website.image_url') }}" class="{{ $field }}"></div>
                                 <div class="sm:col-span-4"><input type="file" name="media[__INDEX__][file]" accept="image/*" class="{{ $field }}"></div>
-                                <div class="sm:col-span-2"><input type="text" name="media[__INDEX__][alt]" placeholder="Teks alternatif" class="{{ $field }}"></div>
+                                <div class="sm:col-span-2"><input type="text" name="media[__INDEX__][alt]" placeholder="{{ __('website.alt_text') }}" class="{{ $field }}"></div>
                                 <div class="sm:col-span-1 text-right"><button type="button" class="btn btn-secondary btn-sm text-red-600" data-repeat-remove><i data-lucide="trash-2"></i></button></div>
                             </div>
                         </template>

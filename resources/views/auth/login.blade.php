@@ -4,7 +4,7 @@
 
 @section('content')
     <h2 class="text-lg font-semibold text-slate-800 mb-1">{{ __('auth.login_title') }}</h2>
-    <p class="text-sm text-slate-500 mb-5">{{ __('common.welcome') }} kembali.</p>
+    <p class="text-sm text-slate-500 mb-5">{{ __('auth.welcome_back') }}</p>
 
     <form method="POST" action="{{ route('login.attempt') }}" class="space-y-4">
         @csrf
@@ -28,15 +28,15 @@
     </form>
 
     <div class="mt-5 pt-4 border-t border-slate-100 text-center text-sm text-slate-500">
-        {{ __('common.mitra') }} baru?
+        {{ __('auth.new_mitra') }}
         <a href="{{ route('mitra.register') }}" class="font-semibold" style="color: var(--color-primary)">{{ __('common.register') }}</a>
     </div>
 
     <div class="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-3 text-xs text-slate-500 leading-relaxed">
-        <div class="font-semibold text-slate-600 mb-1">Akun demo</div>
-        Admin Principal: <b>admin@lbacloud.test</b> / <b>password</b><br>
-        User Principal: <b>user@lbacloud.test</b> / <b>password</b><br>
-        Pemilik Mitra: <b>pemilik@demo.test</b> / <b>password</b><br>
-        Staff Admin: <b>staff@demo.test</b> / <b>password</b>
+        <div class="font-semibold text-slate-600 mb-1">{{ __('auth.demo_accounts') }}</div>
+        {{ __('auth.demo_admin_principal') }}: <b>admin@lbacloud.test</b> / <b>password</b><br>
+        {{ __('auth.demo_user_principal') }}: <b>user@lbacloud.test</b> / <b>password</b><br>
+        {{ __('auth.demo_pemilik_mitra') }}: <b>pemilik@demo.test</b> / <b>password</b><br>
+        {{ __('auth.demo_staff_admin') }}: <b>staff@demo.test</b> / <b>password</b>
     </div>
 @endsection

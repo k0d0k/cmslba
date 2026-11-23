@@ -4,19 +4,19 @@
 
 @section('content')
     <h2 class="text-lg font-semibold text-slate-800 mb-1">{{ __('auth.register_title') }}</h2>
-    <p class="text-sm text-slate-500 mb-5">Database mitra baru akan dibuat otomatis (lbacloud_mitra_xxx).</p>
+    <p class="text-sm text-slate-500 mb-5">{{ __('auth.register_subtitle') }}</p>
 
     <form method="POST" action="{{ route('mitra.register.store') }}" class="space-y-4">
         @csrf
 
         <div>
-            <label class="form-label">Nama Mitra</label>
+            <label class="form-label">{{ __('auth.mitra_name') }}</label>
             <input type="text" name="mitra_name" value="{{ old('mitra_name') }}" class="form-control" required>
-            <p class="text-xs text-slate-400 mt-1">Frontpage publik: {{ url('/') }}/nama-mitra</p>
+            <p class="text-xs text-slate-400 mt-1">{{ __('auth.frontpage_public') }}: {{ url('/') }}/nama-mitra</p>
         </div>
 
         <div>
-            <label class="form-label">{{ __('common.name') }} Pemilik</label>
+            <label class="form-label">{{ __('auth.owner_name') }}</label>
             <input type="text" name="name" value="{{ old('name') }}" class="form-control" required>
         </div>
 
@@ -31,7 +31,7 @@
                 <input type="password" name="password" class="form-control" required>
             </div>
             <div>
-                <label class="form-label">Konfirmasi</label>
+                <label class="form-label">{{ __('auth.confirm_label') }}</label>
                 <input type="password" name="password_confirmation" class="form-control" required>
             </div>
         </div>
@@ -49,7 +49,7 @@
     </form>
 
     <div class="mt-5 pt-4 border-t border-slate-100 text-center text-sm text-slate-500">
-        Sudah punya akun?
+        {{ __('auth.have_account') }}
         <a href="{{ route('login') }}" class="font-semibold" style="color: var(--color-primary)">{{ __('common.login') }}</a>
     </div>
 @endsection

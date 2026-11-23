@@ -14,22 +14,35 @@ class SubscriptionController extends BaseCrudController
 {
     protected string $model = Subscription::class;
     protected string $routeName = 'admin.subscriptions';
-    protected string $title = 'Paket Langganan';
     protected string $menuKey = 'subscriptions';
-    protected array $fields = [
-        ['name' => 'code', 'type' => 'string', 'label' => 'Kode', 'nullable' => false, 'unique' => true],
-        ['name' => 'name', 'type' => 'string', 'label' => 'Nama Paket', 'nullable' => false],
-        ['name' => 'description', 'type' => 'text', 'label' => 'Deskripsi', 'nullable' => true],
-        ['name' => 'status', 'type' => 'select', 'label' => 'Status', 'nullable' => false, 'default' => 'active',
-            'options' => ['active' => 'Aktif', 'inactive' => 'Nonaktif']],
-        ['name' => 'price_amount', 'type' => 'decimal', 'label' => 'Harga', 'nullable' => false, 'default' => 0],
-        ['name' => 'currency', 'type' => 'string', 'label' => 'Mata Uang', 'nullable' => false, 'default' => 'IDR'],
-        ['name' => 'billing_interval', 'type' => 'select', 'label' => 'Interval Tagihan', 'nullable' => false, 'default' => 'monthly',
-            'options' => ['monthly' => 'Bulanan', 'yearly' => 'Tahunan', 'weekly' => 'Mingguan', 'daily' => 'Harian']],
-        ['name' => 'trial_days', 'type' => 'integer', 'label' => 'Trial (hari)', 'nullable' => false, 'default' => 0],
-        ['name' => 'seat_limit', 'type' => 'integer', 'label' => 'Batas Seat', 'nullable' => true],
-        ['name' => 'sina_credit_per_patient_per_period', 'type' => 'integer', 'label' => 'Kredit SINA per pasien per periode', 'nullable' => false, 'default' => 0],
-    ];
+
+    protected function title(): string
+    {
+        return __('subscription.title');
+    }
+
+    protected function fields(): array
+    {
+        return [
+            ['name' => 'code', 'type' => 'string', 'label' => __('common.code'), 'nullable' => false, 'unique' => true],
+            ['name' => 'name', 'type' => 'string', 'label' => __('subscription.name'), 'nullable' => false],
+            ['name' => 'description', 'type' => 'text', 'label' => __('common.description'), 'nullable' => true],
+            ['name' => 'status', 'type' => 'select', 'label' => __('common.status'), 'nullable' => false, 'default' => 'active',
+                'options' => ['active' => __('common.active'), 'inactive' => __('common.inactive')]],
+            ['name' => 'price_amount', 'type' => 'decimal', 'label' => __('common.price'), 'nullable' => false, 'default' => 0],
+            ['name' => 'currency', 'type' => 'string', 'label' => __('common.currency'), 'nullable' => false, 'default' => 'IDR'],
+            ['name' => 'billing_interval', 'type' => 'select', 'label' => __('subscription.billing_interval'), 'nullable' => false, 'default' => 'monthly',
+                'options' => [
+                    'monthly' => __('subscription.interval_monthly'),
+                    'yearly'  => __('subscription.interval_yearly'),
+                    'weekly'  => __('subscription.interval_weekly'),
+                    'daily'   => __('subscription.interval_daily'),
+                ]],
+            ['name' => 'trial_days', 'type' => 'integer', 'label' => __('subscription.trial_days'), 'nullable' => false, 'default' => 0],
+            ['name' => 'seat_limit', 'type' => 'integer', 'label' => __('subscription.seat_limit'), 'nullable' => true],
+            ['name' => 'sina_credit_per_patient_per_period', 'type' => 'integer', 'label' => __('subscription.sina_credit'), 'nullable' => false, 'default' => 0],
+        ];
+    }
 
     protected function moduleOptions(): array
     {
@@ -47,7 +60,7 @@ class SubscriptionController extends BaseCrudController
             'record' => null,
             'modules' => $this->moduleOptions(),
             'routeName' => $this->routeName,
-            'title' => $this->title,
+            'title' => $this->title(),
         ]);
     }
 
@@ -60,7 +73,7 @@ class SubscriptionController extends BaseCrudController
             'record' => $record,
             'modules' => $this->moduleOptions(),
             'routeName' => $this->routeName,
-            'title' => $this->title,
+            'title' => $this->title(),
         ]);
     }
 

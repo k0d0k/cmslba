@@ -20,7 +20,7 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="text-xs uppercase text-slate-500 border-b border-slate-200 bg-slate-50">
-                            <th class="px-4 py-3 text-left">Menu</th>
+                            <th class="px-4 py-3 text-left">{{ __('roles.menu') }}</th>
                             @foreach($abilities as $ability)
                                 <th class="px-4 py-3 text-center">{{ ucfirst($ability) }}</th>
                             @endforeach
@@ -35,7 +35,7 @@
             <div class="card-body flex items-center gap-2 border-t border-slate-100">
                 <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                 <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
-                <span class="text-xs text-slate-400 ml-auto">Centang kemampuan CRUD untuk tiap menu.</span>
+                <span class="text-xs text-slate-400 ml-auto">{{ __('roles.assign_hint') }}</span>
             </div>
         </form>
     </div>

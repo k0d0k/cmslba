@@ -15,33 +15,37 @@ class PaymentProviderController extends BaseCrudController
     protected string $model = PaymentProvider::class;
     protected string $view = 'admin.crud';
     protected string $routeName = 'admin.payment_providers';
-    protected string $title = 'Metode Pembayaran';
     protected string $menuKey = 'payment_providers';
+
+    protected function title(): string
+    {
+        return __('payment.title');
+    }
 
     protected function fields(): array
     {
         return [
-            ['name' => 'provider', 'type' => 'select', 'label' => 'Penyedia', 'nullable' => false, 'unique' => true,
+            ['name' => 'provider', 'type' => 'select', 'label' => __('common.provider'), 'nullable' => false, 'unique' => true,
                 'options' => PaymentProvider::providerOptions()],
-            ['name' => 'label', 'type' => 'string', 'label' => 'Label', 'nullable' => false],
-            ['name' => 'mode', 'type' => 'select', 'label' => 'Mode', 'nullable' => false, 'default' => 'sandbox',
-                'options' => ['sandbox' => 'Sandbox', 'live' => 'Live']],
-            ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => true, 'default' => true],
+            ['name' => 'label', 'type' => 'string', 'label' => __('common.label'), 'nullable' => false],
+            ['name' => 'mode', 'type' => 'select', 'label' => __('common.mode'), 'nullable' => false, 'default' => 'sandbox',
+                'options' => ['sandbox' => __('payment.mode_sandbox'), 'live' => __('payment.mode_live')]],
+            ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => true, 'default' => true],
 
-            ['type' => 'section', 'title' => 'Kredensial',
-                'text' => 'Kredensial dienkripsi saat disimpan dan tidak pernah ditampilkan lagi. Biarkan rahasia kosong untuk mempertahankan nilai tersimpan.'],
+            ['type' => 'section', 'title' => __('payment.credentials'),
+                'text' => __('payment.credentials_text')],
 
-            ['name' => 'server_key', 'type' => 'secret', 'label' => 'Server Key', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'client_key', 'type' => 'secret', 'label' => 'Client Key', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'api_key', 'type' => 'secret', 'label' => 'API Key', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'virtual_account', 'type' => 'secret', 'label' => 'Virtual Account', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'client_id', 'type' => 'secret', 'label' => 'Client ID', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'client_secret', 'type' => 'secret', 'label' => 'Client Secret', 'nullable' => true, 'hide_in_table' => true],
-            ['name' => 'webhook_id', 'type' => 'secret', 'label' => 'Webhook ID', 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'server_key', 'type' => 'secret', 'label' => __('common.server_key'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'client_key', 'type' => 'secret', 'label' => __('common.client_key'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'api_key', 'type' => 'secret', 'label' => __('common.api_key'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'virtual_account', 'type' => 'secret', 'label' => __('common.virtual_account'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'client_id', 'type' => 'secret', 'label' => __('common.client_id'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'client_secret', 'type' => 'secret', 'label' => __('common.client_secret'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'webhook_id', 'type' => 'secret', 'label' => __('common.webhook_id'), 'nullable' => true, 'hide_in_table' => true],
 
-            ['name' => 'currency', 'type' => 'select', 'label' => 'Mata Uang', 'nullable' => true,
+            ['name' => 'currency', 'type' => 'select', 'label' => __('common.currency'), 'nullable' => true,
                 'options' => ['IDR' => 'IDR', 'MYR' => 'MYR'],
-                'hint' => 'Biarkan kosong untuk mengizinkan mata uang bawaan platform.'],
+                'hint' => __('payment.currency_hint')],
         ];
     }
 
@@ -81,7 +85,7 @@ class PaymentProviderController extends BaseCrudController
         foreach ($fields as &$f) {
             if (($f['name'] ?? null) === 'provider') {
                 $f['disabled'] = true;
-                $f['hint'] = 'Kunci penyedia tidak dapat diubah setelah gateway dibuat.';
+                $f['hint'] = __('payment.provider_locked');
             }
         }
         unset($f);
@@ -89,7 +93,7 @@ class PaymentProviderController extends BaseCrudController
         return view($this->view . '.form', [
             'fields'    => $fields,
             'routeName' => $this->routeName,
-            'title'     => $this->title,
+            'title'     => $this->title(),
             'record'    => $record,
         ]);
     }

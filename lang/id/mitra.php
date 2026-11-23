@@ -1,0 +1,68 @@
+<?php
+
+return [
+    'add'  => 'Tambah Mitra',
+    'edit' => 'Ubah Mitra',
+
+    'form_name'   => 'Nama Mitra',
+    'logo'        => 'Logo',
+    'logo_hint'   => 'Format: JPG, PNG, GIF, WEBP. Maks 2 MB.',
+    'slug_hint'   => 'otomatis dari nama',
+
+    'subscription_initial' => 'Langganan &amp; Lisensi Awal',
+    'subscription_mitra'   => 'Langganan &amp; Lisensi Mitra',
+    'package'         => 'Paket',
+    'no_package'      => 'Tanpa paket',
+    'select_package'  => 'Pilih paket',
+    'seats'           => 'Kursi',
+    'attach_brand'    => 'Lampirkan Brand',
+    'primary_brand'   => 'Brand utama',
+    'primary_brand_hint' => 'Brand pertama menjadi utama',
+    'subscribe_mitra' => 'Langganankan Mitra',
+    'provision_note_1' => 'Saat disimpan, sistem akan otomatis membuat database mitra',
+    'provision_note_2' => 'dan menjalankan migrasi.',
+
+    'col_package'     => 'Paket',
+    'col_status'      => 'Status',
+    'col_seats'       => 'Kursi',
+    'col_period_end'  => 'Periode berakhir',
+    'col_reference'   => 'Referensi',
+    'col_action'      => 'Tindakan',
+    'no_history'      => 'Belum ada riwayat langganan.',
+
+    'status_trialing'  => 'Uji coba',
+    'status_cancelled' => 'Dibatalkan',
+    'status_active'    => 'Aktif',
+    'status_pending'   => 'Pending',
+    'status_ended'     => 'Berakhir',
+
+    'activate'      => 'Aktifkan',
+    'cancel'        => 'Batalkan',
+    'cancel_title'  => 'Batalkan Langganan',
+    'cancel_confirm' => 'Batalkan langganan ini?',
+    'cancel_confirm_yes' => 'Ya, Batalkan',
+
+    'choose_brand'   => 'Pilih Brand',
+    'brand_active'   => 'Aktif',
+    'brand_inactive' => 'Nonaktif',
+    'no_brand'       => 'Belum ada brand yang dilampirkan.',
+    'make_primary'   => 'Jadikan utama',
+    'detach'         => 'Lepaskan',
+    'detach_title'   => 'Lepaskan Brand',
+    'detach_confirm' => 'Lepaskan brand ini dari mitra?',
+    'detach_confirm_yes' => 'Ya, Lepaskan',
+
+    'seat_exceed'        => 'Jumlah kursi melebihi batas pada paket yang dipilih.',
+    'subscription_added' => 'Paket langganan berhasil ditambahkan.',
+    'subscription_cancelled' => 'Langganan berhasil dibatalkan.',
+    'subscription_activated' => 'Langganan berhasil diaktifkan.',
+    'brand_attached'     => 'Merek berhasil dilampirkan.',
+    'brand_primary_updated' => 'Merek utama berhasil diubah.',
+    'brand_detached'     => 'Merek berhasil dilepaskan.',
+
+    'list_title'    => 'Daftar Mitra (Tenant)',
+    'multi_title'   => 'Multi Mitra',
+    'slug_frontpage' => 'Slug (Frontpage)',
+    'db'            => 'Database',
+    'subscription_col' => 'Langganan',
+];

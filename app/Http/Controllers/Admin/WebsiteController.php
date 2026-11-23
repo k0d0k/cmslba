@@ -39,7 +39,7 @@ class WebsiteController extends Controller
         $mitra = $this->currentMitra();
 
         if (! $mitra) {
-            return redirect()->route('admin.dashboard')->with('error', 'Tidak ada mitra aktif.');
+            return redirect()->route('admin.dashboard')->with('error', __('website.no_mitra'));
         }
 
         return $this->editor($this->websiteFor($mitra), $mitra);
@@ -50,7 +50,7 @@ class WebsiteController extends Controller
         $mitra = $this->currentMitra();
 
         if (! $mitra) {
-            return redirect()->route('admin.dashboard')->with('error', 'Tidak ada mitra aktif.');
+            return redirect()->route('admin.dashboard')->with('error', __('website.no_mitra'));
         }
 
         return $this->save($request, $mitra, 'admin.mitra_website.index');
@@ -63,7 +63,7 @@ class WebsiteController extends Controller
         return view('admin.website.edit', [
             'website'    => $website,
             'mitra'      => $mitra,
-            'title'      => $mitra ? 'Kelola Website Mitra' : 'Kelola Website Platform',
+            'title'      => $mitra ? __('website.title_mitra') : __('website.title_platform'),
             'action'     => $mitra ? route('admin.mitra_website.save') : route('admin.website.save'),
             'locales'    => WebsiteService::locales(),
             'templates'  => WebsiteService::templates(),
@@ -89,7 +89,7 @@ class WebsiteController extends Controller
 
         return redirect()->route($redirectRoute)->with(
             'success',
-            $status === 'published' ? 'Website berhasil dipublikasikan.' : 'Draf website berhasil disimpan.'
+            $status === 'published' ? __('website.saved_published') : __('website.saved_draft')
         );
     }
 

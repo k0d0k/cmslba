@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'CRUD Generator - Buat Baru')
+@section('title', __('generator.title_new'))
 
 @section('content')
     @php
@@ -15,39 +15,38 @@
         @csrf
 
         <div class="card">
-            <div class="card-header">Informasi Modul</div>
+            <div class="card-header">{{ __('generator.module_info') }}</div>
             <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">Judul Menu</label>
-                    <input type="text" name="title" value="{{ old('title') }}" class="form-control" required placeholder="Produk">
+                    <label class="form-label">{{ __('generator.menu_title') }}</label>
+                    <input type="text" name="title" value="{{ old('title') }}" class="form-control" required placeholder="{{ __('generator.menu_placeholder') }}">
                 </div>
                 <div>
-                    <label class="form-label">Model</label>
-                    <input type="text" name="model" value="{{ old('model') }}" class="form-control" required placeholder="Produk">
-                    <p class="text-xs text-slate-400 mt-1">StudlyCase, tanpa spasi. Model: App\Models\Tenant\{Model}</p>
+                    <label class="form-label">{{ __('generator.model') }}</label>
+                    <input type="text" name="model" value="{{ old('model') }}" class="form-control" required placeholder="{{ __('generator.menu_placeholder') }}">
+                    <p class="text-xs text-slate-400 mt-1">{{ __('generator.model_hint') }}</p>
                 </div>
                 <div>
-                    <label class="form-label">Key / Route (opsional)</label>
+                    <label class="form-label">{{ __('generator.key_route') }}</label>
                     <input type="text" name="key" value="{{ old('key') }}" class="form-control" placeholder="produk">
                 </div>
                 <div>
-                    <label class="form-label">Icon</label>
+                    <label class="form-label">{{ __('common.icon') }}</label>
                     <input type="text" name="icon" value="{{ old('icon', 'table') }}" class="form-control">
                 </div>
                 <div>
-                    <label class="form-label">Database</label>
+                    <label class="form-label">{{ __('generator.database') }}</label>
                     <select name="database_target" id="database_target" class="form-control" onchange="document.getElementById('connection').value = this.value">
-                        <option value="tenant" @selected(old('connection', 'tenant') === 'tenant')>Database Mitra (tenant)</option>
-                        <option value="central" @selected(old('connection') === 'central')>Database Pusat (central)</option>
+                        <option value="tenant" @selected(old('connection', 'tenant') === 'tenant')>{{ __('generator.db_tenant') }}</option>
+                        <option value="central" @selected(old('connection') === 'central')>{{ __('generator.db_central') }}</option>
                     </select>
                     <input type="hidden" name="connection" id="connection" value="{{ old('connection', 'tenant') }}">
                     <p class="text-xs text-slate-400 mt-1">
-                        <b>Mitra</b>: tabel dibuat di <code>database/migrations/tenant</code> (model <code>App\Models\Tenant</code>), tiap tabel diberi <code>mitra_uuid</code>.
-                        <b>Pusat</b>: tabel dibuat di <code>database/migrations</code> (model <code>App\Models</code>).
+                        {!! __('generator.db_hint') !!}
                     </p>
                 </div>
                 <div>
-                    <label class="form-label">Parent Menu</label>
+                    <label class="form-label">{{ __('generator.parent_menu') }}</label>
                     <select name="parent_id" class="form-control">
                         <option value="">- (root)</option>
                         @foreach($parents as $p)
@@ -58,26 +57,25 @@
                 <div class="flex items-end">
                     <label class="flex items-center gap-2 text-sm text-slate-600">
                         <input type="checkbox" name="has_cabang" value="1" class="form-check" @checked(old('has_cabang'))>
-                        Sertakan relasi Cabang (multi cabang)
+                        {{ __('generator.include_cabang') }}
                     </label>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header">Field</div>
+            <div class="card-header">{{ __('generator.field') }}</div>
             <div class="card-body">
                 <div id="fields" class="space-y-3"></div>
-                <button type="button" id="add-field" class="btn btn-secondary btn-sm mt-3">+ Tambah Field</button>
+                <button type="button" id="add-field" class="btn btn-secondary btn-sm mt-3">{{ __('generator.add_field') }}</button>
                 <p class="text-xs text-slate-400 mt-2">
-                    Kolom <b>slug</b> otomatis ditambahkan ke setiap tabel.
-                    Untuk tipe <b>Select</b>, isi opsi dengan format <code>key: Label</code> per baris.
+                    {!! __('generator.field_note') !!}
                 </p>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-header">Assign ke Role</div>
+            <div class="card-header">{{ __('generator.assign_role') }}</div>
             <div class="card-body grid grid-cols-2 md:grid-cols-3 gap-2">
                 @foreach($roles as $roleName => $meta)
                     <label class="flex items-center gap-2 text-sm text-slate-600">
@@ -87,13 +85,13 @@
                     </label>
                 @endforeach
                 <p class="text-xs text-slate-400 col-span-full">
-                    Admin Principal &amp; User Principal otomatis diberi akses penuh.
+                    {!! __('generator.assign_hint') !!}
                 </p>
             </div>
         </div>
 
         <div class="flex items-center gap-2">
-            <button type="submit" class="btn btn-primary">Generate CRUD</button>
+            <button type="submit" class="btn btn-primary">{{ __('generator.generate') }}</button>
             <a href="{{ route('admin.generator.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
         </div>
     </form>
@@ -101,11 +99,11 @@
     <template id="field-template">
         <div class="field-row grid grid-cols-1 md:grid-cols-12 gap-2 items-start border border-slate-200 rounded-lg p-3">
             <div class="md:col-span-3">
-                <label class="form-label">Nama Field</label>
-                <input type="text" name="field_name[]" class="form-control" placeholder="name">
+                <label class="form-label">{{ __('generator.field_name') }}</label>
+                <input type="text" name="field_name[]" class="form-control" placeholder="{{ __('generator.field_name_placeholder') }}">
             </div>
             <div class="md:col-span-2">
-                <label class="form-label">Tipe</label>
+                <label class="form-label">{{ __('generator.field_type') }}</label>
                 <select name="field_type[]" class="form-control">
                     @foreach($fieldTypes as $val => $lbl)
                         <option value="{{ $val }}">{{ $lbl }}</option>
@@ -113,23 +111,23 @@
                 </select>
             </div>
             <div class="md:col-span-3">
-                <label class="form-label">Label</label>
-                <input type="text" name="field_label[]" class="form-control" placeholder="Nama">
+                <label class="form-label">{{ __('generator.field_label') }}</label>
+                <input type="text" name="field_label[]" class="form-control" placeholder="{{ __('generator.field_label_placeholder') }}">
             </div>
             <div class="md:col-span-2 flex items-center gap-3 pt-6 text-xs text-slate-600">
                 <label class="flex items-center gap-1">
-                    <input type="checkbox" name="field_nullable[]" value="1" class="form-check"> Nullable
+                    <input type="checkbox" name="field_nullable[]" value="1" class="form-check"> {{ __('generator.nullable') }}
                 </label>
                 <label class="flex items-center gap-1">
-                    <input type="checkbox" name="field_unique[]" value="1" class="form-check"> Unik
+                    <input type="checkbox" name="field_unique[]" value="1" class="form-check"> {{ __('generator.unique') }}
                 </label>
             </div>
             <div class="md:col-span-2 pt-6">
-                <button type="button" class="btn btn-danger btn-sm remove-field w-full justify-center">Hapus</button>
+                <button type="button" class="btn btn-danger btn-sm remove-field w-full justify-center">{{ __('generator.remove') }}</button>
             </div>
             <div class="md:col-span-12">
-                <label class="form-label">Opsi (khusus Select) — format <code>key: Label</code> per baris</label>
-                <textarea name="field_options[]" rows="2" class="form-control" placeholder="active: Aktif&#10;inactive: Nonaktif"></textarea>
+                <label class="form-label">{{ __('generator.options') }} — format <code>key: Label</code> {{ __('generator.per_line') }}</label>
+                <textarea name="field_options[]" rows="2" class="form-control" placeholder="{{ __('common.active') }}: {{ __('common.active') }}&#10;{{ __('common.inactive') }}: {{ __('common.inactive') }}"></textarea>
             </div>
         </div>
     </template>

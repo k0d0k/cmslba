@@ -1,0 +1,68 @@
+<?php
+
+return [
+    'add'  => 'Add Tenant',
+    'edit' => 'Edit Tenant',
+
+    'form_name'   => 'Tenant Name',
+    'logo'        => 'Logo',
+    'logo_hint'   => 'Format: JPG, PNG, GIF, WEBP. Max 2 MB.',
+    'slug_hint'   => 'auto from name',
+
+    'subscription_initial' => 'Initial Subscription &amp; License',
+    'subscription_mitra'   => 'Tenant Subscription &amp; License',
+    'package'         => 'Plan',
+    'no_package'      => 'No plan',
+    'select_package'  => 'Select plan',
+    'seats'           => 'Seats',
+    'attach_brand'    => 'Attach Brand',
+    'primary_brand'   => 'Primary brand',
+    'primary_brand_hint' => 'The first brand becomes primary',
+    'subscribe_mitra' => 'Subscribe Tenant',
+    'provision_note_1' => 'When saved, the system will automatically create the tenant database',
+    'provision_note_2' => 'and run the migrations.',
+
+    'col_package'     => 'Plan',
+    'col_status'      => 'Status',
+    'col_seats'       => 'Seats',
+    'col_period_end'  => 'Period Ends',
+    'col_reference'   => 'Reference',
+    'col_action'      => 'Action',
+    'no_history'      => 'No subscription history yet.',
+
+    'status_trialing'  => 'Trialing',
+    'status_cancelled' => 'Cancelled',
+    'status_active'    => 'Active',
+    'status_pending'   => 'Pending',
+    'status_ended'     => 'Ended',
+
+    'activate'      => 'Activate',
+    'cancel'        => 'Cancel',
+    'cancel_title'  => 'Cancel Subscription',
+    'cancel_confirm' => 'Cancel this subscription?',
+    'cancel_confirm_yes' => 'Yes, Cancel',
+
+    'choose_brand'   => 'Select Brand',
+    'brand_active'   => 'Active',
+    'brand_inactive' => 'Inactive',
+    'no_brand'       => 'No brand attached yet.',
+    'make_primary'   => 'Make primary',
+    'detach'         => 'Detach',
+    'detach_title'   => 'Detach Brand',
+    'detach_confirm' => 'Detach this brand from the tenant?',
+    'detach_confirm_yes' => 'Yes, Detach',
+
+    'seat_exceed'        => 'The number of seats exceeds the limit of the selected plan.',
+    'subscription_added' => 'Subscription plan added successfully.',
+    'subscription_cancelled' => 'Subscription cancelled successfully.',
+    'subscription_activated' => 'Subscription activated successfully.',
+    'brand_attached'     => 'Brand attached successfully.',
+    'brand_primary_updated' => 'Primary brand updated successfully.',
+    'brand_detached'     => 'Brand detached successfully.',
+
+    'list_title'    => 'Tenant List',
+    'multi_title'   => 'Multi Partners',
+    'slug_frontpage' => 'Slug (Frontpage)',
+    'db'            => 'Database',
+    'subscription_col' => 'Subscription',
+];

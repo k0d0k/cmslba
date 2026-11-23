@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Multi Mitra')
+@section('title', __('mitra.multi_title'))
 
 
 @section('content')
@@ -22,7 +22,7 @@
 
     <div class="card">
         <div class="card-header flex items-center justify-between">
-            <span>Daftar Mitra (Tenant)</span>
+            <span>{{ __('mitra.list_title') }}</span>
             @if($canCreate ?? false)
                 <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
             @endif
@@ -36,12 +36,12 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Logo</th>
+                        <th>{{ __('common.logo') }}</th>
                         <th>{{ __('common.name') }}</th>
-                        <th>Slug (Frontpage)</th>
-                        <th>Database</th>
-                        <th>Brand</th>
-                        <th>Langganan</th>
+                        <th>{{ __('mitra.slug_frontpage') }}</th>
+                        <th>{{ __('common.database') }}</th>
+                        <th>{{ __('common.brand') }}</th>
+                        <th>{{ __('common.subscription') }}</th>
                         <th>{{ __('common.status') }}</th>
                         @if($hasActions)
                             <th>{{ __('common.actions') }}</th>

@@ -1,0 +1,68 @@
+<?php
+
+return [
+    'add'  => 'Tambah Mitra',
+    'edit' => 'Ubah Mitra',
+
+    'form_name'   => 'Nama Mitra',
+    'logo'        => 'Logo',
+    'logo_hint'   => 'Format: JPG, PNG, GIF, WEBP. Maks 2 MB.',
+    'slug_hint'   => 'automatik daripada nama',
+
+    'subscription_initial' => 'Langganan &amp; Lesen Awal',
+    'subscription_mitra'   => 'Langganan &amp; Lesen Mitra',
+    'package'         => 'Pakej',
+    'no_package'      => 'Tanpa pakej',
+    'select_package'  => 'Pilih pakej',
+    'seats'           => 'Kerusi',
+    'attach_brand'    => 'Lampirkan Jenama',
+    'primary_brand'   => 'Jenama utama',
+    'primary_brand_hint' => 'Jenama pertama menjadi utama',
+    'subscribe_mitra' => 'Langgankan Mitra',
+    'provision_note_1' => 'Apabila disimpan, sistem akan mencipta pangkalan data mitra secara automatik',
+    'provision_note_2' => 'dan menjalankan migrasi.',
+
+    'col_package'     => 'Pakej',
+    'col_status'      => 'Status',
+    'col_seats'       => 'Kerusi',
+    'col_period_end'  => 'Tempoh Tamat',
+    'col_reference'   => 'Rujukan',
+    'col_action'      => 'Tindakan',
+    'no_history'      => 'Tiada sejarah langganan lagi.',
+
+    'status_trialing'  => 'Percubaan',
+    'status_cancelled' => 'Dibatalkan',
+    'status_active'    => 'Aktif',
+    'status_pending'   => 'Menunggu',
+    'status_ended'     => 'Tamat',
+
+    'activate'      => 'Aktifkan',
+    'cancel'        => 'Batalkan',
+    'cancel_title'  => 'Batalkan Langganan',
+    'cancel_confirm' => 'Batalkan langganan ini?',
+    'cancel_confirm_yes' => 'Ya, Batalkan',
+
+    'choose_brand'   => 'Pilih Jenama',
+    'brand_active'   => 'Aktif',
+    'brand_inactive' => 'Tidak Aktif',
+    'no_brand'       => 'Tiada jenama dilampirkan lagi.',
+    'make_primary'   => 'Jadikan utama',
+    'detach'         => 'Lepaskan',
+    'detach_title'   => 'Lepaskan Jenama',
+    'detach_confirm' => 'Lepaskan jenama ini daripada mitra?',
+    'detach_confirm_yes' => 'Ya, Lepaskan',
+
+    'seat_exceed'        => 'Jumlah kerusi melebihi had pakej yang dipilih.',
+    'subscription_added' => 'Pakej langganan berjaya ditambah.',
+    'subscription_cancelled' => 'Langganan berjaya dibatalkan.',
+    'subscription_activated' => 'Langganan berjaya diaktifkan.',
+    'brand_attached'     => 'Jenama berjaya dilampirkan.',
+    'brand_primary_updated' => 'Jenama utama berjaya diubah.',
+    'brand_detached'     => 'Jenama berjaya dilepaskan.',
+
+    'list_title'    => 'Senarai Mitra (Penyewa)',
+    'multi_title'   => 'Pelbagai Mitra',
+    'slug_frontpage' => 'Slug (Laman Utama)',
+    'db'            => 'Pangkalan Data',
+    'subscription_col' => 'Langganan',
+];

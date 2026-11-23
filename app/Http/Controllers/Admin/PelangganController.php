@@ -15,18 +15,26 @@ class PelangganController extends BaseCrudController
     protected string $model = \App\Models\Tenant\Pelanggan::class;
     protected string $view = 'admin.crud';
     protected string $routeName = 'admin.pelanggan';
-    protected string $title = 'Pelanggan';
     protected string $menuKey = 'pelanggan';
     protected bool $hasCabang = true;
-    protected array $fields = [
-        ['name' => 'picture', 'type' => 'image', 'label' => 'Foto', 'nullable' => true],
-        ['name' => 'name', 'type' => 'string', 'label' => 'Nama', 'nullable' => false],
-        ['name' => 'email', 'type' => 'email', 'label' => 'Email', 'nullable' => true],
-        ['name' => 'phone', 'type' => 'string', 'label' => 'Telepon', 'nullable' => true],
-        ['name' => 'user_id', 'type' => 'relation', 'label' => 'Akun User', 'nullable' => true, 'relation' => ['model' => \App\Models\User::class, 'label' => 'name_with_role', 'with' => ['roles']]],
-        ['name' => 'cabang_id', 'type' => 'relation', 'label' => 'Cabang', 'nullable' => true, 'relation' => ['model' => \App\Models\Tenant\Cabang::class, 'label' => 'name']],
-        ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => false],
-    ];
+
+    protected function title(): string
+    {
+        return __('common.customer');
+    }
+
+    protected function fields(): array
+    {
+        return [
+            ['name' => 'picture', 'type' => 'image', 'label' => __('common.picture'), 'nullable' => true],
+            ['name' => 'name', 'type' => 'string', 'label' => __('common.name'), 'nullable' => false],
+            ['name' => 'email', 'type' => 'email', 'label' => __('common.email'), 'nullable' => true],
+            ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
+            ['name' => 'user_id', 'type' => 'relation', 'label' => __('common.user_account'), 'nullable' => true, 'relation' => ['model' => \App\Models\User::class, 'label' => 'name_with_role', 'with' => ['roles']]],
+            ['name' => 'cabang_id', 'type' => 'relation', 'label' => __('common.branch'), 'nullable' => true, 'relation' => ['model' => \App\Models\Tenant\Cabang::class, 'label' => 'name']],
+            ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => false],
+        ];
+    }
 
     /**
      * Reset password akun pelanggan: buat password acak, simpan, lalu kirim ke email.

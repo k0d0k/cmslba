@@ -33,19 +33,19 @@ class DashboardController extends Controller
         if ($isPrincipal) {
             // Pusat: seluruh data platform.
             $cards = [
-                ['label' => 'Users',  'value' => User::count(),  'color' => '#465fff'],
-                ['label' => 'Roles',  'value' => Role::count(),  'color' => '#10b981'],
-                ['label' => 'Menus',  'value' => Menu::count(),  'color' => '#f59e0b'],
-                ['label' => 'Mitras', 'value' => Mitra::count(), 'color' => '#f43f5e'],
+                ['label' => __('dashboard.card_users'),  'value' => User::count(),  'color' => '#465fff'],
+                ['label' => __('dashboard.card_roles'),  'value' => Role::count(),  'color' => '#10b981'],
+                ['label' => __('dashboard.card_menus'),  'value' => Menu::count(),  'color' => '#f59e0b'],
+                ['label' => __('dashboard.card_mitras'), 'value' => Mitra::count(), 'color' => '#f43f5e'],
             ];
         } else {
             // Mitra: hanya data mitra sendiri.
             $mitraId = $activeMitra?->id ?? $user?->mitra_id;
             $cards = [
-                ['label' => 'Users',     'value' => $mitraId ? User::where('mitra_id', $mitraId)->count() : 0, 'color' => '#465fff'],
-                ['label' => 'Cabang',    'value' => $tenantStats['cabang'],    'color' => '#10b981'],
-                ['label' => 'Pelanggan', 'value' => $tenantStats['pelanggan'], 'color' => '#f59e0b'],
-                ['label' => 'Brand',     'value' => $activeMitra ? $activeMitra->brands()->count() : 0, 'color' => '#f43f5e'],
+                ['label' => __('dashboard.card_users'),     'value' => $mitraId ? User::where('mitra_id', $mitraId)->count() : 0, 'color' => '#465fff'],
+                ['label' => __('dashboard.card_branch'),    'value' => $tenantStats['cabang'],    'color' => '#10b981'],
+                ['label' => __('dashboard.card_customer'),  'value' => $tenantStats['pelanggan'], 'color' => '#f59e0b'],
+                ['label' => __('dashboard.card_brand'),     'value' => $activeMitra ? $activeMitra->brands()->count() : 0, 'color' => '#f43f5e'],
             ];
         }
 

@@ -35,7 +35,7 @@
         </div>
 
         <div class="text-center text-xs text-slate-300 mt-4">
-            &copy; {{ date('Y') }} {{ config('app.name') }} &middot; LBA Cloud Boilerplate
+            &copy; {{ date('Y') }} {{ config('app.name') }} &middot; {{ __('common.lba_boilerplate') }}
         </div>
     </div>
 </body>

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', __('common.settings') . ' - Menu Dinamis')
+@section('title', __('common.settings') . ' - ' . __('menus.group'))
 
 @section('content')
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -9,8 +9,8 @@
         <div class="lg:col-span-2">
             <div class="card">
                 <div class="card-header flex items-center justify-between">
-                    <span>Struktur Menu (drag &amp; drop)</span>
-                    <span class="text-xs text-slate-400">Ubah posisi/anak dengan menggeser ikon &#8942;&#8942;</span>
+                    <span>{!! __('menus.structure') !!}</span>
+                    <span class="text-xs text-slate-400">{!! __('menus.structure_hint') !!}</span>
                 </div>
                 <div class="card-body">
                     @if($tree->count())
@@ -25,7 +25,7 @@
         {{-- Form tambah / ubah menu --}}
         <div>
             <div class="card">
-                <div class="card-header">{{ $edit ? __('common.edit') : __('common.add') }} Menu</div>
+                <div class="card-header">{{ $edit ? __('common.edit') : __('common.add') }} {{ __('menus.form_title') }}</div>
                 <form method="POST"
                       action="{{ $edit ? route('admin.menus.update', $edit->key) : route('admin.menus.store') }}"
                       class="card-body space-y-3">
@@ -35,22 +35,22 @@
                     @endif
 
                     <div>
-                        <label class="form-label">Judul (Indonesia)</label>
+                        <label class="form-label">{{ __('menus.title_id') }}</label>
                         <input type="text" name="title_id" value="{{ old('title_id', $edit?->title['id'] ?? '') }}" class="form-control" required>
                     </div>
                     <div>
-                        <label class="form-label">Judul (English)</label>
+                        <label class="form-label">{{ __('menus.title_en') }}</label>
                         <input type="text" name="title_en" value="{{ old('title_en', $edit?->title['en'] ?? '') }}" class="form-control">
                     </div>
                     <div>
-                        <label class="form-label">Judul (Malaysia)</label>
+                        <label class="form-label">{{ __('menus.title_ms') }}</label>
                         <input type="text" name="title_ms" value="{{ old('title_ms', $edit?->title['ms'] ?? '') }}" class="form-control">
                     </div>
 
                     <div>
-                        <label class="form-label">Parent</label>
+                        <label class="form-label">{{ __('menus.parent') }}</label>
                         <select name="parent_id" class="form-control">
-                            <option value="">- (root)</option>
+                            <option value="">{{ __('menus.root') }}</option>
                             @foreach($parents as $p)
                                 @continue($edit && $p->id === $edit->id)
                                 <option value="{{ $p->id }}" @selected((int) old('parent_id', $edit?->parent_id) === $p->id)>{{ $p->label() }}</option>
@@ -59,31 +59,31 @@
                     </div>
 
                     <div>
-                        <label class="form-label">Tipe</label>
+                        <label class="form-label">{{ __('menus.type') }}</label>
                         <select name="type" class="form-control">
-                            @foreach(['link' => 'Link', 'group' => 'Group', 'header' => 'Header'] as $val => $lbl)
+                            @foreach(['link' => __('menus.type_link'), 'group' => __('menus.type_group'), 'header' => __('menus.type_header')] as $val => $lbl)
                                 <option value="{{ $val }}" @selected(old('type', $edit?->type ?? 'link') === $val)>{{ $lbl }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div>
-                        <label class="form-label">Route Name</label>
+                        <label class="form-label">{{ __('menus.route_name') }}</label>
                         <input type="text" name="route_name" value="{{ old('route_name', $edit?->route_name) }}" class="form-control" placeholder="admin.pelanggan.index">
                     </div>
 
                     <div>
-                        <label class="form-label">URL (opsional)</label>
+                        <label class="form-label">{{ __('menus.url_optional') }}</label>
                         <input type="text" name="url" value="{{ old('url', $edit?->url) }}" class="form-control" placeholder="https://...">
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="form-label">Icon</label>
+                            <label class="form-label">{{ __('menus.icon') }}</label>
                             <input type="text" name="icon" value="{{ old('icon', $edit?->icon ?? 'circle') }}" class="form-control">
                         </div>
                         <div>
-                            <label class="form-label">Urutan</label>
+                            <label class="form-label">{{ __('menus.sort') }}</label>
                             <input type="number" name="sort" value="{{ old('sort', $edit?->sort ?? 0) }}" class="form-control">
                         </div>
                     </div>
@@ -91,11 +91,11 @@
                     <div class="flex items-center gap-4 text-sm text-slate-600">
                         <label class="flex items-center gap-2">
                             <input type="checkbox" name="is_active" value="1" class="form-check" @checked(old('is_active', $edit?->is_active ?? true))>
-                            Aktif
+                            {{ __('menus.active') }}
                         </label>
                         <label class="flex items-center gap-2">
                             <input type="checkbox" name="is_visible" value="1" class="form-check" @checked(old('is_visible', $edit?->is_visible ?? true))>
-                            Tampil
+                            {{ __('menus.display') }}
                         </label>
                     </div>
 

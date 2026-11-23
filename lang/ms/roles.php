@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title'      => 'Peranan & Akses',
+    'heading'    => 'Peranan &amp; Kebenaran Menu',
+    'add'        => '+ Tambah Peranan',
+    'col_role'        => 'Peranan',
+    'col_scope'       => 'Skop',
+    'col_description' => 'Penerangan',
+    'col_user'        => 'Pengguna',
+    'col_access'      => 'Akses',
+    'modal_title'     => 'Tambah Peranan Baharu',
+    'name_code'       => 'Nama Peranan (kod)',
+    'name_hint'       => 'Hanya huruf, nombor, garis bawah dan sengkang.',
+    'name_placeholder' => 'cth. supervisor_mitra',
+    'label'           => 'Label',
+    'label_placeholder' => 'cth. Supervisor Mitra',
+    'scope'           => 'Skop',
+    'scope_principal' => 'Principal (Pusat)',
+    'scope_mitra'     => 'Mitra',
+    'description'     => 'Penerangan',
+    'description_placeholder' => 'Penerangan ringkas peranan ini...',
+    'menu'            => 'Menu',
+    'assign_hint'     => 'Tandakan kebolehan CRUD bagi setiap menu.',
+    'menu_count'      => ':count menu',
+    'created'         => 'Peranan ":label" berjaya ditambah.',
+];

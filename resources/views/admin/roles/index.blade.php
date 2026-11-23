@@ -1,24 +1,24 @@
 @extends('layouts.admin')
 
-@section('title', __('common.settings') . ' - Role & Akses')
+@section('title', __('common.settings') . ' - ' . __('roles.title'))
 
 @section('content')
     <div class="card">
         <div class="card-header flex items-center justify-between">
-            <span>Role &amp; Hak Akses Menu</span>
+            <span>{!! __('roles.heading') !!}</span>
             <button type="button" class="btn btn-primary btn-sm" data-modal-target="create-role-modal">
-                + Tambah Role
+                {{ __('roles.add') }}
             </button>
         </div>
         <div class="card-body p-0 overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="text-left text-xs uppercase text-slate-500 border-b border-slate-200">
-                        <th class="px-4 py-3">Role</th>
-                        <th class="px-4 py-3">Scope</th>
-                        <th class="px-4 py-3">Deskripsi</th>
-                        <th class="px-4 py-3 text-center">User</th>
-                        <th class="px-4 py-3 text-center">Akses</th>
+                        <th class="px-4 py-3">{{ __('roles.col_role') }}</th>
+                        <th class="px-4 py-3">{{ __('roles.col_scope') }}</th>
+                        <th class="px-4 py-3">{{ __('roles.col_description') }}</th>
+                        <th class="px-4 py-3 text-center">{{ __('roles.col_user') }}</th>
+                        <th class="px-4 py-3 text-center">{{ __('roles.col_access') }}</th>
                         <th class="px-4 py-3 text-right">{{ __('common.actions') }}</th>
                     </tr>
                 </thead>
@@ -44,7 +44,7 @@
                                 <a href="{{ route('admin.roles.assign', $role->id) }}"
                                    class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium
                                           {{ $count > 0 ? 'bg-teal-50 text-teal-700 hover:bg-teal-100' : 'bg-slate-100 text-slate-500 hover:bg-slate-200' }}">
-                                    {{ $count }} menu
+                                    {{ __('roles.menu_count', ['count' => $count]) }}
                                 </a>
                             </td>
                             <td class="px-4 py-3 text-right">
@@ -63,39 +63,39 @@
             <form method="POST" action="{{ route('admin.roles.store') }}">
                 @csrf
                 <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
-                    <h3 class="text-lg font-semibold text-slate-800">Tambah Role Baru</h3>
+                    <h3 class="text-lg font-semibold text-slate-800">{{ __('roles.modal_title') }}</h3>
                     <button type="button" class="text-slate-400 hover:text-slate-600" data-modal-close>&times;</button>
                 </div>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Role (kode)</label>
-                        <input type="text" name="name" class="form-input" placeholder="mis. supervisor_mitra"
+                        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('roles.name_code') }}</label>
+                        <input type="text" name="name" class="form-input" placeholder="{{ __('roles.name_placeholder') }}"
                                value="{{ old('name') }}" required>
-                        <p class="text-xs text-slate-400 mt-1">Hanya huruf, angka, garis bawah, dan strip.</p>
+                        <p class="text-xs text-slate-400 mt-1">{{ __('roles.name_hint') }}</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Label</label>
-                        <input type="text" name="label" class="form-input" placeholder="mis. Supervisor Mitra"
+                        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('roles.label') }}</label>
+                        <input type="text" name="label" class="form-input" placeholder="{{ __('roles.label_placeholder') }}"
                                value="{{ old('label') }}" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Scope</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('roles.scope') }}</label>
                         <select name="scope" class="form-input" required>
-                            <option value="principal">Principal (Pusat)</option>
-                            <option value="mitra">Mitra</option>
+                            <option value="principal">{{ __('roles.scope_principal') }}</option>
+                            <option value="mitra">{{ __('roles.scope_mitra') }}</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('roles.description') }}</label>
                         <textarea name="description" class="form-input" rows="2"
-                                  placeholder="Deskripsi singkat role ini...">{{ old('description') }}</textarea>
+                                  placeholder="{{ __('roles.description_placeholder') }}">{{ old('description') }}</textarea>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 mt-5 border-t border-slate-200 pt-4">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <button type="button" class="btn btn-secondary" data-modal-close>Batal</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-modal-close>{{ __('common.cancel') }}</button>
                 </div>
             </form>
         </div>

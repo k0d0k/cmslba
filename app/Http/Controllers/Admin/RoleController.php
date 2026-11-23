@@ -65,7 +65,7 @@ class RoleController extends Controller
         );
 
         return redirect()->route('admin.roles.index')
-            ->with('success', 'Role "' . $validated['label'] . '" berhasil ditambahkan.');
+            ->with('success', __('roles.created', ['label' => $validated['label']]));
     }
 
     public function assign(Role $role)

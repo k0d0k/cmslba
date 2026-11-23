@@ -111,7 +111,7 @@
                     @elseif($type === 'password')
                         <input type="password" name="{{ $name }}" value="" class="form-control" autocomplete="new-password">
                         @if($record && empty($f['hint']))
-                            <p class="text-slate-400 text-xs mt-1">Biarkan kosong bila tidak ingin mengganti password.</p>
+                            <p class="text-slate-400 text-xs mt-1">{{ __('common.keep_password_hint') }}</p>
                         @endif
 
                     @elseif($type === 'secret')

@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title'      => 'Roles & Access',
+    'heading'    => 'Roles &amp; Menu Permissions',
+    'add'        => '+ Add Role',
+    'col_role'        => 'Role',
+    'col_scope'       => 'Scope',
+    'col_description' => 'Description',
+    'col_user'        => 'Users',
+    'col_access'      => 'Access',
+    'modal_title'     => 'Add New Role',
+    'name_code'       => 'Role Name (code)',
+    'name_hint'       => 'Only letters, numbers, underscores, and dashes.',
+    'name_placeholder' => 'e.g. supervisor_mitra',
+    'label'           => 'Label',
+    'label_placeholder' => 'e.g. Tenant Supervisor',
+    'scope'           => 'Scope',
+    'scope_principal' => 'Principal (Central)',
+    'scope_mitra'     => 'Tenant',
+    'description'     => 'Description',
+    'description_placeholder' => 'Short description of this role...',
+    'menu'            => 'Menu',
+    'assign_hint'     => 'Check the CRUD abilities for each menu.',
+    'menu_count'      => ':count menus',
+    'created'         => 'Role ":label" has been added.',
+];

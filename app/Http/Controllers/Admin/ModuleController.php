@@ -9,13 +9,21 @@ class ModuleController extends BaseCrudController
 {
     protected string $model = \App\Models\Module::class;
     protected string $routeName = 'admin.modules';
-    protected string $title = 'Modul';
     protected string $menuKey = 'modules';
-    protected array $fields = [
-        ['name' => 'name', 'type' => 'string', 'label' => 'Nama Modul', 'nullable' => false],
-        ['name' => 'code', 'type' => 'string', 'label' => 'Kode', 'nullable' => false, 'unique' => true],
-        ['name' => 'version', 'type' => 'string', 'label' => 'Versi', 'nullable' => true],
-        ['name' => 'description', 'type' => 'text', 'label' => 'Deskripsi', 'nullable' => true],
-        ['name' => 'is_active', 'type' => 'boolean', 'label' => 'Aktif', 'nullable' => true, 'default' => true],
-    ];
+
+    protected function title(): string
+    {
+        return __('common.module');
+    }
+
+    protected function fields(): array
+    {
+        return [
+            ['name' => 'name', 'type' => 'string', 'label' => __('common.module_name'), 'nullable' => false],
+            ['name' => 'code', 'type' => 'string', 'label' => __('common.code'), 'nullable' => false, 'unique' => true],
+            ['name' => 'version', 'type' => 'string', 'label' => __('common.version'), 'nullable' => true],
+            ['name' => 'description', 'type' => 'text', 'label' => __('common.description'), 'nullable' => true],
+            ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => true, 'default' => true],
+        ];
+    }
 }
