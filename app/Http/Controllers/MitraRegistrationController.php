@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mitra;
-use App\Models\User;
+use Modules\Mitra\Models\Mitra;
+use Modules\User\Models\User;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

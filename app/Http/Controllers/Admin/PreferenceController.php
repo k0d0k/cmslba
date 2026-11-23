@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Mitra;
+use Modules\Mitra\Models\Mitra;
 use Illuminate\Http\Request;
 
 /**
@@ -27,7 +27,7 @@ class PreferenceController extends Controller
     public function skin(Request $request)
     {
         $skin = $request->input('skin');
-        $exists = \App\Models\Skin::where('code', $skin)->where('is_active', true)->exists();
+        $exists = \Modules\Setting\Models\Skin::where('code', $skin)->where('is_active', true)->exists();
         abort_unless($exists, 422);
 
         $request->session()->put('skin', $skin);

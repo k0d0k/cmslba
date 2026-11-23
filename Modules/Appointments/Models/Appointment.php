@@ -40,17 +40,17 @@ class Appointment extends Model
 
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Tenant\Pelanggan::class, 'patient_id');
+        return $this->belongsTo(\Modules\Pelanggan\Models\Pelanggan::class, 'patient_id');
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Tenant\Cabang::class, 'branch_id');
+        return $this->belongsTo(\Modules\Cabang\Models\Cabang::class, 'branch_id');
     }
 
     public function staffUser(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'staff_user_id');
+        return $this->belongsTo(\Modules\User\Models\User::class, 'staff_user_id');
     }
 
     public function statusHistories(): HasMany

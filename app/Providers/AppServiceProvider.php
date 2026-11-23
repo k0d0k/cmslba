@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Menu;
+use Modules\Menu\Models\Menu;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 

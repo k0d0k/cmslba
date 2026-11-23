@@ -1,21 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AccountController;
-use App\Http\Controllers\Admin\AuditTrailController;
-use App\Http\Controllers\Admin\CrudGeneratorController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\MitraController;
-use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\PreferenceController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\SinaController;
-use App\Http\Controllers\Admin\SettingAppController;
-use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\FrontpageController;
 use App\Http\Controllers\MitraRegistrationController;
 use Illuminate\Support\Facades\Route;
+use Modules\Website\Http\Controllers\FrontpageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,13 +28,16 @@ Route::post('register', [MitraRegistrationController::class, 'register'])->name(
 |--------------------------------------------------------------------------
 | Admin (butuh login + konteks mitra/tenant)
 |--------------------------------------------------------------------------
+| Route fitur (Dashboard, Multi Mitra, Cabang, Pelanggan, Website, Brand,
+| Registry Modul, Paket Langganan, User, SINA AI, Metode Pembayaran,
+| Setting, Menu Dinamis, Role & Akses, CRUD Generator, Jejak Audit) 
+| didaftarkan oleh masing-masing modul di Modules/<Nama>/Routes/web.php.
+| Di sini hanya route inti yang belum dimiliki modul.
 */
 Route::middleware(['auth', 'tenant'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
         // Preferensi: bahasa, skin, mitra & cabang aktif
         Route::post('preference/locale', [PreferenceController::class, 'locale'])->name('preference.locale');
         Route::post('preference/skin', [PreferenceController::class, 'skin'])->name('preference.skin');
@@ -56,69 +49,6 @@ Route::middleware(['auth', 'tenant'])
         Route::post('account/profile', [AccountController::class, 'updateProfile'])->name('account.profile.update');
         Route::get('account/password', [AccountController::class, 'password'])->name('account.password');
         Route::post('account/password', [AccountController::class, 'updatePassword'])->name('account.password.update');
-
-        // Multi mitra — akses diatur lewat Role & Akses (role_menu), bukan hanya principal.
-        Route::get('mitras', [MitraController::class, 'index'])->name('mitras.index');
-        Route::get('mitras/data', [MitraController::class, 'data'])->name('mitras.data');
-        Route::get('mitras/create', [MitraController::class, 'create'])->name('mitras.create');
-        Route::post('mitras', [MitraController::class, 'store'])->name('mitras.store');
-        Route::get('mitras/{mitra}/edit', [MitraController::class, 'edit'])->name('mitras.edit');
-        Route::put('mitras/{mitra}', [MitraController::class, 'update'])->name('mitras.update');
-        Route::delete('mitras/{mitra}', [MitraController::class, 'destroy'])->name('mitras.destroy');
-        Route::post('mitras/{mitra}/subscriptions', [MitraController::class, 'subscribe'])->name('mitras.subscriptions.store');
-        Route::post('mitras/{mitra}/subscriptions/{subscription}/cancel', [MitraController::class, 'cancelSubscription'])->name('mitras.subscriptions.cancel');
-        Route::post('mitras/{mitra}/subscriptions/{subscription}/activate', [MitraController::class, 'activateSubscription'])->name('mitras.subscriptions.activate');
-        Route::post('mitras/{mitra}/brands', [MitraController::class, 'attachBrand'])->name('mitras.brands.store');
-        Route::post('mitras/{mitra}/brands/{brand}/primary', [MitraController::class, 'makePrimaryBrand'])->name('mitras.brands.primary');
-        Route::delete('mitras/{mitra}/brands/{brand}', [MitraController::class, 'detachBrand'])->name('mitras.brands.destroy');
-
-        // Reset password akun pelanggan (dikirim ke email).
-        Route::post('pelanggan/{slug}/reset-password', [PelangganController::class, 'resetPassword'])->name('pelanggan.reset-password');
-
-        // Setting aplikasi (form tunggal): nama, logo, bahasa, telepon, email, alamat, map.
-        Route::get('setting-aplikasi', [SettingAppController::class, 'edit'])->name('setting-app.index');
-        Route::post('setting-aplikasi', [SettingAppController::class, 'update'])->name('setting-app.update');
-
-        // Kelola website/frontpage platform (Principal).
-        Route::get('website', [WebsiteController::class, 'platform'])->name('website.index');
-        Route::post('website', [WebsiteController::class, 'savePlatform'])->name('website.save');
-
-        // Kelola website/frontpage mitra aktif.
-        Route::get('mitra-website', [WebsiteController::class, 'mitra'])->name('mitra_website.index');
-        Route::post('mitra-website', [WebsiteController::class, 'saveMitra'])->name('mitra_website.save');
-
-        // Jejak Audit (Audit Trail): aktivitas login s.d. logout, aksi ubah data, dan error/bug.
-        Route::get('audit-trail', [AuditTrailController::class, 'index'])->name('audit.index');
-        Route::get('audit-trail/data', [AuditTrailController::class, 'data'])->name('audit.data');
-        Route::get('audit-trail/{id}', [AuditTrailController::class, 'show'])->name('audit.show');
-
-        // Integrasi SINA AI (Data Master): konfigurasi, harga token, saldo kredit, riwayat, top-up.
-        Route::get('sina', [SinaController::class, 'index'])->name('sina.index');
-        Route::get('sina/data', [SinaController::class, 'data'])->name('sina.data');
-        Route::get('sina/topups', [SinaController::class, 'topups'])->name('sina.topups');
-        Route::post('sina/config', [SinaController::class, 'updateConfig'])->name('sina.config');
-        Route::post('sina/token-price', [SinaController::class, 'savePricing'])->name('sina.pricing');
-        Route::post('sina/topup', [SinaController::class, 'topUp'])->name('sina.topup');
-
-        // Manajemen menu dinamis (drag & drop)
-        Route::middleware('role:admin_principal')->group(function () {
-            Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
-            Route::post('menus', [MenuController::class, 'store'])->name('menus.store');
-            Route::put('menus/{menu}', [MenuController::class, 'update'])->name('menus.update');
-            Route::delete('menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');
-            Route::post('menus/reorder', [MenuController::class, 'reorder'])->name('menus.reorder');
-
-            // Assign menu + permission CRUD per role
-            Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
-            Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
-            Route::get('roles/{role}/assign', [RoleController::class, 'assign'])->name('roles.assign');
-            Route::post('roles/{role}/assign', [RoleController::class, 'saveAssign'])->name('roles.assign.save');
-
-            // CRUD Generator
-            Route::get('generator', [CrudGeneratorController::class, 'index'])->name('generator.index');
-            Route::get('generator/create', [CrudGeneratorController::class, 'create'])->name('generator.create');
-            Route::post('generator', [CrudGeneratorController::class, 'store'])->name('generator.store');
-        });
     });
 
 /*

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Mitra;
+use Modules\Mitra\Models\Mitra;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -22,13 +22,24 @@ class TenantService
 
     /**
      * Semua path migrasi untuk database mitra: folder inti (database/migrations/tenant)
-     * digabung dengan folder Database/Migrations milik setiap modul di Modules/.
+     * digabung dengan subfolder `Tenant` milik setiap modul di Modules/.
+     *
+     * Konvensi Modular Native:
+     *   Modules/<Nama>/Database/Migrations/*.php         -> migrasi pusat (central)
+     *   Modules/<Nama>/Database/Migrations/Tenant/*.php  -> migrasi database mitra (tenant)
      */
     public function migrationPaths(): array
     {
-        $paths = [(string) $this->path()];
+        $paths = [];
 
-        $moduleMigrations = glob(config('lbacloud.modules_path') . '/*/Database/Migrations', GLOB_ONLYDIR) ?: [];
+        // Folder migrasi tenant inti (bila ada).
+        $base = (string) $this->path();
+        if (is_dir($base)) {
+            $paths[] = $base;
+        }
+
+        // Migrasi tenant milik setiap modul.
+        $moduleMigrations = glob(config('lbacloud.modules_path') . '/*/Database/Migrations/Tenant', GLOB_ONLYDIR) ?: [];
         foreach ($moduleMigrations as $dir) {
             $paths[] = $dir;
         }

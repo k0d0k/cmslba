@@ -3,7 +3,7 @@
 use App\Http\Middleware\RecordActivity;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\SetLocale;
-use App\Services\AuditLogger;
+use Modules\Audit\Services\AuditLogger;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

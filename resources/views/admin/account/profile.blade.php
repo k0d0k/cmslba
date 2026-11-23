@@ -57,7 +57,7 @@
                 <div>
                     <label class="form-label">{{ __('common.skin') }}</label>
                     <select name="skin" class="form-control">
-                        @foreach(\App\Models\Skin::where('is_active', true)->orderBy('id')->get() as $sk)
+                        @foreach(\Modules\Setting\Models\Skin::where('is_active', true)->orderBy('id')->get() as $sk)
                             <option value="{{ $sk->code }}" @selected(old('skin', $user->skin ?? 'default') === $sk->code)>{{ $sk->label }}</option>
                         @endforeach
                     </select>

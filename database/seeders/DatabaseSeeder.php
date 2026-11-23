@@ -2,13 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\Mitra;
-use App\Models\User;
 use App\Services\TenantService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Modules\Menu\Database\Seeders\MenuSeeder;
+use Modules\Mitra\Models\Mitra;
+use Modules\ModuleRegistry\Database\Seeders\ModuleSeeder;
+use Modules\Role\Database\Seeders\RoleMenuSeeder;
+use Modules\Role\Database\Seeders\RoleSeeder;
+use Modules\Setting\Database\Seeders\SkinSeeder;
+use Modules\Subscription\Database\Seeders\SubscriptionSeeder;
+use Modules\User\Database\Seeders\UserSeeder;
+use Modules\User\Models\User;
 
 class DatabaseSeeder extends Seeder
 {

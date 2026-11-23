@@ -1,10 +1,10 @@
 @php
-    $menuService = app(\App\Services\MenuService::class);
+    $menuService = app(\Modules\Menu\Services\MenuService::class);
     $currentUser = auth()->user();
     $sidebarItems = $currentUser ? $menuService->sidebar($currentUser) : collect();
 
     $activeSkinCode = session('skin', $currentUser->skin ?? 'default');
-    $activeSkin = \App\Models\Skin::where('code', $activeSkinCode)->first();
+    $activeSkin = \Modules\Setting\Models\Skin::where('code', $activeSkinCode)->first();
     $skinPrimary = $activeSkin->primary ?? '#087f80';
     $skinSidebar = $activeSkin->sidebar ?? '#14263d';
 
@@ -25,8 +25,8 @@
     $activeCabangId = session('active_cabang_id');
 
     // Identitas aplikasi (logo & footer) dari tabel settings grup `app`.
-    $appLogo = \App\Models\Setting::get('logo', null, 'app');
-    $appFooter = \App\Models\Setting::get('footer', null, 'app');
+    $appLogo = \Modules\Setting\Models\Setting::get('logo', null, 'app');
+    $appFooter = \Modules\Setting\Models\Setting::get('footer', null, 'app');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -86,7 +86,7 @@
                     <form method="POST" action="{{ route('admin.preference.mitra') }}" class="hidden lg:block">
                         @csrf
                         <select name="mitra_id" onchange="this.form.submit()" class="form-control !py-1.5 !text-xs" title="{{ __('common.active_mitra') }}">
-                            @foreach(\App\Models\Mitra::orderBy('name')->get() as $m)
+                            @foreach(\Modules\Mitra\Models\Mitra::orderBy('name')->get() as $m)
                                 <option value="{{ $m->id }}" @selected($activeMitra && $activeMitra->id === $m->id)>
                                     {{ __('common.active_mitra') }}: {{ $m->name }}
                                 </option>
@@ -134,7 +134,7 @@
                         <span class="w-3 h-3 rounded-full inline-block" style="background: {{ $skinPrimary }}"></span>
                     </button>
                     <div id="dd-skin" data-dropdown class="hidden absolute right-0 mt-1 w-44 card p-1 z-30">
-                        @foreach(\App\Models\Skin::where('is_active', true)->orderBy('id')->get() as $sk)
+                        @foreach(\Modules\Setting\Models\Skin::where('is_active', true)->orderBy('id')->get() as $sk)
                             <form method="POST" action="{{ route('admin.preference.skin') }}">
                                 @csrf
                                 <input type="hidden" name="skin" value="{{ $sk->code }}">

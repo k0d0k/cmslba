@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Mitra;
+use Modules\Mitra\Models\Mitra;
 use App\Services\TenantService;
 use Closure;
 use Illuminate\Http\Request;

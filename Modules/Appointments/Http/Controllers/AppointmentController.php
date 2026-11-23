@@ -33,11 +33,11 @@ class AppointmentController extends BaseCrudController
     {
         return [
             ['name' => 'patient_id', 'type' => 'relation', 'label' => __('common.patient'), 'nullable' => false,
-                'relation' => ['model' => \App\Models\Tenant\Pelanggan::class, 'label' => 'name']],
+                'relation' => ['model' => \Modules\Pelanggan\Models\Pelanggan::class, 'label' => 'name']],
             ['name' => 'branch_id', 'type' => 'relation', 'label' => __('common.branch'), 'nullable' => false,
-                'relation' => ['model' => \App\Models\Tenant\Cabang::class, 'label' => 'name']],
+                'relation' => ['model' => \Modules\Cabang\Models\Cabang::class, 'label' => 'name']],
             ['name' => 'staff_user_id', 'type' => 'relation', 'label' => __('common.staff'), 'nullable' => true,
-                'relation' => ['model' => \App\Models\User::class, 'label' => 'name_with_role', 'with' => ['roles']]],
+                'relation' => ['model' => \Modules\User\Models\User::class, 'label' => 'name_with_role', 'with' => ['roles']]],
             ['name' => 'starts_at', 'type' => 'datetime', 'label' => __('appointments.starts_at'), 'nullable' => false],
             ['name' => 'ends_at', 'type' => 'datetime', 'label' => __('appointments.ends_at'), 'nullable' => false],
             ['name' => 'service_type', 'type' => 'string', 'label' => __('appointments.service_type'), 'nullable' => false],
