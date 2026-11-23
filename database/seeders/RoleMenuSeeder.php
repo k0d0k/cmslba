@@ -29,6 +29,7 @@ class RoleMenuSeeder extends Seeder
         'pemilik_mitra' => [
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'create', 'update', 'delete', 'export'],
+            'appointments' => ['view', 'create', 'update', 'delete', 'export'],
             'cabang'    => ['view', 'create', 'update', 'delete'],
             'mitras'    => ['view'],
             'brand'     => ['view'],
@@ -41,6 +42,7 @@ class RoleMenuSeeder extends Seeder
         'admin_mitra' => [
             'dashboard' => ['view'],
             'pelanggan' => ['view', 'create', 'update', 'delete', 'export'],
+            'appointments' => ['view', 'create', 'update', 'delete', 'export'],
             'cabang'    => ['view', 'create', 'update', 'delete'],
             'mitras'    => ['view'],
             'brand'     => ['view'],

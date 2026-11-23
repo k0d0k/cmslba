@@ -103,6 +103,9 @@ return [
     'logo'            => 'Logo',
     'user'            => 'User',
     'module'          => 'Modul',
+    'appointment'     => 'Janji Temu',
+    'patient'         => 'Pasien',
+    'staff'           => 'Staf',
 
     // ==================== Petunjuk umum ====================
     'keep_password_hint' => 'Biarkan kosong bila tidak ingin mengganti password.',

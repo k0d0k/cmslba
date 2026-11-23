@@ -103,6 +103,9 @@ return [
     'logo'            => 'Logo',
     'user'            => 'User',
     'module'          => 'Module',
+    'appointment'     => 'Appointment',
+    'patient'         => 'Patient',
+    'staff'           => 'Staff',
 
     // ==================== Common hints ====================
     'keep_password_hint' => 'Leave blank if you do not want to change the password.',

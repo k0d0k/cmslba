@@ -51,6 +51,12 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'Website Mitra', 'en' => 'Partner Website', 'ms' => 'Laman Rakan'],
                 'route_name' => 'admin.mitra_website.index',
             ],
+            [
+                'key' => 'appointments', 'icon' => 'calendar-clock', 'sort' => 4, 'parent' => 'mitra',
+                'title' => ['id' => 'Janji Temu', 'en' => 'Appointments', 'ms' => 'Temu Janji'],
+                'route_name' => 'admin.appointments.index', 'resource' => 'Appointment',
+                'module_key' => 'appointments', 'is_crud' => true,
+            ],
 
             // ── Data Master (group) ─────────────────────────────────────
             [
@@ -142,6 +148,7 @@ class MenuSeeder extends Seeder
                 'is_visible' => true,
                 'is_crud'    => $data['is_crud'] ?? false,
                 'resource'   => $data['resource'] ?? null,
+                'module_key' => $data['module_key'] ?? null,
             ]);
 
             $created[$data['key']] = $menu;
