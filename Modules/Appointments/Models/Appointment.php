@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Tenant;
+namespace Modules\Appointments\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -40,12 +40,12 @@ class Appointment extends Model
 
     public function patient(): BelongsTo
     {
-        return $this->belongsTo(Pelanggan::class, 'patient_id');
+        return $this->belongsTo(\App\Models\Tenant\Pelanggan::class, 'patient_id');
     }
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(Cabang::class, 'branch_id');
+        return $this->belongsTo(\App\Models\Tenant\Cabang::class, 'branch_id');
     }
 
     public function staffUser(): BelongsTo

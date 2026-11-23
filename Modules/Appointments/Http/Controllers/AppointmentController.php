@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace Modules\Appointments\Http\Controllers;
 
-use App\Models\Tenant\Appointment;
-use App\Models\Tenant\AppointmentStatusHistory;
+use App\Http\Controllers\Admin\BaseCrudController;
 use Illuminate\Http\Request;
+use Modules\Appointments\Models\Appointment;
+use Modules\Appointments\Models\AppointmentStatusHistory;
 
 /**
- * Contoh modul CRUD Janji Temu (Appointments) pada database mitra.
+ * CRUD Janji Temu (Appointments) pada database mitra.
  *
- * Menu `appointments` diberi `resource = 'Appointment'` sehingga route CRUD
- * `admin/appointments` otomatis terdaftar (lihat AppServiceProvider) — inilah
- * yang menghidupkan link menu yang tadinya mati.
+ * View modul: appointments::crud (Resources/views/crud).
+ * Route didaftarkan oleh AppointmentsServiceProvider (Routes/web.php).
  */
 class AppointmentController extends BaseCrudController
 {
     protected string $model = Appointment::class;
-    protected string $view = 'admin.crud';
+    protected string $view = 'appointments::crud';
     protected string $routeName = 'admin.appointments';
     protected string $menuKey = 'appointments';
     protected bool $hasCabang = false;

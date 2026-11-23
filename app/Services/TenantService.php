@@ -20,6 +20,22 @@ class TenantService
         return config('lbacloud.tenant_migration_path');
     }
 
+    /**
+     * Semua path migrasi untuk database mitra: folder inti (database/migrations/tenant)
+     * digabung dengan folder Database/Migrations milik setiap modul di Modules/.
+     */
+    public function migrationPaths(): array
+    {
+        $paths = [(string) $this->path()];
+
+        $moduleMigrations = glob(config('lbacloud.modules_path') . '/*/Database/Migrations', GLOB_ONLYDIR) ?: [];
+        foreach ($moduleMigrations as $dir) {
+            $paths[] = $dir;
+        }
+
+        return array_values(array_unique($paths));
+    }
+
     public function sqlitePath(Mitra $mitra): string
     {
         return database_path('tenants/' . $mitra->db_name . '.sqlite');
@@ -75,7 +91,7 @@ class TenantService
         $this->connect($mitra);
 
         Artisan::call('migrate', [
-            '--path'     => $this->path(),
+            '--path'     => $this->migrationPaths(),
             '--realpath' => true,
             '--database' => 'tenant',
             '--force'    => true,
