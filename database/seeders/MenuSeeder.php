@@ -51,12 +51,6 @@ class MenuSeeder extends Seeder
                 'title' => ['id' => 'Website Mitra', 'en' => 'Partner Website', 'ms' => 'Laman Rakan'],
                 'route_name' => 'admin.mitra_website.index',
             ],
-            [
-                'key' => 'appointments', 'icon' => 'calendar-clock', 'sort' => 4, 'parent' => 'mitra',
-                'title' => ['id' => 'Janji Temu', 'en' => 'Appointments', 'ms' => 'Temu Janji'],
-                'route_name' => 'admin.appointments.index', 'resource' => 'Appointment',
-                'module_key' => 'appointments', 'is_crud' => true,
-            ],
 
             // ── Data Master (group) ─────────────────────────────────────
             [
@@ -99,9 +93,21 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.website.index',
             ],
 
+            // ── Modules (group) ─────────────────────────────────────────
+            [
+                'key' => 'modules_group', 'icon' => 'puzzle', 'sort' => 3, 'type' => 'group',
+                'title' => ['id' => 'Modul', 'en' => 'Modules', 'ms' => 'Modul'],
+            ],
+            [
+                'key' => 'appointments', 'icon' => 'calendar-clock', 'sort' => 0, 'parent' => 'modules_group',
+                'title' => ['id' => 'Janji Temu', 'en' => 'Appointments', 'ms' => 'Temu Janji'],
+                'route_name' => 'admin.appointments.index', 'resource' => 'Appointment',
+                'module_key' => 'appointments', 'is_crud' => true,
+            ],
+
             // ── Pengaturan (group) ──────────────────────────────────────
             [
-                'key' => 'pengaturan', 'icon' => 'settings', 'sort' => 3, 'type' => 'group',
+                'key' => 'pengaturan', 'icon' => 'settings', 'sort' => 4, 'type' => 'group',
                 'title' => ['id' => 'Pengaturan', 'en' => 'Settings', 'ms' => 'Tetapan'],
             ],
             [
