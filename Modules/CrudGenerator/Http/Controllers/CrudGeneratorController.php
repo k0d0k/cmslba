@@ -74,19 +74,28 @@ class CrudGeneratorController extends Controller
             ];
         }
 
-        $result = $this->generator->generate([
-            'title'      => $request->input('title'),
-            'key'        => $request->input('key'),
-            'model'      => $request->input('model'),
-            'icon'       => $request->input('icon', 'table'),
-            'parent_id'  => $request->input('parent_id') ?: null,
-            'has_cabang' => $hasCabang,
-            'connection' => $connection,
-            'fields'     => $fields,
-            'roles'      => $request->input('roles', []),
-        ]);
+        try {
+            $result = $this->generator->generate([
+                'title'      => $request->input('title'),
+                'key'        => $request->input('key'),
+                'model'      => $request->input('model'),
+                'icon'       => $request->input('icon', 'table'),
+                'parent_id'  => $request->input('parent_id') ?: null,
+                'has_cabang' => $hasCabang,
+                'connection' => $connection,
+                'fields'     => $fields,
+                'roles'      => $request->input('roles', []),
+            ]);
+        } catch (\RuntimeException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
 
-        $this->migrate($connection);
+        $this->migrate($connection, $result['migration']);
+
+        // Bila config/route sedang di-cache, segarkan agar ServiceProvider & route
+        // milik modul baru dikenali pada permintaan berikutnya.
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
 
         return redirect()->route('admin.generator.index')
             ->with('success', __('messages.crud_generated', ['model' => $request->input('model')]))
@@ -95,9 +104,12 @@ class CrudGeneratorController extends Controller
 
     /**
      * Jalankan migrasi pada database target (pusat atau mitra) yang baru dibuat.
+     * Path migrasi mengikuti konvensi Modular Native (folder migrasi milik modul).
      */
-    protected function migrate(string $connection): void
+    protected function migrate(string $connection, ?string $migrationFile = null): void
     {
+        $moduleMigrationDir = $migrationFile ? dirname($migrationFile) : null;
+
         if ($connection === 'tenant') {
             $mitra = app()->bound('active_mitra') ? app('active_mitra') : Mitra::where('status', 'active')->first();
             if (! $mitra) {
@@ -105,8 +117,14 @@ class CrudGeneratorController extends Controller
             }
             $this->tenant->connect($mitra);
 
+            // Semua migrasi tenant: folder inti + Tenant/ milik setiap modul.
+            $paths = $this->tenant->migrationPaths();
+            if ($moduleMigrationDir && ! in_array($moduleMigrationDir, $paths, true)) {
+                $paths[] = $moduleMigrationDir;
+            }
+
             Artisan::call('migrate', [
-                '--path'     => $this->tenant->path(),
+                '--path'     => $paths,
                 '--realpath' => true,
                 '--database' => 'tenant',
                 '--force'    => true,
@@ -115,8 +133,14 @@ class CrudGeneratorController extends Controller
             return;
         }
 
+        // Central: migrasi inti + folder migrasi milik modul baru.
+        $paths = [database_path('migrations')];
+        if ($moduleMigrationDir) {
+            $paths[] = $moduleMigrationDir;
+        }
+
         Artisan::call('migrate', [
-            '--path'     => database_path('migrations'),
+            '--path'     => $paths,
             '--realpath' => true,
             '--database' => 'central',
             '--force'    => true,

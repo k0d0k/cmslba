@@ -8,11 +8,22 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
- * CRUD Generator: membuat migrasi, model, controller, dan menu secara otomatis.
+ * CRUD Generator (Modular Native: PSR-4 + ServiceProvider).
+ *
+ * Setiap CRUD yang digenerate menghasilkan SATU modul mandiri di Modules/<Model>/
+ * yang mendaftarkan route-nya sendiri melalui ServiceProvider-nya.
+ *
+ * Struktur hasil generate:
+ *   Modules/<Model>/Http/Controllers/<Model>Controller.php
+ *   Modules/<Model>/Models/<Model>.php
+ *   Modules/<Model>/Providers/<Model>ServiceProvider.php   (otomatis didaftarkan di bootstrap/providers.php)
+ *   Modules/<Model>/Routes/web.php
+ *   Modules/<Model>/Database/Migrations/<...>.php          (bila connection = central)
+ *   Modules/<Model>/Database/Migrations/Tenant/<...>.php   (bila connection = tenant)
  *
  * Mendukung dua target database:
- * - tenant  -> database mitra (database/migrations/tenant, model App\Models\Tenant).
- * - central -> database pusat  (database/migrations, model App\Models).
+ * - tenant  -> database mitra (Modules/<Model>/Database/Migrations/Tenant) dijalankan oleh App\Services\TenantService.
+ * - central -> database pusat  (Modules/<Model>/Database/Migrations) dijalankan lewat ServiceProvider (loadMigrationsFrom).
  */
 class CrudGeneratorService
 {
@@ -34,36 +45,63 @@ class CrudGeneratorService
      */
     public function generate(array $definition): array
     {
-        $title   = $definition['title'];
-        $model   = Str::studly($definition['model']);
-        $key     = Str::slug($definition['key'] ?: Str::snake(Str::pluralStudly($model)), '_');
-        $table   = Str::snake(Str::pluralStudly($model));
-        $fields  = $definition['fields'];
-        $icon    = $definition['icon'] ?? 'table';
+        $title     = $definition['title'];
+        $model     = Str::studly($definition['model']);
+        $key       = Str::slug($definition['key'] ?: Str::snake(Str::pluralStudly($model)), '_');
+        $table     = Str::snake(Str::pluralStudly($model));
+        $fields    = $definition['fields'];
+        $icon      = $definition['icon'] ?? 'table';
         $hasCabang = (bool) ($definition['has_cabang'] ?? false);
 
         $connection = ($definition['connection'] ?? 'tenant') === 'central' ? 'central' : 'tenant';
         $isTenant   = $connection === 'tenant';
-        $namespace  = $isTenant ? 'App\\Models\\Tenant' : 'App\\Models';
+        $namespace  = "Modules\\{$model}\\Models";
         $timestamp  = date('Y_m_d_His');
 
-        // 1. Migrasi (ke folder sesuai target database)
-        $migrationPath = $isTenant
-            ? database_path("migrations/tenant/{$timestamp}_create_{$table}_table.php")
-            : database_path("migrations/{$timestamp}_create_{$table}_table.php");
+        // Satu CRUD = satu modul. Nama folder & namespace memakai nama model.
+        $modulesRoot = rtrim((string) config('lbacloud.modules_path', base_path('Modules')), '/\\');
+        $modulePath  = $modulesRoot . '/' . $model;
+
+        if (File::isDirectory($modulePath)) {
+            throw new \RuntimeException(
+                "Modul \"{$model}\" sudah ada di Modules/. Gunakan nama model yang lain."
+            );
+        }
+
+        // Kerangka direktori modul (Modular Native).
+        File::ensureDirectoryExists($modulePath . '/Http/Controllers');
+        File::ensureDirectoryExists($modulePath . '/Models');
+        File::ensureDirectoryExists($modulePath . '/Providers');
+        File::ensureDirectoryExists($modulePath . '/Routes');
+
+        // 1. Migrasi (folder sesuai target database).
+        if ($isTenant) {
+            File::ensureDirectoryExists($modulePath . '/Database/Migrations/Tenant');
+            $migrationPath = "{$modulePath}/Database/Migrations/Tenant/{$timestamp}_create_{$table}_table.php";
+        } else {
+            File::ensureDirectoryExists($modulePath . '/Database/Migrations');
+            $migrationPath = "{$modulePath}/Database/Migrations/{$timestamp}_create_{$table}_table.php";
+        }
         File::put($migrationPath, $this->migrationStub($table, $fields, $hasCabang, $isTenant));
 
         // 2. Model
-        $modelPath = $isTenant
-            ? app_path("Models/Tenant/{$model}.php")
-            : app_path("Models/{$model}.php");
+        $modelPath = "{$modulePath}/Models/{$model}.php";
         File::put($modelPath, $this->modelStub($model, $table, $fields, $hasCabang, $connection, $namespace));
 
         // 3. Controller
-        $controllerPath = app_path("Http/Controllers/Admin/{$model}Controller.php");
+        $controllerPath = "{$modulePath}/Http/Controllers/{$model}Controller.php";
         File::put($controllerPath, $this->controllerStub($model, $key, $title, $fields, $hasCabang, $namespace));
 
-        // 4. Menu
+        // 4. Routes (didaftarkan sendiri oleh modul, bukan generator menu inti).
+        $routesPath = "{$modulePath}/Routes/web.php";
+        File::put($routesPath, $this->routeStub($model, $key));
+
+        // 5. ServiceProvider + registrasi di bootstrap/providers.php.
+        $providerPath = "{$modulePath}/Providers/{$model}ServiceProvider.php";
+        File::put($providerPath, $this->providerStub($model, $isTenant));
+        $this->registerProvider($model);
+
+        // 6. Menu
         $menu = Menu::create([
             'parent_id'  => $definition['parent_id'] ?? null,
             'key'        => $key,
@@ -76,7 +114,7 @@ class CrudGeneratorService
             'resource'   => $model,
         ]);
 
-        // 5. Simpan definisi + assign ke role
+        // 7. Simpan definisi + assign ke role
         CrudDefinition::create([
             'model_name' => $model,
             'table_name' => $table,
@@ -91,11 +129,41 @@ class CrudGeneratorService
         $this->assignRoles($menu, $definition['roles'] ?? []);
 
         return [
+            'module'     => $modulePath,
             'migration'  => $migrationPath,
             'model'      => $modelPath,
             'controller' => $controllerPath,
+            'routes'     => $routesPath,
+            'provider'   => $providerPath,
             'menu'       => $menu,
         ];
+    }
+
+    /**
+     * Daftarkan ServiceProvider modul baru ke bootstrap/providers.php
+     * (idempoten: tidak dobel bila sudah terdaftar).
+     */
+    protected function registerProvider(string $model): void
+    {
+        $file = base_path('bootstrap/providers.php');
+        if (! File::exists($file)) {
+            return;
+        }
+
+        $fqcn    = "Modules\\{$model}\\Providers\\{$model}ServiceProvider::class";
+        $content = File::get($file);
+
+        if (str_contains($content, $fqcn)) {
+            return;
+        }
+
+        $pos = strrpos($content, '];');
+        if ($pos === false) {
+            return;
+        }
+
+        $content = substr($content, 0, $pos) . "    {$fqcn},\n" . substr($content, $pos);
+        File::put($file, $content);
     }
 
     protected function assignRoles(Menu $menu, array $roles): void
@@ -216,12 +284,13 @@ PHP;
         $mitraImport = $isTenant ? "\nuse App\\Models\\Concerns\\HasMitraUuid;" : '';
         $mitraTrait  = $isTenant ? "\n    use HasMitraUuid;" : '';
         $belongsToImport = $hasCabang ? "\nuse Illuminate\\Database\\Eloquent\\Relations\\BelongsTo;" : '';
+        // Relasi ke modul Cabang memakai FQCN karena berada di modul berbeda.
         $cabangRelation = $hasCabang ? <<<PHP
 
 
     public function cabang(): BelongsTo
     {
-        return \$this->belongsTo(Cabang::class, 'cabang_id');
+        return \$this->belongsTo(\Modules\Cabang\Models\Cabang::class, 'cabang_id');
     }
 PHP : '';
 
@@ -254,14 +323,17 @@ PHP;
 
     protected function controllerStub(string $model, string $key, string $title, array $fields, bool $hasCabang, string $namespace): string
     {
-        $fieldsPhp = $this->exportFields($fields);
+        $fieldsPhp    = $this->exportFields($fields);
         $hasCabangStr = $hasCabang ? 'true' : 'false';
-        $fqcn = "\\{$namespace}\\{$model}";
+        $fqcn         = "\\{$namespace}\\{$model}";
+        $controllerNs = "Modules\\{$model}\\Http\\Controllers";
 
         return <<<PHP
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace {$controllerNs};
+
+use App\Http\Controllers\Admin\BaseCrudController;
 
 class {$model}Controller extends BaseCrudController
 {
@@ -272,6 +344,80 @@ class {$model}Controller extends BaseCrudController
     protected string \$menuKey = '{$key}';
     protected bool \$hasCabang = {$hasCabangStr};
     protected array \$fields = {$fieldsPhp};
+}
+PHP;
+    }
+
+    protected function routeStub(string $model, string $key): string
+    {
+        $controllerFqcn = "Modules\\{$model}\\Http\\Controllers\\{$model}Controller";
+
+        return <<<PHP
+<?php
+
+use Illuminate\Support\Facades\Route;
+use {$controllerFqcn};
+
+/*
+|--------------------------------------------------------------------------
+| Routes modul {$model} (hasil CRUD Generator)
+|--------------------------------------------------------------------------
+| Didaftarkan sendiri oleh modul melalui {$model}ServiceProvider sehingga
+| bersifat mandiri. Nama route mengikuti konvensi inti: admin.{$key}.*
+*/
+
+Route::middleware(['web', 'auth', 'tenant'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        \$controller = {$model}Controller::class;
+
+        Route::get('{$key}', [\$controller, 'index'])->name('{$key}.index');
+        Route::get('{$key}/data', [\$controller, 'data'])->name('{$key}.data');
+        Route::get('{$key}/create', [\$controller, 'create'])->name('{$key}.create');
+        Route::post('{$key}', [\$controller, 'store'])->name('{$key}.store');
+        Route::get('{$key}/{slug}/edit', [\$controller, 'edit'])->name('{$key}.edit');
+        Route::put('{$key}/{slug}', [\$controller, 'update'])->name('{$key}.update');
+        Route::delete('{$key}/{slug}', [\$controller, 'destroy'])->name('{$key}.destroy');
+    });
+PHP;
+    }
+
+    protected function providerStub(string $model, bool $isTenant): string
+    {
+        $namespace = "Modules\\{$model}\\Providers";
+
+        // Modul tenant tidak memuat migrasi lewat provider (dijalankan TenantService
+        // dari Modules/<Model>/Database/Migrations/Tenant). Modul central memuatnya.
+        $migrations = $isTenant
+            ? ''
+            : "\n        \$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');";
+
+        return <<<PHP
+<?php
+
+namespace {$namespace};
+
+use Illuminate\Support\ServiceProvider;
+
+/**
+ * ServiceProvider modul {$model} (Modular Native).
+ *
+ * Modul hasil CRUD Generator ini mendaftarkan route-nya sendiri
+ * (Routes/web.php) dan memakai view bersama 'admin.crud' sehingga tidak
+ * memiliki view sendiri.
+ */
+class {$model}ServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        \$this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');{$migrations}
+    }
 }
 PHP;
     }
