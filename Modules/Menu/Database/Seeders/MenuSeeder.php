@@ -10,7 +10,7 @@ class MenuSeeder extends Seeder
     /**
      * Susunan menu admin:
      *   Dashboard
-     *   Data Mitra   -> Multi Mitra, Cabang, Pelanggan
+     *   Data Mitra   -> Multi Mitra, Cabang, Pelanggan, Praktisi, Website Mitra
      *   Data Master  -> Brand, Registry Modul, Paket Langganan, User, Integrasi SINA AI
      *   Modul        -> Janji Temu (appointments)
      *   Konsultasi   -> Konsultasi (consultations)
@@ -51,7 +51,13 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.pelanggan.index', 'resource' => 'Pelanggan', 'is_crud' => true,
             ],
             [
-                'key' => 'mitra_website', 'icon' => 'globe', 'sort' => 3, 'parent' => 'mitra',
+                'key' => 'practitioners', 'icon' => 'stethoscope', 'sort' => 3, 'parent' => 'mitra',
+                'title' => ['id' => 'Praktisi', 'en' => 'Practitioners', 'ms' => 'Praktisi'],
+                'route_name' => 'admin.practitioners.index', 'resource' => 'Practitioner',
+                'module_key' => 'practitioners', 'is_crud' => true,
+            ],
+            [
+                'key' => 'mitra_website', 'icon' => 'globe', 'sort' => 4, 'parent' => 'mitra',
                 'title' => ['id' => 'Website Mitra', 'en' => 'Partner Website', 'ms' => 'Laman Rakan'],
                 'route_name' => 'admin.mitra_website.index',
             ],

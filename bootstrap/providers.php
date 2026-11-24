@@ -25,6 +25,7 @@ return [
     Modules\ModuleRegistry\Providers\ModuleRegistryServiceProvider::class,
     Modules\PaymentProvider\Providers\PaymentProviderServiceProvider::class,
     Modules\Pelanggan\Providers\PelangganServiceProvider::class,
+    Modules\Practitioners\Providers\PractitionersServiceProvider::class,
     Modules\Role\Providers\RoleServiceProvider::class,
     Modules\Setting\Providers\SettingServiceProvider::class,
     Modules\Sina\Providers\SinaServiceProvider::class,
