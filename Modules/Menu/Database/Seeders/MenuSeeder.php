@@ -10,11 +10,12 @@ class MenuSeeder extends Seeder
     /**
      * Susunan menu admin:
      *   Dashboard
-     *   Data Mitra   -> Multi Mitra, Cabang, Pelanggan, Praktisi, Website Mitra
+     *   Data Mitra   -> Multi Mitra, Cabang, Pelanggan, Website Mitra
      *   Data Master  -> Brand, Registry Modul, Paket Langganan, User, Integrasi SINA AI
      *   Modul        -> Janji Temu (appointments)
      *   Konsultasi   -> Konsultasi (consultations)
      *   Perdagangan  -> Produk, Kategori Produk, Pesanan, Invoice, Transaksi Pembayaran, Stok Inventaris (commerce)
+     *   Praktisi     -> Praktisi (practitioners)
      *   LBA          -> Pemeriksaan, Asesmen, Gambar, Laporan, Review (lba)
      *   Pengaturan   -> Setting, Menu Dinamis, Role & Akses, CRUD Generator
      *
@@ -51,13 +52,7 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.pelanggan.index', 'resource' => 'Pelanggan', 'is_crud' => true,
             ],
             [
-                'key' => 'practitioners', 'icon' => 'stethoscope', 'sort' => 3, 'parent' => 'mitra',
-                'title' => ['id' => 'Praktisi', 'en' => 'Practitioners', 'ms' => 'Praktisi'],
-                'route_name' => 'admin.practitioners.index', 'resource' => 'Practitioner',
-                'module_key' => 'practitioners', 'is_crud' => true,
-            ],
-            [
-                'key' => 'mitra_website', 'icon' => 'globe', 'sort' => 4, 'parent' => 'mitra',
+                'key' => 'mitra_website', 'icon' => 'globe', 'sort' => 3, 'parent' => 'mitra',
                 'title' => ['id' => 'Website Mitra', 'en' => 'Partner Website', 'ms' => 'Laman Rakan'],
                 'route_name' => 'admin.mitra_website.index',
             ],
@@ -169,9 +164,21 @@ class MenuSeeder extends Seeder
                 'module_key' => 'commerce', 'is_crud' => true,
             ],
 
+            // ── Practitioners (group) ───────────────────────────────────
+            [
+                'key' => 'practitioners_group', 'icon' => 'stethoscope', 'sort' => 6, 'type' => 'group',
+                'title' => ['id' => 'Praktisi', 'en' => 'Practitioners', 'ms' => 'Praktisi'],
+            ],
+            [
+                'key' => 'practitioners', 'icon' => 'user-round-check', 'sort' => 0, 'parent' => 'practitioners_group',
+                'title' => ['id' => 'Praktisi', 'en' => 'Practitioners', 'ms' => 'Praktisi'],
+                'route_name' => 'admin.practitioners.index', 'resource' => 'Practitioner',
+                'module_key' => 'practitioners', 'is_crud' => true,
+            ],
+
             // ── LBA (group) ─────────────────────────────────────────────
             [
-                'key' => 'lba_group', 'icon' => 'microscope', 'sort' => 6, 'type' => 'group',
+                'key' => 'lba_group', 'icon' => 'microscope', 'sort' => 7, 'type' => 'group',
                 'title' => ['id' => 'LBA', 'en' => 'LBA', 'ms' => 'LBA'],
             ],
             [
@@ -207,7 +214,7 @@ class MenuSeeder extends Seeder
 
             // ── Pengaturan (group) ──────────────────────────────────────
             [
-                'key' => 'pengaturan', 'icon' => 'settings', 'sort' => 7, 'type' => 'group',
+                'key' => 'pengaturan', 'icon' => 'settings', 'sort' => 8, 'type' => 'group',
                 'title' => ['id' => 'Pengaturan', 'en' => 'Settings', 'ms' => 'Tetapan'],
             ],
             [
