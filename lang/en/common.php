@@ -39,6 +39,7 @@ return [
     'create'       => 'Create',
     'update'       => 'Update',
     'sidebar_toggle' => 'Toggle sidebar',
+    'menu_group'   => 'Menu Group',
     'account'      => 'Account',
     'change_password' => 'Change Password',
     'current_password' => 'Current Password',

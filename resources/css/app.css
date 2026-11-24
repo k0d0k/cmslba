@@ -109,6 +109,22 @@ body {
 .sidebar-group-label svg { width: .95rem; height: .95rem; flex-shrink: 0; }
 .sidebar-sub { margin-left: 1.5rem; display: flex; flex-direction: column; gap: .15rem; }
 
+/* Pemilih group menu pada sidebar */
+.sidebar-select {
+    width: 100%;
+    background: var(--color-sidebar-hover);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: .5rem;
+    padding: .5rem .65rem;
+    font-size: .8125rem;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+}
+.sidebar-select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+.sidebar-select option { background: #fff; color: #1f2937; }
+
 /* ================= DataTables (gaya TailAdmin) ================= */
 .dt-container { padding: 0; font-size: .875rem; }
 

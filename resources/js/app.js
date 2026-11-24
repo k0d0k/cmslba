@@ -74,6 +74,44 @@ function initSidebar() {
     });
 }
 
+/**
+ * Pemilih group menu pada sidebar. Hanya item dari group terpilih yang tampil
+ * agar daftar menu tidak memanjang. Prioritas pilihan: group dari halaman aktif
+ * (data-active) -> pilihan tersimpan (localStorage) -> group pertama.
+ */
+function initSidebarGroupNav() {
+    const select = document.getElementById('sidebar-group-select');
+    const wrap = document.getElementById('sidebar-groups');
+    if (!select || !wrap) return;
+
+    const panels = Array.from(wrap.querySelectorAll('[data-sidebar-group]'));
+    const keys = panels.map((p) => p.dataset.sidebarGroup);
+    if (!keys.length) return;
+
+    const storeKey = 'sidebar-group';
+
+    const show = (key) => {
+        panels.forEach((p) => p.classList.toggle('hidden', p.dataset.sidebarGroup !== key));
+        select.value = key;
+    };
+
+    let stored = null;
+    try { stored = localStorage.getItem(storeKey); } catch (e) { stored = null; }
+
+    const active = select.dataset.active;
+    const initial = keys.includes(active) ? active
+        : (keys.includes(stored) ? stored : keys[0]);
+
+    show(initial);
+
+    select.addEventListener('change', () => {
+        show(select.value);
+        try { localStorage.setItem(storeKey, select.value); } catch (e) { /* abaikan */ }
+    });
+}
+
+window.initSidebarGroupNav = initSidebarGroupNav;
+
 function initDeletes() {
     document.addEventListener('click', async (e) => {
         const btn = e.target.closest('.js-delete');
@@ -541,6 +579,7 @@ window.initWebsiteBuilder = initWebsiteBuilder;
 function boot() {
     initIcons();
     initSidebar();
+    initSidebarGroupNav();
     initDeletes();
     initConfirmForms();
     initDataTables();

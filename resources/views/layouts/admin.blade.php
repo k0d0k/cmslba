@@ -12,6 +12,35 @@
     $isPrincipal = $currentUser?->isPrincipal() ?? false;
     $currentRoute = request()->route()?->getName();
 
+    // Sidebar dikelompokkan: menu group dipilih lewat dropdown agar daftar menu
+    // tidak memanjang ke bawah. Menu di luar group (mis. Dashboard) selalu tampil.
+    $sidebarGroups = $sidebarItems->where('type', 'group')->values();
+    $sidebarRootLinks = $sidebarItems->where('type', '!=', 'group')->values();
+
+    $activeGroupKey = null;
+    if ($currentRoute) {
+        $containsRoute = function ($items, $routeName) use (&$containsRoute) {
+            foreach ($items as $i) {
+                if ($i->route_name === $routeName) {
+                    return true;
+                }
+                if ($containsRoute($i->children_tree ?? collect(), $routeName)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+        foreach ($sidebarGroups as $g) {
+            if ($containsRoute($g->children_tree ?? collect(), $currentRoute)) {
+                $activeGroupKey = $g->key;
+                break;
+            }
+        }
+    }
+    // Dipakai untuk render awal; JS akan menyesuaikan bila ada pilihan tersimpan.
+    $preSelectedGroupKey = $activeGroupKey ?? $sidebarGroups->first()?->key;
+
     // Daftar cabang pada database mitra yang sedang aktif (untuk pemilih cabang).
     $cabangs = collect();
     if ($activeMitra) {
@@ -61,7 +90,32 @@
         </div>
 
         <nav class="flex flex-col gap-0.5">
-            @include('layouts.partials.menu-item', ['items' => $sidebarItems, 'level' => 0])
+            {{-- Menu di luar group (mis. Dashboard) selalu tampil. --}}
+            @include('layouts.partials.menu-item', ['items' => $sidebarRootLinks, 'level' => 0])
+
+            @if($sidebarGroups->count())
+                {{-- Pemilih group menu: hanya item dari group terpilih yang tampil. --}}
+                <div class="sidebar-group-switch mt-3">
+                    <label for="sidebar-group-select" class="sidebar-group-label">
+                        <i data-lucide="folder-tree"></i>
+                        <span>{{ __('common.menu_group') }}</span>
+                    </label>
+                    <select id="sidebar-group-select" class="sidebar-select" data-active="{{ $activeGroupKey }}">
+                        @foreach($sidebarGroups as $g)
+                            <option value="{{ $g->key }}" @selected($g->key === $preSelectedGroupKey)>{{ $g->label() }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div id="sidebar-groups" class="flex flex-col gap-0.5 mt-2">
+                    @foreach($sidebarGroups as $g)
+                        <div class="sidebar-group-panel {{ $g->key === $preSelectedGroupKey ? '' : 'hidden' }}"
+                             data-sidebar-group="{{ $g->key }}">
+                            @include('layouts.partials.menu-item', ['items' => $g->children_tree ?? collect(), 'level' => 1])
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </nav>
     </aside>
 

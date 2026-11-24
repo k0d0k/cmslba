@@ -39,6 +39,7 @@ return [
     'create'       => 'Tambah',
     'update'       => 'Ubah',
     'sidebar_toggle' => 'Sembunyikan/tampilkan menu',
+    'menu_group'   => 'Grup Menu',
     'account'      => 'Akun',
     'change_password' => 'Ganti Password',
     'current_password' => 'Password Saat Ini',
