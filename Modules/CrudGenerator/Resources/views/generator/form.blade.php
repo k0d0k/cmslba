@@ -32,7 +32,7 @@
                 </div>
                 <div>
                     <label class="form-label">{{ __('common.icon') }}</label>
-                    <input type="text" name="icon" value="{{ old('icon', 'table') }}" class="form-control">
+                    @include('layouts.partials.icon-picker', ['name' => 'icon', 'value' => 'table'])
                 </div>
                 <div>
                     <label class="form-label">{{ __('generator.database') }}</label>

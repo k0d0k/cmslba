@@ -63,6 +63,8 @@ return [
     'slug'            => 'Slug',
     'sort'            => 'Order',
     'icon'            => 'Icon',
+    'search_icon'     => 'Search icon...',
+    'icon_not_found'  => 'Icon not found',
     'type'            => 'Type',
     'role'            => 'Role',
     'branch'          => 'Branch',

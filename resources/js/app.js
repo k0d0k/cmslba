@@ -13,6 +13,8 @@ import 'select2/dist/css/select2.min.css';
 window.$ = window.jQuery = $;
 window.Sortable = Sortable;
 window.Swal = Swal;
+// Seluruh koleksi ikon lucide (PascalCase) untuk icon picker.
+window.lucideIcons = icons;
 
 // Dynamic import select2 setelah jQuery global tersedia.
 const select2Module = await import('select2');
@@ -365,6 +367,129 @@ function initModal() {
 window.initModal = initModal;
 
 /**
+ * Icon picker: memilih ikon lewat grid + pencarian, tanpa perlu mengetik nama
+ * ikon. Markup memakai partial `layouts.partials.icon-picker`:
+ *   - `[data-icon-picker]`            : pembungkus (position: relative)
+ *   - `[data-icon-picker-input]`      : input hidden yang nilainya dikirim form
+ *   - `[data-icon-picker-toggle]`     : tombol pemicu
+ *   - `[data-icon-picker-panel]`      : panel dropdown
+ *   - `[data-icon-picker-search]`     : input pencarian
+ *   - `[data-icon-picker-grid]`       : wadah grid ikon
+ */
+function initIconPickers(root = document) {
+    const all = window.lucideIcons || {};
+
+    const toPascal = (s) => s.split('-').map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w)).join('');
+    const toKebab = (s) => s
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+        .toLowerCase();
+
+    // Hanya ikon yang namanya bisa di-resolve balik oleh createIcons().
+    const names = Object.keys(all)
+        .map((name) => toKebab(name))
+        .filter((kebab) => all[toPascal(kebab)])
+        .sort();
+
+    root.querySelectorAll('[data-icon-picker]').forEach((picker) => {
+        if (picker.dataset.init === '1') return;
+        picker.dataset.init = '1';
+
+        const input = picker.querySelector('[data-icon-picker-input]');
+        const toggle = picker.querySelector('[data-icon-picker-toggle]');
+        const panel = picker.querySelector('[data-icon-picker-panel]');
+        const search = picker.querySelector('[data-icon-picker-search]');
+        const grid = picker.querySelector('[data-icon-picker-grid]');
+        const label = picker.querySelector('[data-icon-picker-label]');
+        const preview = picker.querySelector('[data-icon-picker-preview]');
+
+        let rendered = false;
+
+        const markSelected = () => {
+            grid.querySelectorAll('.icon-picker-item').forEach((item) => {
+                item.classList.toggle('is-selected', item.dataset.iconName === input.value);
+            });
+        };
+
+        const render = () => {
+            if (rendered) return;
+            rendered = true;
+            const frag = document.createDocumentFragment();
+            names.forEach((name) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'icon-picker-item';
+                btn.dataset.iconName = name;
+                btn.title = name;
+                btn.innerHTML = '<i data-lucide="' + name + '"></i>';
+                frag.appendChild(btn);
+            });
+            grid.appendChild(frag);
+            if (window.initIcons) window.initIcons(grid);
+            markSelected();
+        };
+
+        const filter = () => {
+            const q = search.value.trim().toLowerCase();
+            let visible = 0;
+            grid.querySelectorAll('.icon-picker-item').forEach((item) => {
+                const match = !q || item.dataset.iconName.includes(q);
+                item.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+
+            let empty = grid.querySelector('.icon-picker-empty');
+            if (!visible) {
+                if (!empty) {
+                    empty = document.createElement('div');
+                    empty.className = 'icon-picker-empty';
+                    empty.textContent = search.dataset.emptyText || 'Ikon tidak ditemukan';
+                    grid.appendChild(empty);
+                }
+                empty.style.display = '';
+            } else if (empty) {
+                empty.style.display = 'none';
+            }
+        };
+
+        const close = () => panel.classList.add('hidden');
+        const open = () => {
+            render();
+            panel.classList.remove('hidden');
+            search.value = '';
+            filter();
+            search.focus();
+        };
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            panel.classList.contains('hidden') ? open() : close();
+        });
+
+        search.addEventListener('input', filter);
+
+        grid.addEventListener('click', (e) => {
+            const item = e.target.closest('.icon-picker-item');
+            if (!item) return;
+            input.value = item.dataset.iconName;
+            if (label) label.textContent = item.dataset.iconName;
+            if (preview) {
+                preview.innerHTML = '<i data-lucide="' + item.dataset.iconName + '"></i>';
+                if (window.initIcons) window.initIcons(preview);
+            }
+            markSelected();
+            close();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!picker.contains(e.target)) close();
+        });
+    });
+}
+
+window.initIconPickers = initIconPickers;
+
+/**
  * Editor website/frontpage: tab bahasa + baris berulang (layanan/fitur/FAQ/media).
  * Baris baru dikloning dari <template data-row-template> dengan placeholder
  * `__INDEX__` diganti nilai unik.
@@ -423,6 +548,7 @@ function boot() {
     initSelect2();
     initImagePreview();
     initModal();
+    initIconPickers();
     initWebsiteBuilder();
 }
 

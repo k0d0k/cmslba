@@ -63,6 +63,8 @@ return [
     'slug'            => 'Slug',
     'sort'            => 'Susunan',
     'icon'            => 'Ikon',
+    'search_icon'     => 'Cari ikon...',
+    'icon_not_found'  => 'Ikon tidak dijumpai',
     'type'            => 'Jenis',
     'role'            => 'Peranan',
     'branch'          => 'Cawangan',

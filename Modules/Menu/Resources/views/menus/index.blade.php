@@ -91,7 +91,7 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="form-label">{{ __('menus.icon') }}</label>
-                            <input type="text" name="icon" value="{{ old('icon', $edit?->icon ?? 'circle') }}" class="form-control">
+                            @include('layouts.partials.icon-picker', ['name' => 'icon', 'value' => $edit?->icon ?? 'circle'])
                         </div>
                         <div>
                             <label class="form-label">{{ __('menus.sort') }}</label>
