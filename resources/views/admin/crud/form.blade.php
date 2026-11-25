@@ -31,6 +31,10 @@
                     @continue
                 @endif
 
+                @if(!empty($f['hide_in_form']))
+                    @continue
+                @endif
+
                 @php
                     $name = $f['name'];
                     $value = old($name, optional($record)->{$name} ?? ($f['default'] ?? null));

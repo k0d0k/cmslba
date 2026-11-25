@@ -4,16 +4,24 @@ namespace Modules\Pelanggan\Http\Controllers;
 
 use App\Http\Controllers\Admin\BaseCrudController;
 use Modules\Pelanggan\Mail\PelangganPasswordReset;
+use Modules\Pelanggan\Models\Pelanggan;
+use Modules\User\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * Contoh modul CRUD Pelanggan (data multi cabang pada database mitra).
  * Pelanggan direlasikan ke akun login pada tabel users (database pusat).
+ *
+ * Saat menyimpan, akun user dapat dibuat otomatis: memilih role level mitra
+ * (id 3 s.d. 8) pada field "Akun User", lalu sistem membuat baris `users`
+ * dengan password default + `mitra_id` sebagai relasi user ke mitra.
  */
 class PelangganController extends BaseCrudController
 {
-    protected string $model = \Modules\Pelanggan\Models\Pelanggan::class;
+    protected string $model = Pelanggan::class;
     protected string $view = 'admin.crud';
     protected string $routeName = 'admin.pelanggan';
     protected string $menuKey = 'pelanggan';
@@ -24,6 +32,18 @@ class PelangganController extends BaseCrudController
         return __('common.customer');
     }
 
+    /** Role yang boleh dipakai akun pelanggan: id 3 s.d. 8 (role level mitra). */
+    protected function mitraRoleOptions(): array
+    {
+        $meta = app(\Modules\Role\Services\RoleService::class)->allMeta();
+
+        return Role::whereBetween('id', [3, 8])
+            ->orderBy('id')
+            ->get()
+            ->mapWithKeys(fn (Role $r) => [$r->id => $meta[$r->name]['label'] ?? $r->name])
+            ->all();
+    }
+
     protected function fields(): array
     {
         return [
@@ -31,8 +51,11 @@ class PelangganController extends BaseCrudController
             ['name' => 'name', 'type' => 'string', 'label' => __('common.name'), 'nullable' => false],
             ['name' => 'email', 'type' => 'email', 'label' => __('common.email'), 'nullable' => true],
             ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
-            ['name' => 'user_id', 'type' => 'relation', 'label' => __('common.user_account'), 'nullable' => true, 'relation' => [
-                'model' => \Modules\User\Models\User::class,
+            // Pilihan role (id 3 s.d. 8). Saat disimpan, akun user dibuat otomatis.
+            ['name' => 'role', 'type' => 'select', 'label' => __('common.user_account'), 'nullable' => true, 'options' => $this->mitraRoleOptions(), 'hide_in_table' => true],
+            // Ditampilkan di tabel: akun user yang sudah terhubung ke pelanggan.
+            ['name' => 'user_id', 'type' => 'relation', 'label' => __('common.user_account'), 'nullable' => true, 'hide_in_form' => true, 'relation' => [
+                'model' => User::class,
                 'label' => 'name_with_role',
                 'with'  => ['roles'],
                 // Akun mitra hanya boleh memilih akun user milik mitranya sendiri;
@@ -49,6 +72,87 @@ class PelangganController extends BaseCrudController
             ['name' => 'cabang_id', 'type' => 'relation', 'label' => __('common.branch'), 'nullable' => true, 'relation' => ['model' => \Modules\Cabang\Models\Cabang::class, 'label' => 'name']],
             ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => false],
         ];
+    }
+
+    public function store(Request $request)
+    {
+        $this->authorizeAbility('create');
+        $request->validate($this->rules());
+
+        $data = $this->values($request);
+        $roleId = $data['role'] ?? null;
+        unset($data['role'], $data['user_id']);
+
+        if ($this->hasCabang && empty($data['cabang_id'])) {
+            $data['cabang_id'] = session('active_cabang_id') ?: $this->user()?->cabang_id;
+        }
+
+        $pelanggan = ($this->model)::create($data);
+
+        if ($roleId) {
+            $pelanggan->user_id = $this->createUserForPelanggan($pelanggan, (int) $roleId)->id;
+            $pelanggan->save();
+        }
+
+        return redirect()->route($this->routeName . '.index')
+            ->with('success', __('messages.created'));
+    }
+
+    public function update(Request $request, $slug)
+    {
+        $this->authorizeAbility('update');
+        $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
+
+        $request->validate($this->rules($record->id));
+
+        $data = $this->values($request);
+        $roleId = $data['role'] ?? null;
+        unset($data['role'], $data['user_id']);
+
+        $record->update($data);
+
+        if ($roleId) {
+            $role = Role::find((int) $roleId);
+            if ($user = $record->user) {
+                // Sudah punya akun: cukup sinkronkan role-nya.
+                if ($role) {
+                    $user->syncRoles([$role->name]);
+                }
+            } else {
+                $record->user_id = $this->createUserForPelanggan($record, (int) $roleId)->id;
+                $record->save();
+            }
+        }
+
+        return redirect()->route($this->routeName . '.index')
+            ->with('success', __('messages.updated'));
+    }
+
+    /**
+     * Buat akun user (database pusat) untuk pelanggan sesuai role mitra terpilih:
+     * password default + `mitra_id` (relasi user ke mitra).
+     */
+    protected function createUserForPelanggan(Pelanggan $pelanggan, int $roleId): User
+    {
+        $email = $pelanggan->email;
+        if (blank($email) || User::withTrashed()->where('email', $email)->exists()) {
+            $email = Str::slug($pelanggan->name ?: 'pelanggan') . '+' . Str::lower(Str::random(6)) . '@pelanggan.local';
+        }
+
+        $user = User::create([
+            'name'      => $pelanggan->name,
+            'email'     => $email,
+            'password'  => config('lbacloud.default_user_password', 'password'),
+            'mitra_id'  => app()->bound('active_mitra') ? app('active_mitra')->id : $this->user()?->mitra_id,
+            'locale'    => app()->getLocale(),
+            'is_active' => true,
+        ]);
+
+        if ($role = Role::find($roleId)) {
+            $user->syncRoles([$role->name]);
+        }
+
+        return $user;
     }
 
     /**

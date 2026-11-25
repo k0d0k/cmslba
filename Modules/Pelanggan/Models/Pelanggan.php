@@ -38,4 +38,13 @@ class Pelanggan extends Model
     {
         return $this->belongsTo(\Modules\User\Models\User::class, 'user_id');
     }
+
+    /**
+     * Id role akun user yang terhubung (dipakai untuk mengisi pilihan role
+     * pada form edit). Null bila belum ada akun / tanpa role.
+     */
+    public function getRoleAttribute(): ?int
+    {
+        return $this->user?->roles?->first()?->id;
+    }
 }
