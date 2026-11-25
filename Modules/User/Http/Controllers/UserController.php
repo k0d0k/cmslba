@@ -42,7 +42,20 @@ class UserController extends BaseCrudController
             ['name' => 'password', 'type' => 'password', 'label' => __('common.password'), 'nullable' => true, 'hide_in_table' => true],
             ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
             ['name' => 'role', 'type' => 'select', 'label' => __('common.role'), 'nullable' => true, 'options' => $this->roleOptions()],
-            ['name' => 'mitra_id', 'type' => 'relation', 'label' => __('common.mitra'), 'nullable' => true, 'relation' => ['model' => \Modules\Mitra\Models\Mitra::class, 'label' => 'name']],
+            ['name' => 'mitra_id', 'type' => 'relation', 'label' => __('common.mitra'), 'nullable' => true, 'relation' => [
+                'model' => \Modules\Mitra\Models\Mitra::class,
+                'label' => 'name',
+                // Akun mitra hanya boleh melihat/memilih mitranya sendiri;
+                // user pusat (principal) tetap melihat seluruh mitra.
+                'query' => function ($query) {
+                    $user = auth()->user();
+                    if ($user && ! $user->isPrincipal() && $user->mitra_id) {
+                        $query->where('id', $user->mitra_id);
+                    }
+
+                    return $query;
+                },
+            ]],
             ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => true, 'default' => true],
         ];
     }
@@ -78,6 +91,11 @@ class UserController extends BaseCrudController
         $data = $this->values($request);
         unset($data['role']); // bukan kolom; ditangani lewat syncRoles.
 
+        // Akun mitra: paksa user baru berada pada mitra-nya sendiri.
+        if (($auth = $this->user()) && ! $auth->isPrincipal()) {
+            $data['mitra_id'] = $auth->mitra_id;
+        }
+
         $user = User::create($data);
 
         if ($role = $request->input('role')) {
@@ -99,6 +117,11 @@ class UserController extends BaseCrudController
         unset($data['role']);
         if (blank($data['password'] ?? null)) {
             unset($data['password']); // biarkan password lama.
+        }
+
+        // Akun mitra: tidak boleh memindahkan user ke mitra lain.
+        if (($auth = $this->user()) && ! $auth->isPrincipal()) {
+            $data['mitra_id'] = $auth->mitra_id;
         }
 
         $record->update($data);
