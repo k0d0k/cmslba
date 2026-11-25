@@ -68,6 +68,11 @@
                             if ($relQuery && !empty($relWith)) {
                                 $relQuery->with($relWith);
                             }
+                            // Callback opsional untuk membatasi pilihan relasi
+                            // (mis. hanya akun user milik mitra yang sedang aktif).
+                            if ($relQuery && is_callable($f['relation']['query'] ?? null)) {
+                                $relQuery = call_user_func($f['relation']['query'], $relQuery) ?: $relQuery;
+                            }
                             $relRows = $relQuery ? $relQuery->get() : collect();
                         @endphp
                         <select name="{{ $name }}" class="form-control">

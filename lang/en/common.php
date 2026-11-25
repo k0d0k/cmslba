@@ -46,6 +46,7 @@ return [
     'new_password' => 'New Password',
     'confirm_password' => 'Confirm Password',
     'active_cabang' => 'Active Branch',
+    'all'          => 'All',
     'all_branches' => 'All Branches',
     'picture'      => 'Picture',
     'reset_password' => 'Reset Password',

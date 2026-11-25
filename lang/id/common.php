@@ -46,6 +46,7 @@ return [
     'new_password' => 'Password Baru',
     'confirm_password' => 'Konfirmasi Password',
     'active_cabang' => 'Cabang Aktif',
+    'all'          => 'Semua',
     'all_branches' => 'Semua Cabang',
     'picture'      => 'Foto',
     'reset_password' => 'Reset Password',

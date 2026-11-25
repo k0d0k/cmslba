@@ -31,7 +31,21 @@ class PelangganController extends BaseCrudController
             ['name' => 'name', 'type' => 'string', 'label' => __('common.name'), 'nullable' => false],
             ['name' => 'email', 'type' => 'email', 'label' => __('common.email'), 'nullable' => true],
             ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
-            ['name' => 'user_id', 'type' => 'relation', 'label' => __('common.user_account'), 'nullable' => true, 'relation' => ['model' => \Modules\User\Models\User::class, 'label' => 'name_with_role', 'with' => ['roles']]],
+            ['name' => 'user_id', 'type' => 'relation', 'label' => __('common.user_account'), 'nullable' => true, 'relation' => [
+                'model' => \Modules\User\Models\User::class,
+                'label' => 'name_with_role',
+                'with'  => ['roles'],
+                // Akun mitra hanya boleh memilih akun user milik mitranya sendiri;
+                // user pusat (principal) tetap melihat seluruh akun.
+                'query' => function ($query) {
+                    $user = auth()->user();
+                    if ($user && ! $user->isPrincipal() && $user->mitra_id) {
+                        $query->where('mitra_id', $user->mitra_id);
+                    }
+
+                    return $query;
+                },
+            ]],
             ['name' => 'cabang_id', 'type' => 'relation', 'label' => __('common.branch'), 'nullable' => true, 'relation' => ['model' => \Modules\Cabang\Models\Cabang::class, 'label' => 'name']],
             ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => false],
         ];

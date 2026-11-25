@@ -101,6 +101,7 @@
                         <span>{{ __('common.menu_group') }}</span>
                     </label>
                     <select id="sidebar-group-select" class="sidebar-select" data-active="{{ $activeGroupKey }}">
+                        <option value="all" @selected($preSelectedGroupKey === 'all')>{{ __('common.all') }}</option>
                         @foreach($sidebarGroups as $g)
                             <option value="{{ $g->key }}" @selected($g->key === $preSelectedGroupKey)>{{ $g->label() }}</option>
                         @endforeach
@@ -114,6 +115,11 @@
                             @include('layouts.partials.menu-item', ['items' => $g->children_tree ?? collect(), 'level' => 1])
                         </div>
                     @endforeach
+                    {{-- Pilihan "Semua": tampilkan menu dari seluruh group sekaligus. --}}
+                    <div class="sidebar-group-panel {{ $preSelectedGroupKey === 'all' ? '' : 'hidden' }}"
+                         data-sidebar-group="all">
+                        @include('layouts.partials.menu-item', ['items' => $sidebarGroups, 'level' => 1])
+                    </div>
                 </div>
             @endif
         </nav>

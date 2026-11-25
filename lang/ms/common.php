@@ -46,6 +46,7 @@ return [
     'new_password' => 'Kata Laluan Baharu',
     'confirm_password' => 'Sahkan Kata Laluan',
     'active_cabang' => 'Cawangan Aktif',
+    'all'          => 'Semua',
     'all_branches' => 'Semua Cawangan',
     'picture'      => 'Gambar',
     'reset_password' => 'Set Semula Kata Laluan',
