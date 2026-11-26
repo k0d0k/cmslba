@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 class PelangganController extends BaseCrudController
 {
     protected string $model = Pelanggan::class;
-    protected string $view = 'admin.crud';
+    protected string $view = 'admin.pelanggan';
     protected string $routeName = 'admin.pelanggan';
     protected string $menuKey = 'pelanggan';
     protected bool $hasCabang = true;
@@ -42,7 +42,7 @@ class PelangganController extends BaseCrudController
     protected function fields(): array
     {
         return [
-            ['name' => 'picture', 'type' => 'image', 'label' => __('common.picture'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'picture', 'type' => 'image', 'label' => __('common.picture'), 'nullable' => true],
             ['name' => 'patient_number', 'type' => 'string', 'label' => 'No. Pasien / Pelanggan', 'nullable' => true],
             ['name' => 'name', 'type' => 'string', 'label' => __('common.name'), 'nullable' => false],
             [
