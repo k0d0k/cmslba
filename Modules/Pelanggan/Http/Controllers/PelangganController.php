@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 class PelangganController extends BaseCrudController
 {
     protected string $model = Pelanggan::class;
-    protected string $view = 'admin.pelanggan';
+    protected string $view = 'admin.crud';
     protected string $routeName = 'admin.pelanggan';
     protected string $menuKey = 'pelanggan';
     protected bool $hasCabang = true;
