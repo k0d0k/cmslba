@@ -232,7 +232,7 @@ abstract class BaseCrudController extends Controller
         $dt->addColumn('actions', function ($row) {
             $html = '<div class="flex gap-2">';
             if ($this->can('update')) {
-                $html .= '<a href="' . route($this->routeName . '.edit', $row->getRouteKey()) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
+                $html .= '<a href="' . route($this->routeName . '.edit', $row->getRouteKey()) . '" class="btn btn-sm btn-primary"><i data-lucide="pencil"></i> ' . __('common.edit') . '</a>';
             }
             $html .= $this->rowActions($row);
             if ($this->can('delete')) {

@@ -84,7 +84,7 @@ class MitraController extends Controller
                 $html .= '<a href="' . route('admin.sina.index', ['mitra' => $m->slug]) . '" class="btn btn-sm btn-secondary" title="' . e(__('sina.title')) . '">'
                     . '<i data-lucide="brain-circuit"></i> SINA AI</a>';
                 if ($this->can('update')) {
-                    $html .= '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
+                    $html .= '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary"><i data-lucide="pencil"></i> ' . __('common.edit') . '</a>';
                 }
                 if ($this->can('delete')) {
                     $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route('admin.mitras.destroy', $m->slug) . '"><i data-lucide="trash-2"></i> ' . __('common.delete') . '</button>';
