@@ -95,39 +95,6 @@ class PelangganController extends BaseCrudController
         ];
     }
 
-    /**
-     * Gunakan form khusus modul Pelanggan untuk tampilan create & edit
-     */
-    public function create()
-    {
-        $this->authorizeAbility('create');
-
-        return view('admin.pelanggan.form', [
-            'title'       => $this->title(),
-            'routeName'   => $this->routeName,
-            'record'      => null,
-            'roleOptions' => $this->mitraRoleOptions(),
-            'cabangs'     => \Modules\Cabang\Models\Cabang::all(),
-        ]);
-    }
-
-    public function edit($slug)
-    {
-        $this->authorizeAbility('update');
-        $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
-
-        return view('admin.pelanggan.form', [
-            'title'       => $this->title(),
-            'routeName'   => $this->routeName,
-            'record'      => $record,
-            'roleOptions' => $this->mitraRoleOptions(),
-            'cabangs'     => \Modules\Cabang\Models\Cabang::all(),
-        ]);
-    }
-
-    // ... biarkan method store(), update(), createUserForPelanggan(), resetPassword(), dan rowActions() tetap seperti semula ...
-
-
     public function store(Request $request)
     {
         $this->authorizeAbility('create');
