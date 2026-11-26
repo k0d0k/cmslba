@@ -106,6 +106,11 @@ class PelangganController extends BaseCrudController
         $roleId = $data['role'] ?? null;
         unset($data['role'], $data['user_id']);
 
+        // Tombol "Arsipkan" pada form: set tanggal arsip ke waktu sekarang.
+        if ($request->boolean('archive')) {
+            $data['archived_at'] = now();
+        }
+
         if ($this->hasCabang && empty($data['cabang_id'])) {
             $data['cabang_id'] = session('active_cabang_id') ?: $this->user()?->cabang_id;
         }
@@ -131,6 +136,11 @@ class PelangganController extends BaseCrudController
         $data = $this->values($request);
         $roleId = $data['role'] ?? null;
         unset($data['role'], $data['user_id']);
+
+        // Tombol "Arsipkan" pada form: set tanggal arsip ke waktu sekarang.
+        if ($request->boolean('archive')) {
+            $data['archived_at'] = now();
+        }
 
         $record->update($data);
 

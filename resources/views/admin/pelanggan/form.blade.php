@@ -153,12 +153,17 @@
                     </div>
                     <div>
                         <label class="form-label">{{ __('common.date_register') }}</label>
-                        <input type="datetime-local" name="registered_at" value="{{ $fmtDt($val('registered_at')) }}" class="form-control">
+                        <input type="datetime-local" name="registered_at" value="{{ $fmtDt($val('registered_at', now())) }}" class="form-control">
                         @error('registered_at') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="form-label">Tanggal Arsip</label>
-                        <input type="datetime-local" name="archived_at" value="{{ $fmtDt($val('archived_at')) }}" class="form-control">
+                        <div class="form-control bg-slate-50 text-slate-500">
+                            {{ $record && $record->archived_at ? \Illuminate\Support\Carbon::parse($record->archived_at)->format('d M Y H:i') : '-' }}
+                        </div>
+                        {{-- Hanya tampilan: nilai lama tetap dikirim agar tidak terhapus saat simpan,
+                             dan hanya diubah melalui tombol Arsipkan. --}}
+                        <input type="hidden" name="archived_at" value="{{ $fmtDt($val('archived_at')) }}">
                         @error('archived_at') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -194,8 +199,12 @@
                 </div>
             </section>
 
-            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
                 <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
+                <button type="submit" name="archive" value="1" class="btn btn-secondary"
+                        onclick="return confirm('Arsipkan data pelanggan ini?');">
+                    <i data-lucide="archive"></i> Arsipkan
+                </button>
                 <a href="{{ route($routeName . '.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
             </div>
         </form>
