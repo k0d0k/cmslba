@@ -23,6 +23,8 @@ return [
     'no_data'           => 'Tiada data.',
 
     'confirm_reset_password'           => 'Set semula kata laluan akaun pelanggan ini dan hantar kata laluan baharu ke e-mel?',
+    'confirm_archive'                  => 'Arkibkan pelanggan ini? Tarikh arkib akan diisi secara automatik.',
+    'pelanggan_archived'               => 'Pelanggan berjaya diarkibkan.',
     'pelanggan_no_user'                => 'Pelanggan belum dipautkan ke akaun pengguna.',
     'pelanggan_no_email'               => 'Akaun pengguna tiada e-mel.',
     'pelanggan_password_reset'         => 'Kata laluan baharu berjaya dihantar ke :email.',

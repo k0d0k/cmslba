@@ -15,7 +15,7 @@
         <div class="card-header flex items-center justify-between">
             <span>{{ $title }}</span>
             @if($canCreate)
-                <a href="{{ route($routeName . '.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
+                <a href="{{ route($routeName . '.create') }}" class="btn btn-primary btn-sm"><i data-lucide="plus"></i> {{ __('common.add') }}</a>
             @endif
         </div>
 

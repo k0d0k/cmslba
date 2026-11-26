@@ -223,6 +223,8 @@ async function initDataTables() {
             columns: cols,
             order: [],
             pageLength: 10,
+            // Rekonversi ikon lucide pada sel aksi setiap tabel selesai digambar.
+            drawCallback: () => { if (window.initIcons) window.initIcons(table); },
             pagingType: 'simple_numbers',
             layout: {
                 topStart: 'pageLength',

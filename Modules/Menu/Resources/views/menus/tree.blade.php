@@ -19,7 +19,7 @@
 
                 <div class="ml-auto flex items-center gap-1">
                     <a href="{{ route('admin.menus.index', ['edit' => $item->key]) }}" class="btn btn-secondary btn-sm">{{ __('common.edit') }}</a>
-                    <button type="button" class="btn btn-danger btn-sm js-delete" data-url="{{ route('admin.menus.destroy', $item->key) }}">{{ __('common.delete') }}</button>
+                    <button type="button" class="btn btn-danger btn-sm js-delete" data-url="{{ route('admin.menus.destroy', $item->key) }}"><i data-lucide="trash-2"></i> {{ __('common.delete') }}</button>
                 </div>
             </div>
 

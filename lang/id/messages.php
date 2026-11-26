@@ -23,6 +23,8 @@ return [
     'no_data'           => 'Belum ada data.',
 
     'confirm_reset_password'           => 'Reset password akun pelanggan ini dan kirim password baru ke emailnya?',
+    'confirm_archive'                  => 'Arsipkan data pelanggan ini? Tanggal arsip akan diisi otomatis.',
+    'pelanggan_archived'               => 'Data pelanggan berhasil diarsipkan.',
     'pelanggan_no_user'                => 'Pelanggan belum direlasikan ke akun user.',
     'pelanggan_no_email'               => 'Akun user belum memiliki email.',
     'pelanggan_password_reset'         => 'Password baru berhasil dikirim ke :email.',

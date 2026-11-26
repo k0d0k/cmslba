@@ -7,7 +7,7 @@
         <div class="card-header flex items-center justify-between">
             <span>{!! __('roles.heading') !!}</span>
             <button type="button" class="btn btn-primary btn-sm" data-modal-target="create-role-modal">
-                {{ __('roles.add') }}
+                <i data-lucide="plus"></i> {{ __('roles.add') }}
             </button>
         </div>
         <div class="card-body p-0 overflow-x-auto">
@@ -94,8 +94,8 @@
                 </div>
 
                 <div class="flex items-center gap-2 mt-5 border-t border-slate-200 pt-4">
-                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
-                    <button type="button" class="btn btn-secondary" data-modal-close>{{ __('common.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('common.save') }}</button>
+                    <button type="button" class="btn btn-secondary" data-modal-close><i data-lucide="x"></i> {{ __('common.cancel') }}</button>
                 </div>
             </form>
         </div>

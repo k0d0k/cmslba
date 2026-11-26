@@ -24,7 +24,7 @@
         <div class="card-header flex items-center justify-between">
             <span>{{ __('mitra.list_title') }}</span>
             @if($canCreate ?? false)
-                <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm">{{ __('common.add') }}</a>
+                <a href="{{ route('admin.mitras.create') }}" class="btn btn-primary btn-sm"><i data-lucide="plus"></i> {{ __('common.add') }}</a>
             @endif
         </div>
 

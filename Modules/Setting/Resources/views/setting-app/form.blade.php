@@ -78,7 +78,7 @@
 
             @if($canUpdate)
                 <div class="flex items-center gap-2 pt-2">
-                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
+                    <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('common.save') }}</button>
                 </div>
             @endif
         </form>

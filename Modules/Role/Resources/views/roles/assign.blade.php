@@ -33,8 +33,8 @@
             </div>
 
             <div class="card-body flex items-center gap-2 border-t border-slate-100">
-                <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
-                <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
+                <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('common.save') }}</button>
+                <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary"><i data-lucide="x"></i> {{ __('common.cancel') }}</a>
                 <span class="text-xs text-slate-400 ml-auto">{{ __('roles.assign_hint') }}</span>
             </div>
         </form>

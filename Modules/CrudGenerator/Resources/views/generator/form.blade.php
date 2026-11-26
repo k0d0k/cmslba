@@ -92,7 +92,7 @@
 
         <div class="flex items-center gap-2">
             <button type="submit" class="btn btn-primary">{{ __('generator.generate') }}</button>
-            <a href="{{ route('admin.generator.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
+            <a href="{{ route('admin.generator.index') }}" class="btn btn-secondary"><i data-lucide="x"></i> {{ __('common.cancel') }}</a>
         </div>
     </form>
 

@@ -26,4 +26,5 @@ Route::middleware(['web', 'auth', 'tenant'])
         Route::put('pelanggan/{slug}', [$controller, 'update'])->name('pelanggan.update');
         Route::delete('pelanggan/{slug}', [$controller, 'destroy'])->name('pelanggan.destroy');
         Route::post('pelanggan/{slug}/reset-password', [$controller, 'resetPassword'])->name('pelanggan.reset-password');
+        Route::post('pelanggan/{slug}/archive', [$controller, 'archive'])->name('pelanggan.archive');
     });

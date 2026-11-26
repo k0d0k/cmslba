@@ -111,9 +111,9 @@
                     </div>
 
                     <div class="flex items-center gap-2 pt-1">
-                        <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
+                        <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('common.save') }}</button>
                         @if($edit)
-                            <a href="{{ route('admin.menus.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
+                            <a href="{{ route('admin.menus.index') }}" class="btn btn-secondary"><i data-lucide="x"></i> {{ __('common.cancel') }}</a>
                         @endif
                     </div>
                 </form>

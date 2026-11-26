@@ -27,8 +27,8 @@
             </div>
 
             <div class="flex items-center gap-2 pt-1">
-                <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
-                <a href="{{ route('admin.account.profile') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
+                <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('common.save') }}</button>
+                <a href="{{ route('admin.account.profile') }}" class="btn btn-secondary"><i data-lucide="x"></i> {{ __('common.cancel') }}</a>
             </div>
         </form>
     </div>

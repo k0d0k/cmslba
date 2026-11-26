@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                                 <div class="pt-4">
-                                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
+                                    <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('common.save') }}</button>
                                 </div>
                             </form>
                         @else
@@ -177,7 +177,7 @@
                                     {{ __('sina.price_value_hint') }}
                                 </p>
 
-                                <button type="submit" class="btn btn-primary">{{ __('sina.save_price') }}</button>
+                                <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> {{ __('sina.save_price') }}</button>
                             </form>
                         @else
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl">

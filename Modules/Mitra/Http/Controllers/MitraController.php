@@ -87,7 +87,7 @@ class MitraController extends Controller
                     $html .= '<a href="' . route('admin.mitras.edit', $m->slug) . '" class="btn btn-sm btn-primary">' . __('common.edit') . '</a>';
                 }
                 if ($this->can('delete')) {
-                    $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route('admin.mitras.destroy', $m->slug) . '">' . __('common.delete') . '</button>';
+                    $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route('admin.mitras.destroy', $m->slug) . '"><i data-lucide="trash-2"></i> ' . __('common.delete') . '</button>';
                 }
                 $html .= '</div>';
 

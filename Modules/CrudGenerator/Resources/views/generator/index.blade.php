@@ -19,7 +19,7 @@
     <div class="card">
         <div class="card-header flex items-center justify-between">
             <span>{{ __('generator.definitions') }}</span>
-            <a href="{{ route('admin.generator.create') }}" class="btn btn-primary btn-sm">{{ __('generator.new') }}</a>
+            <a href="{{ route('admin.generator.create') }}" class="btn btn-primary btn-sm"><i data-lucide="plus"></i> {{ __('generator.new') }}</a>
         </div>
         <div class="card-body p-0">
             <table class="w-full text-sm">

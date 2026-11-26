@@ -200,13 +200,31 @@
             </section>
 
             <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
-                <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
-                <button type="submit" name="archive" value="1" class="btn btn-secondary"
-                        onclick="return confirm('Arsipkan data pelanggan ini?');">
-                    <i data-lucide="archive"></i> Arsipkan
+                <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i> {{ __('common.save') }}
                 </button>
-                <a href="{{ route($routeName . '.index') }}" class="btn btn-secondary">{{ __('common.cancel') }}</a>
+                @if($record)
+                    <button type="submit" form="pelanggan-archive-form" class="btn btn-secondary">
+                        <i data-lucide="archive"></i> Arsipkan
+                    </button>
+                @endif
+                <a href="{{ route($routeName . '.index') }}" class="btn btn-secondary">
+                    <i data-lucide="x"></i> {{ __('common.cancel') }}
+                </a>
             </div>
         </form>
+
+        @if($record)
+            {{-- Form terpisah: tombol Arsipkan di atas memicunya, konfirmasi lewat SweetAlert (js-confirm). --}}
+            <form id="pelanggan-archive-form" method="POST"
+                  action="{{ route($routeName . '.archive', $record->slug) }}"
+                  class="js-confirm hidden"
+                  data-icon="warning"
+                  data-title="Arsipkan {{ __('common.customer') }}"
+                  data-confirm="{{ __('messages.confirm_archive') }}"
+                  data-confirm-text="Ya, Arsipkan">
+                @csrf
+            </form>
+        @endif
     </div>
 @endsection

@@ -23,6 +23,8 @@ return [
     'no_data'           => 'No data available.',
 
     'confirm_reset_password'           => 'Reset this customer account password and email the new password?',
+    'confirm_archive'                  => 'Archive this customer? The archive date will be set automatically.',
+    'pelanggan_archived'               => 'The customer has been archived.',
     'pelanggan_no_user'                => 'Customer is not linked to a user account.',
     'pelanggan_no_email'               => 'The user account has no email.',
     'pelanggan_password_reset'         => 'A new password has been sent to :email.',

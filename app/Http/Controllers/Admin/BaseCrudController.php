@@ -236,7 +236,7 @@ abstract class BaseCrudController extends Controller
             }
             $html .= $this->rowActions($row);
             if ($this->can('delete')) {
-                $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route($this->routeName . '.destroy', $row->getRouteKey()) . '">' . __('common.delete') . '</button>';
+                $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route($this->routeName . '.destroy', $row->getRouteKey()) . '"><i data-lucide="trash-2"></i> ' . __('common.delete') . '</button>';
             }
             $html .= '</div>';
 
