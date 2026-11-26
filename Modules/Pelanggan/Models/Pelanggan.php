@@ -19,11 +19,17 @@ class Pelanggan extends Model
     protected $fillable = [
         'mitra_uuid', 'cabang_id', 'user_id', 'name', 'slug', 'email', 'phone',
         'picture', 'address', 'birth_date', 'notes', 'is_active',
+        // Data pasien/pelanggan (dipakai form kustom admin.pelanggan.form).
+        'patient_number', 'sex', 'date_of_birth', 'city', 'region', 'country',
+        'registered_at', 'archived_at',
     ];
 
     protected $casts = [
-        'birth_date' => 'date',
-        'is_active'  => 'boolean',
+        'birth_date'    => 'date',
+        'date_of_birth' => 'date',
+        'registered_at' => 'datetime',
+        'archived_at'   => 'datetime',
+        'is_active'     => 'boolean',
     ];
 
     public $slug_source = 'name';

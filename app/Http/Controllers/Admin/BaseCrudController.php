@@ -17,6 +17,8 @@ abstract class BaseCrudController extends Controller
 {
     protected string $model;
     protected string $view = 'admin.crud';
+    /** View form khusus modul. Bila kosong, memakai `$view . '.form'`. */
+    protected string $formView = '';
     protected string $routeName;
     protected string $title = 'Data';
     protected string $menuKey = '';
@@ -262,7 +264,7 @@ abstract class BaseCrudController extends Controller
     {
         $this->authorizeAbility('create');
 
-        return view($this->view . '.form', [
+        return view($this->formView ?: $this->view . '.form', [
             'fields'    => $this->fields(),
             'routeName' => $this->routeName,
             'title'     => $this->title(),
@@ -291,7 +293,7 @@ abstract class BaseCrudController extends Controller
         $this->authorizeAbility('update');
         $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
 
-        return view($this->view . '.form', [
+        return view($this->formView ?: $this->view . '.form', [
             'fields'    => $this->fields(),
             'routeName' => $this->routeName,
             'title'     => $this->title(),

@@ -15,6 +15,8 @@ class PelangganController extends BaseCrudController
 {
     protected string $model = Pelanggan::class;
     protected string $view = 'admin.crud';
+    /** Form khusus modul Pelanggan (layouts berkelompok: identitas, kontak, alamat, status, akun). */
+    protected string $formView = 'admin.pelanggan.form';
     protected string $routeName = 'admin.pelanggan';
     protected string $menuKey = 'pelanggan';
     protected bool $hasCabang = true;
