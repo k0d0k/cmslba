@@ -52,6 +52,7 @@ return [
     'reset_password' => 'Reset Password',
     'detail'       => 'Detail',
     'close'        => 'Tutup',
+    'select'       => 'Pilih',
 
     // ==================== Label field umum ====================
     'data'            => 'Data',
@@ -73,7 +74,7 @@ return [
     'branch_name'     => 'Nama Cabang',
     'brand'           => 'Brand',
     'user_account'    => 'Akun User',
-    'customer'        => 'Pelanggan',
+    'customer'        => 'Pasien',
     'module_name'     => 'Nama Modul',
     'display'         => 'Tampil',
     'price'           => 'Harga',
@@ -110,6 +111,20 @@ return [
     'appointment'     => 'Janji Temu',
     'patient'         => 'Pasien',
     'staff'           => 'Staf',
+
+    //==data pasien==
+    'identitas_title'           => 'Identitas Utama',
+    'date_register'           => 'Tanggal Registrasi',
+    'patient_number'           => 'No. Pasien',
+    'sex'           => 'Jenis Kelamin',
+    'birthday'           => 'Tanggal Lahir',
+    'address'           => 'Alamat',
+    'notes'           => 'Catatan',
+    'region_title'           => 'Alamat & Wilayah',
+    'city'           => 'Kota',
+    'region'           => 'Propinsi / Wilayah',
+    'country'           => 'Kode Negara (2 Huruf)',
+    'statusfoto_title'           => 'Status dan Foto',
 
     // ==================== Petunjuk umum ====================
     'keep_password_hint' => 'Biarkan kosong bila tidak ingin mengganti password.',

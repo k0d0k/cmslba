@@ -52,6 +52,7 @@ return [
     'reset_password' => 'Set Semula Kata Laluan',
     'detail'       => 'Perincian',
     'close'        => 'Tutup',
+    'select'       => 'Pilih',
 
     // ==================== Label medan umum ====================
     'data'            => 'Data',
@@ -73,7 +74,7 @@ return [
     'branch_name'     => 'Nama Cawangan',
     'brand'           => 'Jenama',
     'user_account'    => 'Akaun Pengguna',
-    'customer'        => 'Pelanggan',
+    'customer'        => 'Pesakit',
     'module_name'     => 'Nama Modul',
     'display'         => 'Papar',
     'price'           => 'Harga',
@@ -110,6 +111,21 @@ return [
     'appointment'     => 'Temu Janji',
     'patient'         => 'Pesakit',
     'staff'           => 'Kakitangan',
+    
+     //==data pasien==
+    'identitas_title'           => 'Primary Identity',
+    'date_register'           => 'Reistration Date',
+    'patient_number'           => 'Patient Number',
+    'sex'           => 'Sex',
+    'birthday'           => 'Birthday',
+    'address'           => 'Addres',
+    'notes'           => 'Notes',
+    'region_title'           => 'Address & Region',
+    'city'           => 'City',
+    'region'           => 'Region',
+    'country'           => 'Country (2 Lettes)',
+    'statusfoto_title'           => 'Status dan Photos',
+
 
     // ==================== Petunjuk umum ====================
     'keep_password_hint' => 'Biarkan kosong jika tidak mahu menukar kata laluan.',

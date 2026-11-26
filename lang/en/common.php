@@ -52,6 +52,7 @@ return [
     'reset_password' => 'Reset Password',
     'detail'       => 'Detail',
     'close'        => 'Close',
+    'select'       => 'select',
 
     // ==================== Common field labels ====================
     'data'            => 'Data',
@@ -73,7 +74,7 @@ return [
     'branch_name'     => 'Branch Name',
     'brand'           => 'Brand',
     'user_account'    => 'User Account',
-    'customer'        => 'Customer',
+    'customer'        => 'Patient',
     'module_name'     => 'Module Name',
     'display'         => 'Show',
     'price'           => 'Price',
@@ -110,6 +111,21 @@ return [
     'appointment'     => 'Appointment',
     'patient'         => 'Patient',
     'staff'           => 'Staff',
+
+    //==data pasien==
+    'identitas_title'           => 'Primary Identity',
+    'date_register'           => 'Reistration Date',
+    'patient_number'           => 'Patient Number',
+    'sex'           => 'Sex',
+    'birthday'           => 'Birthday',
+    'address'           => 'Addres',
+    'notes'           => 'Notes',
+    'region_title'           => 'Address & Region',
+    'city'           => 'City',
+    'region'           => 'Region',
+    'country'           => 'Country (2 Lettes)',
+    'statusfoto_title'           => 'Status dan Photos',
+
 
     // ==================== Common hints ====================
     'keep_password_hint' => 'Leave blank if you do not want to change the password.',

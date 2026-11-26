@@ -11,14 +11,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
-/**
- * Contoh modul CRUD Pelanggan (data multi cabang pada database mitra).
- * Pelanggan direlasikan ke akun login pada tabel users (database pusat).
- *
- * Saat menyimpan, akun user dapat dibuat otomatis: memilih role level mitra
- * (id 3 s.d. 8) pada field "Akun User", lalu sistem membuat baris `users`
- * dengan password default + `mitra_id` sebagai relasi user ke mitra.
- */
 class PelangganController extends BaseCrudController
 {
     protected string $model = Pelanggan::class;
@@ -32,7 +24,6 @@ class PelangganController extends BaseCrudController
         return __('common.customer');
     }
 
-    /** Role yang boleh dipakai akun pelanggan: id 3 s.d. 8 (role level mitra). */
     protected function mitraRoleOptions(): array
     {
         $meta = app(\Modules\Role\Services\RoleService::class)->allMeta();
@@ -44,28 +35,58 @@ class PelangganController extends BaseCrudController
             ->all();
     }
 
+    /**
+     * Semua field didaftarkan di sini agar validasi ($this->rules()) 
+     * dan pengambilan input ($this->values($request)) di BaseCrudController tetap berjalan otomatis.
+     */
     protected function fields(): array
     {
         return [
-            ['name' => 'picture', 'type' => 'image', 'label' => __('common.picture'), 'nullable' => true],
+            ['name' => 'picture', 'type' => 'image', 'label' => __('common.picture'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'patient_number', 'type' => 'string', 'label' => 'No. Pasien / Pelanggan', 'nullable' => true],
             ['name' => 'name', 'type' => 'string', 'label' => __('common.name'), 'nullable' => false],
+            [
+                'name'     => 'sex',
+                'type'     => 'select',
+                'label'    => 'Jenis Kelamin',
+                'options'  => [
+                    'male'   => 'Male',
+                    'female' => 'Female',
+                ],
+                'nullable' => false,
+            ],
+            ['name' => 'date_of_birth', 'type' => 'date', 'label' => 'Tanggal Lahir', 'nullable' => true, 'hide_in_table' => true],
             ['name' => 'email', 'type' => 'email', 'label' => __('common.email'), 'nullable' => true],
             ['name' => 'phone', 'type' => 'string', 'label' => __('common.phone'), 'nullable' => true],
+            ['name' => 'city', 'type' => 'string', 'label' => 'Kota', 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'region', 'type' => 'string', 'label' => 'Provinsi / Wilayah', 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'country', 'type' => 'string', 'label' => 'Kode Negara', 'nullable' => true, 'hide_in_table' => true],
+            [
+                'name'     => 'country',
+                'type'     => 'select',
+                'label'    => 'Kode Negara',
+                'options'  => [
+                    'id'   => 'ID',
+                    'my' => 'MY'
+                ],
+                'nullable' => false,'hide_in_table' => true,
+            ],
+            ['name' => 'registered_at', 'type' => 'datetime', 'label' => 'Tanggal Registrasi', 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'archived_at', 'type' => 'datetime', 'label' => 'Tanggal Arsip', 'nullable' => true, 'hide_in_table' => true],
+            
             // Pilihan role (id 3 s.d. 8). Saat disimpan, akun user dibuat otomatis.
             ['name' => 'role', 'type' => 'select', 'label' => __('common.user_account'), 'nullable' => true, 'options' => $this->mitraRoleOptions(), 'hide_in_table' => true],
+            
             // Ditampilkan di tabel: akun user yang sudah terhubung ke pelanggan.
             ['name' => 'user_id', 'type' => 'relation', 'label' => __('common.user_account'), 'nullable' => true, 'hide_in_form' => true, 'relation' => [
                 'model' => User::class,
                 'label' => 'name_with_role',
                 'with'  => ['roles'],
-                // Akun mitra hanya boleh memilih akun user milik mitranya sendiri;
-                // user pusat (principal) tetap melihat seluruh akun.
                 'query' => function ($query) {
                     $user = auth()->user();
                     if ($user && ! $user->isPrincipal() && $user->mitra_id) {
                         $query->where('mitra_id', $user->mitra_id);
                     }
-
                     return $query;
                 },
             ]],
@@ -73,6 +94,39 @@ class PelangganController extends BaseCrudController
             ['name' => 'is_active', 'type' => 'boolean', 'label' => __('common.active'), 'nullable' => false],
         ];
     }
+
+    /**
+     * Gunakan form khusus modul Pelanggan untuk tampilan create & edit
+     */
+    public function create()
+    {
+        $this->authorizeAbility('create');
+
+        return view('admin.pelanggan.form', [
+            'title'       => $this->title(),
+            'routeName'   => $this->routeName,
+            'record'      => null,
+            'roleOptions' => $this->mitraRoleOptions(),
+            'cabangs'     => \Modules\Cabang\Models\Cabang::all(),
+        ]);
+    }
+
+    public function edit($slug)
+    {
+        $this->authorizeAbility('update');
+        $record = ($this->model)::where($this->routeKeyName(), $slug)->firstOrFail();
+
+        return view('admin.pelanggan.form', [
+            'title'       => $this->title(),
+            'routeName'   => $this->routeName,
+            'record'      => $record,
+            'roleOptions' => $this->mitraRoleOptions(),
+            'cabangs'     => \Modules\Cabang\Models\Cabang::all(),
+        ]);
+    }
+
+    // ... biarkan method store(), update(), createUserForPelanggan(), resetPassword(), dan rowActions() tetap seperti semula ...
+
 
     public function store(Request $request)
     {
@@ -140,13 +194,33 @@ class PelangganController extends BaseCrudController
         }
 
         $user = User::create([
-            'name'      => $pelanggan->name,
-            'email'     => $email,
-            'password'  => config('lbacloud.default_user_password', 'password'),
-            'mitra_id'  => app()->bound('active_mitra') ? app('active_mitra')->id : $this->user()?->mitra_id,
-            'locale'    => app()->getLocale(),
-            'is_active' => true,
-        ]);
+        // Identitas pengguna
+        'name'           => $pelanggan->name,
+        'email'          => $email,
+        'password'       => config('lbacloud.default_user_password', 'password'),
+
+        // Data pelanggan
+        'picture'        => $pelanggan->picture,
+        'patient_number' => $pelanggan->patient_number,
+        'sex'            => $pelanggan->sex,
+        'date_of_birth'  => $pelanggan->date_of_birth,
+        'phone'          => $pelanggan->phone,
+        'city'           => $pelanggan->city,
+        'region'         => $pelanggan->region,
+        'country'        => $pelanggan->country,
+        'address'        => $pelanggan->address,
+        'notes'        => $pelanggan->notes,
+        'cabang_id'      => $pelanggan->cabang_id,
+
+        // Konteks akun
+        'mitra_id'       => app()->bound('active_mitra')
+            ? app('active_mitra')->id
+            : $this->user()?->mitra_id,
+
+        'locale'         => app()->getLocale(),
+        'is_active'      => true,
+    ]);
+
 
         if ($role = Role::find($roleId)) {
             $user->syncRoles([$role->name]);
