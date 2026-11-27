@@ -231,15 +231,23 @@ abstract class BaseCrudController extends Controller
         }
 
         $dt->addColumn('actions', function ($row) {
-            $html = '<div class="flex gap-2">';
+            $ddId = 'dd-actions-' . $row->getRouteKey();
+
+            $html = '<div class="relative inline-block text-left">';
+            $html .= '<button type="button" class="btn btn-sm btn-secondary" data-dropdown-toggle="' . $ddId . '" title="' . __('common.actions') . '"><i data-lucide="ellipsis-vertical"></i></button>';
+            $html .= '<div id="' . $ddId . '" data-dropdown class="hidden absolute right-0 mt-1 w-40 card p-1 z-30">';
+
             if ($this->can('update')) {
-                $html .= '<a href="' . route($this->routeName . '.edit', $row->getRouteKey()) . '" class="btn btn-sm btn-primary"><i data-lucide="pencil"></i> ' . __('common.edit') . '</a>';
+                $html .= '<a href="' . route($this->routeName . '.edit', $row->getRouteKey()) . '" class="flex items-center gap-2 px-3 py-2 rounded text-sm hover:bg-slate-100"><i data-lucide="pencil"></i> ' . __('common.edit') . '</a>';
             }
+
             $html .= $this->rowActions($row);
+
             if ($this->can('delete')) {
-                $html .= '<button type="button" class="btn btn-sm btn-danger js-delete" data-url="' . route($this->routeName . '.destroy', $row->getRouteKey()) . '"><i data-lucide="trash-2"></i> ' . __('common.delete') . '</button>';
+                $html .= '<button type="button" class="js-delete w-full flex items-center gap-2 text-left px-3 py-2 rounded text-sm hover:bg-slate-100 text-red-600" data-url="' . route($this->routeName . '.destroy', $row->getRouteKey()) . '"><i data-lucide="trash-2"></i> ' . __('common.delete') . '</button>';
             }
-            $html .= '</div>';
+
+            $html .= '</div></div>';
 
             return $html;
         });

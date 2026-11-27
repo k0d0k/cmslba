@@ -58,18 +58,21 @@ function initSidebar() {
         });
     });
 
-    document.querySelectorAll('[data-dropdown-toggle]').forEach((el) => {
-        el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const target = document.getElementById(el.dataset.dropdownToggle);
+    // Dropdown generik: tombol `[data-dropdown-toggle]` + panel `[data-dropdown]`.
+    // Memakai event delegation agar tetap berfungsi pada konten dinamis
+    // (mis. tombol aksi per baris DataTables yang dirender server-side).
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('[data-dropdown-toggle]');
+        if (toggle) {
+            const target = document.getElementById(toggle.dataset.dropdownToggle);
             document.querySelectorAll('[data-dropdown]').forEach((d) => {
                 if (d !== target) d.classList.add('hidden');
             });
             target?.classList.toggle('hidden');
-        });
-    });
+            return;
+        }
 
-    document.addEventListener('click', () => {
+        // Klik di luar dropdown: tutup semua.
         document.querySelectorAll('[data-dropdown]').forEach((d) => d.classList.add('hidden'));
     });
 }
