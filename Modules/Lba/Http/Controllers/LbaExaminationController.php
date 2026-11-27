@@ -32,7 +32,7 @@ class LbaExaminationController extends BaseCrudController
             ['name' => 'branch_id', 'type' => 'relation', 'label' => 'Cabang', 'nullable' => false,
                 'relation' => ['model' => \Modules\Cabang\Models\Cabang::class, 'label' => 'name']],
             ['name' => 'appointment_id', 'type' => 'relation', 'label' => 'Janji Temu', 'nullable' => true,
-                'relation' => ['model' => \Modules\Appointments\Models\Appointment::class, 'label' => 'service_type']],
+                'relation' => ['model' => \Modules\Appointments\Models\Appointment::class, 'label' => 'id']],
             ['name' => 'mode', 'type' => 'select', 'label' => 'Mode', 'nullable' => false,
                 'options' => ['manual' => 'Manual', 'assisted' => 'Assisted']],
             ['name' => 'status', 'type' => 'select', 'label' => 'Status', 'nullable' => false,

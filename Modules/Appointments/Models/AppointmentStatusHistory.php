@@ -18,7 +18,7 @@ class AppointmentStatusHistory extends Model
     protected $table = 'appointment_status_histories';
 
     protected $fillable = [
-        'appointment_id', 'from_status', 'to_status', 'changed_by', 'note', 'changed_at',
+        'appointment_id', 'from_status_id', 'to_status_id', 'changed_by', 'note', 'changed_at',
     ];
 
     protected $casts = [
@@ -28,5 +28,15 @@ class AppointmentStatusHistory extends Model
     public function appointment(): BelongsTo
     {
         return $this->belongsTo(Appointment::class, 'appointment_id');
+    }
+
+    public function fromStatus(): BelongsTo
+    {
+        return $this->belongsTo(AppointmentStatus::class, 'from_status_id');
+    }
+
+    public function toStatus(): BelongsTo
+    {
+        return $this->belongsTo(AppointmentStatus::class, 'to_status_id');
     }
 }
