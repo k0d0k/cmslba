@@ -17,7 +17,7 @@ class Event extends Model
 
     protected $fillable = [
         'mitra_id', 'cabang_id', 'name', 'location',
-        'start_date', 'end_date', 'is_active',
+        'start_date', 'end_date', 'notes', 'is_active',
     ];
 
     protected $casts = [
