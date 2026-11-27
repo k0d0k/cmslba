@@ -39,9 +39,9 @@ class SubscriptionController extends BaseCrudController
                     'weekly'  => __('subscription.interval_weekly'),
                     'daily'   => __('subscription.interval_daily'),
                 ]],
-            ['name' => 'trial_days', 'type' => 'integer', 'label' => __('subscription.trial_days'), 'nullable' => false, 'default' => 0],
-            ['name' => 'seat_limit', 'type' => 'integer', 'label' => __('subscription.seat_limit'), 'nullable' => true],
-            ['name' => 'sina_credit_per_patient_per_period', 'type' => 'integer', 'label' => __('subscription.sina_credit'), 'nullable' => false, 'default' => 0],
+            ['name' => 'trial_days', 'type' => 'integer', 'label' => __('subscription.trial_days'), 'nullable' => false, 'default' => 0, 'hide_in_table' => true],
+            ['name' => 'seat_limit', 'type' => 'integer', 'label' => __('subscription.seat_limit'), 'nullable' => true, 'hide_in_table' => true],
+            ['name' => 'sina_credit_per_patient_per_period', 'type' => 'integer', 'label' => __('subscription.sina_credit'), 'nullable' => false, 'default' => 0, 'hide_in_table' => true],
         ];
     }
 
