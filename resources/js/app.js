@@ -72,6 +72,9 @@ function initSidebar() {
             return;
         }
 
+        // Klik di dalam panel dropdown: jangan tutup (mis. checkbox pemilih kolom).
+        if (e.target.closest('[data-dropdown]')) return;
+
         // Klik di luar dropdown: tutup semua.
         document.querySelectorAll('[data-dropdown]').forEach((d) => d.classList.add('hidden'));
     });
@@ -188,6 +191,93 @@ function initConfirmForms() {
     });
 }
 
+/**
+ * Terjemahan kontrol DataTables. Diambil dari `window.LB.dt` yang dikirim
+ * layout sesuai locale aktif, dengan fallback agar tetap aman bila kosong.
+ */
+function dataTablesLanguage() {
+    const t = (window.LB && window.LB.dt) || {};
+
+    return {
+        search: '',
+        searchPlaceholder: t.searchPlaceholder ?? 'Cari...',
+        lengthMenu: t.lengthMenu ?? 'Tampilkan _MENU_ data',
+        info: t.info ?? 'Menampilkan _START_ - _END_ dari _TOTAL_ data',
+        infoEmpty: t.infoEmpty ?? 'Tidak ada data',
+        infoFiltered: t.infoFiltered ?? '(difilter dari _MAX_ total data)',
+        paginate: { previous: t.previous ?? 'Sebelumnya', next: t.next ?? 'Berikutnya' },
+        zeroRecords: t.zeroRecords ?? 'Belum ada data',
+        emptyTable: t.emptyTable ?? 'Belum ada data',
+        processing: t.processing ?? 'Memuat...',
+    };
+}
+
+/**
+ * Tombol "Pilih Kolom" (column visibility) di kanan atas area DataTables.
+ * Dibuat generik supaya tersedia otomatis pada semua tabel (.js-datatable).
+ * Kolom nomor (#) dan kolom aksi tetap selalu tampil.
+ */
+function initColumnToggle(dt, table, dataColCount) {
+    if (!dataColCount) return;
+
+    const t = (window.LB && window.LB.dt) || {};
+    const label = t.columns ?? 'Kolom';
+
+    const headerCells = Array.from(table.tHead?.rows?.[0]?.cells ?? []);
+    const items = [];
+    for (let i = 1; i <= dataColCount; i++) {
+        items.push({ idx: i, title: (headerCells[i]?.textContent || '').trim() || ('#' + i) });
+    }
+
+    const ddId = 'dt-colvis-' + Math.random().toString(36).slice(2, 8);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'dt-colvis relative inline-block text-left ml-2';
+    wrap.innerHTML = `
+        <button type="button" class="btn btn-sm btn-secondary" data-dropdown-toggle="${ddId}" title="${label}">
+            <i data-lucide="columns-3"></i><span class="hidden sm:inline">${label}</span>
+        </button>
+        <div id="${ddId}" data-dropdown class="hidden absolute right-0 mt-1 w-56 card p-2 z-40 max-h-72 overflow-auto text-left">
+            <div class="flex items-center justify-between gap-2 px-2 pb-1.5 mb-1 border-b border-slate-100">
+                <button type="button" class="js-colvis-all text-xs font-medium text-teal-600 hover:underline">${t.selectAll ?? 'Pilih semua'}</button>
+                <button type="button" class="js-colvis-clear text-xs font-medium text-slate-500 hover:underline">${t.clear ?? 'Bersihkan'}</button>
+            </div>
+            ${items.map((it) => `
+                <label class="flex items-center gap-2 px-2 py-1.5 rounded text-sm text-slate-600 hover:bg-slate-100 cursor-pointer">
+                    <input type="checkbox" class="form-check js-colvis-toggle" data-col="${it.idx}" checked>
+                    <span class="truncate">${it.title}</span>
+                </label>`).join('')}
+        </div>`;
+
+    const checkboxes = Array.from(wrap.querySelectorAll('.js-colvis-toggle'));
+
+    const setAll = (visible) => {
+        checkboxes.forEach((cb) => {
+            cb.checked = visible;
+            dt.column(parseInt(cb.dataset.col, 10)).visible(visible);
+        });
+    };
+
+    checkboxes.forEach((cb) => {
+        cb.addEventListener('change', () => {
+            dt.column(parseInt(cb.dataset.col, 10)).visible(cb.checked);
+        });
+    });
+
+    wrap.querySelector('.js-colvis-all')?.addEventListener('click', () => setAll(true));
+    wrap.querySelector('.js-colvis-clear')?.addEventListener('click', () => setAll(false));
+
+    // Sisipkan di sebelah kanan kotak pencarian (kanan atas area DataTables).
+    const search = dt.table().container().querySelector('.dt-search');
+    if (search && search.parentNode) {
+        search.parentNode.appendChild(wrap);
+    } else {
+        dt.table().container().appendChild(wrap);
+    }
+
+    if (window.initIcons) window.initIcons(wrap);
+}
+
 async function initDataTables() {
     if (!document.querySelector('.js-datatable')) return;
     const { default: DataTable } = await import('datatables.net-dt');
@@ -217,7 +307,7 @@ async function initDataTables() {
             cols.push({ data: 'actions', name: 'actions', orderable: false, searchable: false });
         }
 
-        new DataTable(table, {
+        const dt = new DataTable(table, {
             processing: true,
             serverSide: true,
             autoWidth: false,
@@ -235,19 +325,11 @@ async function initDataTables() {
                 bottomStart: 'info',
                 bottomEnd: 'paging',
             },
-            language: {
-                search: '',
-                searchPlaceholder: 'Cari...',
-                lengthMenu: 'Tampilkan _MENU_ data',
-                info: 'Menampilkan _START_ - _END_ dari _TOTAL_ data',
-                infoEmpty: 'Tidak ada data',
-                infoFiltered: '(difilter dari _MAX_ total data)',
-                paginate: { previous: 'Sebelumnya', next: 'Berikutnya' },
-                zeroRecords: 'Belum ada data',
-                emptyTable: 'Belum ada data',
-                processing: 'Memuat...',
-            },
+            language: dataTablesLanguage(),
         });
+
+        // Tombol pemilih kolom di kanan atas (semua menu yang memakai DataTables).
+        initColumnToggle(dt, table, columns.length);
     });
 }
 

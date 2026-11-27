@@ -172,6 +172,13 @@ body {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
 }
+/* Placeholder kotak pencarian agar selalu terbaca (sebelumnya terlalu pucat). */
+.dt-container .dt-search input::placeholder { color: #64748b; opacity: 1; }
+
+/* Tombol pemilih kolom (kanan atas area DataTables) */
+.dt-container .dt-layout-cell { overflow: visible; }
+.dt-container .dt-colvis .btn { white-space: nowrap; }
+.dt-container .dt-colvis .form-check { accent-color: var(--color-primary); }
 
 /* Tabel */
 table.dataTable { width: 100% !important; border-collapse: collapse; margin: 0 !important; }

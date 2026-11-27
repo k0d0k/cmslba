@@ -74,6 +74,27 @@
             --color-sidebar: {{ $skinSidebar }};
         }
     </style>
+    <script>
+        // Terjemahan sisi klien (mis. kontrol DataTables) mengikuti locale aktif.
+        window.LB = Object.assign(window.LB || {}, @json([
+            'locale' => app()->getLocale(),
+            'dt' => [
+                'searchPlaceholder' => __('datatables.search_placeholder'),
+                'lengthMenu'        => __('datatables.length_menu'),
+                'info'              => __('datatables.info'),
+                'infoEmpty'         => __('datatables.info_empty'),
+                'infoFiltered'      => __('datatables.info_filtered'),
+                'zeroRecords'       => __('datatables.zero_records'),
+                'emptyTable'        => __('datatables.empty_table'),
+                'processing'        => __('datatables.processing'),
+                'previous'          => __('datatables.previous'),
+                'next'              => __('datatables.next'),
+                'columns'           => __('datatables.columns'),
+                'selectAll'         => __('datatables.select_all'),
+                'clear'             => __('datatables.clear'),
+            ],
+        ]));
+    </script>
 </head>
 <body>
 <div class="min-h-screen flex">
