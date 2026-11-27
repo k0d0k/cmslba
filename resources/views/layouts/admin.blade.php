@@ -56,6 +56,27 @@
     // Identitas aplikasi (logo & footer) dari tabel settings grup `app`.
     $appLogo = \Modules\Setting\Models\Setting::get('logo', null, 'app');
     $appFooter = \Modules\Setting\Models\Setting::get('footer', null, 'app');
+
+    // Terjemahan sisi klien (mis. kontrol DataTables) mengikuti locale aktif.
+    // Dibuat sebagai variabel agar tidak ada array literal di dalam <script>.
+    $lbConfig = [
+        'locale' => app()->getLocale(),
+        'dt' => [
+            'searchPlaceholder' => __('datatables.search_placeholder'),
+            'lengthMenu'        => __('datatables.length_menu'),
+            'info'              => __('datatables.info'),
+            'infoEmpty'         => __('datatables.info_empty'),
+            'infoFiltered'      => __('datatables.info_filtered'),
+            'zeroRecords'       => __('datatables.zero_records'),
+            'emptyTable'        => __('datatables.empty_table'),
+            'processing'        => __('datatables.processing'),
+            'previous'          => __('datatables.previous'),
+            'next'              => __('datatables.next'),
+            'columns'           => __('datatables.columns'),
+            'selectAll'         => __('datatables.select_all'),
+            'clear'             => __('datatables.clear'),
+        ],
+    ];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -76,24 +97,7 @@
     </style>
     <script>
         // Terjemahan sisi klien (mis. kontrol DataTables) mengikuti locale aktif.
-        window.LB = Object.assign(window.LB || {}, @json([
-            'locale' => app()->getLocale(),
-            'dt' => [
-                'searchPlaceholder' => __('datatables.search_placeholder'),
-                'lengthMenu'        => __('datatables.length_menu'),
-                'info'              => __('datatables.info'),
-                'infoEmpty'         => __('datatables.info_empty'),
-                'infoFiltered'      => __('datatables.info_filtered'),
-                'zeroRecords'       => __('datatables.zero_records'),
-                'emptyTable'        => __('datatables.empty_table'),
-                'processing'        => __('datatables.processing'),
-                'previous'          => __('datatables.previous'),
-                'next'              => __('datatables.next'),
-                'columns'           => __('datatables.columns'),
-                'selectAll'         => __('datatables.select_all'),
-                'clear'             => __('datatables.clear'),
-            ],
-        ]));
+        window.LB = Object.assign(window.LB || {}, @json($lbConfig));
     </script>
 </head>
 <body>
