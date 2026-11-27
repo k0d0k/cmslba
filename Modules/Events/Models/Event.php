@@ -16,7 +16,7 @@ class Event extends Model
     protected $table = 'events';
 
     protected $fillable = [
-        'mitra_id', 'cabang_id', 'name', 'location',
+        'mitra_uuid', 'cabang_id', 'name', 'location',
         'start_date', 'end_date', 'notes', 'is_active',
     ];
 
@@ -26,9 +26,10 @@ class Event extends Model
         'is_active'  => 'boolean',
     ];
 
+    /** Relasi ke mitra pada database pusat (mitras.uuid). */
     public function mitra(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Mitra\Models\Mitra::class, 'mitra_id');
+        return $this->belongsTo(\Modules\Mitra\Models\Mitra::class, 'mitra_uuid', 'uuid');
     }
 
     public function cabang(): BelongsTo

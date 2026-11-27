@@ -31,10 +31,10 @@ class EventController extends BaseCrudController
     protected function fields(): array
     {
         return [
-            // mitra_id disembunyikan pada form & diisi otomatis dari mitra aktif.
-            ['name' => 'mitra_id', 'type' => 'relation', 'label' => __('common.mitra'), 'nullable' => true,
+            // mitra_uuid disembunyikan pada form & diisi otomatis dari mitra aktif.
+            ['name' => 'mitra_uuid', 'type' => 'relation', 'label' => __('common.mitra'), 'nullable' => true,
                 'hide_in_form' => true,
-                'relation' => ['model' => Mitra::class, 'label' => 'name']],
+                'relation' => ['name' => 'mitra', 'model' => Mitra::class, 'label' => 'name']],
             // Pilihan cabang dibatasi hanya cabang milik mitra yang sedang aktif.
             ['name' => 'cabang_id', 'type' => 'relation', 'label' => __('common.branch'), 'nullable' => true,
                 'relation' => ['model' => Cabang::class, 'label' => 'name',
@@ -52,8 +52,8 @@ class EventController extends BaseCrudController
     {
         $data = parent::values($request);
 
-        // mitra_id selalu mengikuti mitra yang sedang aktif (tidak dari input form).
-        $data['mitra_id'] = $this->currentMitra()?->id;
+        // mitra_uuid selalu mengikuti mitra yang sedang aktif (tidak dari input form).
+        $data['mitra_uuid'] = $this->currentMitra()?->uuid;
 
         return $data;
     }

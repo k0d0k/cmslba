@@ -82,13 +82,14 @@ abstract class BaseCrudController extends Controller
     {
         $query = ($this->model)::query();
 
-        // Eager-load relasi. Nama relasi diturunkan dari nama field (mis. `patient_id`
-        // -> `patient()`), sama seperti saat kolom relasi ditampilkan di data().
+        // Eager-load relasi. Nama relasi diambil dari `relation.name` bila ada,
+        // jika tidak diturunkan dari nama field (mis. `patient_id` -> `patient()`),
+        // sama seperti saat kolom relasi ditampilkan di data().
         $relations = collect($this->fields())
             ->filter(fn ($f) => ($f['type'] ?? null) === 'relation'
                 && ! empty($f['relation']['model'])
                 && isset($f['name']))
-            ->map(fn ($f) => Str::of($f['name'])->replace('_id', '')->camel()->toString())
+            ->map(fn ($f) => $f['relation']['name'] ?? Str::of($f['name'])->replace('_id', '')->camel()->toString())
             ->unique()
             ->values()
             ->all();
@@ -223,7 +224,7 @@ abstract class BaseCrudController extends Controller
             } elseif ($type === 'select' && ! empty($f['options'])) {
                 $dt->editColumn($name, fn ($row) => ($f['options'][$row->{$name}] ?? $row->{$name}));
             } elseif ($type === 'relation' && ! empty($f['relation'])) {
-                $rel = Str::of($name)->replace('_id', '')->camel()->toString();
+                $rel = $f['relation']['name'] ?? Str::of($name)->replace('_id', '')->camel()->toString();
                 $labelCol = $f['relation']['label'] ?? 'name';
                 $dt->editColumn($name, fn ($row) => optional($row->{$rel})->{$labelCol});
             }

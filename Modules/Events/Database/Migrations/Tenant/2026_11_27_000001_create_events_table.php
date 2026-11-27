@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('mitra_id')->nullable()->index();
+            $table->string('mitra_uuid')->nullable()->index();
             $table->unsignedBigInteger('cabang_id')->nullable()->index();
             $table->string('name');
             $table->string('location')->nullable();
