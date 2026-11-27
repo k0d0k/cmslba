@@ -11,8 +11,9 @@ return new class extends Migration
         Schema::create('appointment_status_histories', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('appointment_id', 26)->index();
-            $table->string('from_status')->nullable();
-            $table->string('to_status');
+            // Relasi ke master appointments_status (statuses.id).
+            $table->unsignedBigInteger('from_status_id')->nullable()->index();
+            $table->unsignedBigInteger('to_status_id')->nullable()->index();
             $table->string('changed_by')->nullable();
             $table->text('note')->nullable();
             $table->timestamp('changed_at')->nullable();

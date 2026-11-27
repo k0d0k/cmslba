@@ -20,8 +20,8 @@ class Appointment extends Model
     protected $table = 'appointments';
 
     protected $fillable = [
-        'patient_id', 'branch_id', 'staff_user_id', 'starts_at', 'ends_at',
-        'service_type', 'status', 'notes', 'created_by',
+        'mitra_uuid', 'patient_id', 'branch_id', 'staff_user_id', 'starts_at', 'ends_at',
+        'service_type_id', 'status_id', 'notes', 'created_by',
     ];
 
     protected $casts = [
@@ -38,6 +38,12 @@ class Appointment extends Model
         });
     }
 
+    /** Relasi ke mitra pada database pusat (mitras.uuid). */
+    public function mitra(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Mitra\Models\Mitra::class, 'mitra_uuid', 'uuid');
+    }
+
     public function patient(): BelongsTo
     {
         return $this->belongsTo(\Modules\Pelanggan\Models\Pelanggan::class, 'patient_id');
@@ -51,6 +57,16 @@ class Appointment extends Model
     public function staffUser(): BelongsTo
     {
         return $this->belongsTo(\Modules\User\Models\User::class, 'staff_user_id');
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(AppointmentStatus::class, 'status_id');
+    }
+
+    public function serviceType(): BelongsTo
+    {
+        return $this->belongsTo(AppointmentServiceType::class, 'service_type_id');
     }
 
     public function statusHistories(): HasMany
