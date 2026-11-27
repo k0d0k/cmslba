@@ -29,7 +29,7 @@ class Event extends Model
     /** Relasi ke mitra pada database pusat (mitras.uuid). */
     public function mitra(): BelongsTo
     {
-        return $this->belongsTo(\Modules\Mitra\Models\Mitra::class, 'mitra_uuid', 'uuid');
+        return $this->belongsTo(\Modules\Mitra\Models\Mitra::class, 'mitras', 'uuid');
     }
 
     public function cabang(): BelongsTo
