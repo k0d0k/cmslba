@@ -109,6 +109,12 @@ class MenuSeeder extends Seeder
                 'route_name' => 'admin.appointments.index', 'resource' => 'Appointment',
                 'module_key' => 'appointments', 'is_crud' => true,
             ],
+            [
+                'key' => 'events', 'icon' => 'calendar-days', 'sort' => 1, 'parent' => 'modules_group',
+                'title' => ['id' => 'Agenda', 'en' => 'Events', 'ms' => 'Acara'],
+                'route_name' => 'admin.events.index', 'resource' => 'Event',
+                'module_key' => 'events', 'is_crud' => true,
+            ],
 
             // ── Consultations (group) ───────────────────────────────────
             [

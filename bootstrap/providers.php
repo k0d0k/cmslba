@@ -19,6 +19,7 @@ return [
     Modules\Consultation\Providers\ConsultationServiceProvider::class,
     Modules\CrudGenerator\Providers\CrudGeneratorServiceProvider::class,
     Modules\Dashboard\Providers\DashboardServiceProvider::class,
+    Modules\Events\Providers\EventsServiceProvider::class,
     Modules\Lba\Providers\LbaServiceProvider::class,
     Modules\Menu\Providers\MenuServiceProvider::class,
     Modules\Mitra\Providers\MitraServiceProvider::class,

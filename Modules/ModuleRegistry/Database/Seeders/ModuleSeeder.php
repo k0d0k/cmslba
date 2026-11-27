@@ -14,6 +14,7 @@ class ModuleSeeder extends Seeder
     {
         $modules = [
             ['code' => 'appointments',  'name' => 'Appointments'],
+            ['code' => 'events',        'name' => 'Events'],
             ['code' => 'consultations', 'name' => 'Consultations'],
             ['code' => 'knowledge_base', 'name' => 'KnowledgeBase'],
             ['code' => 'demo.showcase', 'name' => 'DemoShowcase'],
